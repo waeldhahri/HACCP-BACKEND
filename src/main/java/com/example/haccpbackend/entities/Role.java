@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Entity
 @Getter
 public enum Role {
@@ -18,7 +19,4 @@ public enum Role {
         this.id = id;
     }
 
-    public Long getId() {
-        return id;
-    }
 }
