@@ -1,6 +1,7 @@
 package com.example.haccpbackend.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -14,12 +15,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Utilisateur {
+public class User {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false)
+    @Column(name = "User-id", nullable = false )
     private Long id;
 
     @NotNull
@@ -32,10 +33,13 @@ public class Utilisateur {
     private String email;
 
     @Column(nullable = false)
-    private String motdepasse;
+    private String password;
 
-    @ManyToOne
-    private Role role;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role")
+    @JsonIgnoreProperties("users")
+    private Role roles;
+
 
 
 
