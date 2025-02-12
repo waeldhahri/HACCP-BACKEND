@@ -1,17 +1,16 @@
-package com.example.haccpbackend.service;
+package com.example.haccpbackend.moduleUsers;
 
-import com.example.haccpbackend.entities.User;
+import com.example.haccpbackend.moduleUsers.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IServiceUser {
 
 
     public User createUser(User user);
-    public User findUserById(Long Id);
+    public User findUserById(Long id);
 
-    public User updateUser(User user);
+    public User updateUser(Long id,User newUser);
 
     public List<User> getAllUsers();
 

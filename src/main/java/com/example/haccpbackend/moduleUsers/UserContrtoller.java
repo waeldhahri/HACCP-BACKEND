@@ -1,31 +1,36 @@
-package com.example.haccpbackend.controller;
+package com.example.haccpbackend.moduleUsers;
 
 
-import com.example.haccpbackend.entities.User;
-import com.example.haccpbackend.repository.UserRepository;
-import com.example.haccpbackend.service.IServiceUser;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin
-@RequiredArgsConstructor
+@CrossOrigin()
 @RequestMapping("/users")
 public class UserContrtoller {
 
-    private final IServiceUser iServiceUser;
-    private final UserRepository userRepository;
-    private final TokenRepository tokenRepository ;
+    @Autowired
+    private  IServiceUser iServiceUser;
+
+    @Autowired
+    private   UserRepository userRepository;
+
+    //private final TokenRepository tokenRepository ;
 
 
+    public UserContrtoller(IServiceUser iServiceUser) {
+        this.iServiceUser = iServiceUser;
+    }
 
     @GetMapping("")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public List<User> getAllEmploye(){
 
         return  iServiceUser.getAllUsers();
@@ -34,6 +39,7 @@ public class UserContrtoller {
 
 
     @GetMapping("/email/{email}")
+    //@PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     public ResponseEntity<User> getEmployeByEmail(@PathVariable String email){
         return ResponseEntity.ok(iServiceUser.findUserByEmail(email));
     }
@@ -41,9 +47,11 @@ public class UserContrtoller {
 
 
     @PostMapping("")
+   // @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(iServiceUser.createUser(user));
+
     }
 
 
@@ -58,9 +66,10 @@ public class UserContrtoller {
 
     @DeleteMapping("/{userId}")
     @Transactional
+    //@PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
 
-        tokenRepository.clearUserReferences(userId);
+       //   tokenRepository.clearUserReferences(userId);
 
         //sessionRepository.clearEmployeeReferences(userId);
 
@@ -72,9 +81,9 @@ public class UserContrtoller {
 
 
     @PutMapping("update/{userId}")
-    public ResponseEntity<User> updateEmploye(@Valid @RequestBody User user, @PathVariable Long userId ){
-        user.setId(userId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(iServiceUser.updateUser(user));
+    //@PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<User> updateEmploye(@PathVariable Long userId , @Valid @RequestBody User user ){
+        return ResponseEntity.status(HttpStatus.CREATED).body(iServiceUser.updateUser(userId ,user));
     }
 
 
