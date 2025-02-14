@@ -1,6 +1,4 @@
-package com.example.haccpbackend.moduleProducts;
-
-import com.example.haccpbackend.moduleProducts.Product;
+package com.example.haccpbackend.modulProducts;
 
 import java.util.List;
 

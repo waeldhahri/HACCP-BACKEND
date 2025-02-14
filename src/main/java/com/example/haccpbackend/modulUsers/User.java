@@ -1,4 +1,4 @@
-package com.example.haccpbackend.moduleUsers;
+package com.example.haccpbackend.modulUsers;
 
 
 import jakarta.persistence.*;
@@ -6,6 +6,19 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.security.auth.Subject;
+import java.security.Principal;
+import java.util.Collection;
+import java.util.List;
 //import org.springframework.security.core.GrantedAuthority;
 //import org.springframework.security.core.authority.SimpleGrantedAuthority;
 //import org.springframework.security.core.userdetails.UserDetails;
@@ -13,16 +26,19 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "users")
-public class User /*implements UserDetails*/ {
+public class User implements UserDetails , Principal {
+
+
+
 
     public User() {
     }
 
-    public User(Long id, String fullName, String email, String password, boolean enabled, boolean accountLocked, Role role) {
+    public User(Long id, String fullName, String email, String motdepasse, boolean enabled, boolean accountLocked, Role role) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
-        this.password = password;
+        this.motdepasse = motdepasse;
         this.enabled = enabled;
         this.accountLocked = accountLocked;
         this.role = role;
@@ -52,12 +68,13 @@ public class User /*implements UserDetails*/ {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+
+    public String getMotdepasse() {
+        return motdepasse;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setMotdepasse(String motdepasse) {
+        this.motdepasse = motdepasse;
     }
 
     public boolean isEnabled() {
@@ -85,7 +102,7 @@ public class User /*implements UserDetails*/ {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "User_id", nullable = false )
     private Long id;
 
@@ -98,8 +115,8 @@ public class User /*implements UserDetails*/ {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password" , updatable = true , nullable = false )
-    private String password;
+    @Column(name = "motdepasse" , updatable = true , nullable = false )
+    private String motdepasse;
 
 
     private boolean enabled=true;
@@ -143,4 +160,43 @@ public class User /*implements UserDetails*/ {
     public boolean isEnabled() {
         return enabled;
     }*/
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
+
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !accountLocked;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+
+    @Override
+    public String getName() {
+        return email;
+    }
+    @Override
+    public String getPassword() {
+        return motdepasse;
+    }
+
 }

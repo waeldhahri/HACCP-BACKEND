@@ -1,8 +1,4 @@
-package com.example.haccpbackend.moduleProducts;
-
-import com.example.haccpbackend.moduleProducts.IServiceProduct;
-import com.example.haccpbackend.moduleProducts.Product;
-import com.example.haccpbackend.moduleProducts.ProductRepository;
+package com.example.haccpbackend.modulProducts;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

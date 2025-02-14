@@ -1,6 +1,4 @@
-package com.example.haccpbackend.moduleUsers;
-
-import com.example.haccpbackend.moduleUsers.User;
+package com.example.haccpbackend.modulUsers;
 
 import java.util.List;
 

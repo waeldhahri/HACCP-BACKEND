@@ -1,6 +1,5 @@
-package com.example.haccpbackend.moduleUsers;
+package com.example.haccpbackend.modulUsers;
 
-import com.example.haccpbackend.moduleUsers.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.example.haccpbackend.springSecurity;
 
-/*
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-/*
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -40,39 +40,20 @@ public class SecurityConfig {
     }
 
 
-
-/*
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails admin = User.withDefaultPasswordEncoder()
-                .username("khalil")
-                .password("password")
-                .authorities("SUPER_ADMIN")
-                .build();
-
-
-        UserDetails ouvrier = User.withDefaultPasswordEncoder()
-                .username("ouvrier")
-                .password("password")
-                .authorities("OUVRIER")
-                .build();
-
-        return new InMemoryUserDetailsManager(admin, ouvrier);
-
-    }*/
-/*
+    /*
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users").permitAll()
-                                .requestMatchers("/products").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/products").permitAll()  // Permet à tout le monde d'accéder
-                        .requestMatchers(HttpMethod.GET, "/products").permitAll()
+                       // .requestMatchers("/users").permitAll()
+                             //   .requestMatchers("/products").permitAll()
+                       // .requestMatchers(HttpMethod.POST, "/products").permitAll()  // Permet à tout le monde d'accéder
+                        //.requestMatchers(HttpMethod.GET, "/products").permitAll()
                         //.requestMatchers("/users/**").hasAuthority("ADMIN")
                        // .requestMatchers("/products/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
                        // .anyRequest().authenticated()
+                        .anyRequest().hasAuthority("ADMIN")
                 )
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
@@ -80,7 +61,24 @@ public class SecurityConfig {
 
         return http.build();
     }
+*/
+
+
+
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable()) // Désactive CSRF pour tests API (à éviter en production)
+                .authorizeHttpRequests(auth -> auth.requestMatchers("**").permitAll()
+                       // .requestMatchers("/users/**").hasAuthority("ADMIN") // ADMIN peut accéder à `/users/**`
+                       // .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
+                )
+                .formLogin(form -> form.defaultSuccessUrl("/home", true)) // Redirige après login
+                .httpBasic(Customizer.withDefaults()); // Active l'authentification Basic pour API
+
+        return http.build();
+    }
 
 
 }
-*/

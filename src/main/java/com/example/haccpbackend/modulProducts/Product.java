@@ -1,4 +1,4 @@
-package com.example.haccpbackend.moduleProducts;
+package com.example.haccpbackend.modulProducts;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +19,7 @@ public class Product {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "produit_id")
     private Long idProduit ;
 

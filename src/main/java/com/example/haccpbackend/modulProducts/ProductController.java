@@ -1,4 +1,4 @@
-package com.example.haccpbackend.moduleProducts;
+package com.example.haccpbackend.modulProducts;
 
 
 import jakarta.transaction.Transactional;
@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +17,6 @@ import java.util.List;
 public class ProductController {
 
 
-    @Autowired
-    private  ProductRepository productRepository;
 
     @Autowired
     private  IServiceProduct iServiceProduct;
@@ -27,9 +26,11 @@ public class ProductController {
     public ProductController( IServiceProduct iServiceProduct) {
 
         this.iServiceProduct = iServiceProduct;
+
     }
 
     @GetMapping("")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<Product> getAllProducts(){
 
         return iServiceProduct.getAllproducts();
@@ -37,6 +38,7 @@ public class ProductController {
     }
 
     @PostMapping("")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product){
 
       return ResponseEntity.status(HttpStatus.CREATED).body(iServiceProduct.createproduct(product));
@@ -44,6 +46,7 @@ public class ProductController {
 
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Product> findProductById(@PathVariable Long id){
 
         return ResponseEntity.ok(iServiceProduct.findproductById(id));
@@ -53,7 +56,7 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    //@PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){
 
         //   tokenRepository.clearUserReferences(userId);
@@ -69,8 +72,8 @@ public class ProductController {
 
 
     @PutMapping("/update/{id}")
-    //@PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Product> updateEmploye(@PathVariable Long id , @Valid @RequestBody Product product ){
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id , @Valid @RequestBody Product product ){
         return ResponseEntity.status(HttpStatus.CREATED).body(iServiceProduct.updateproduct(id ,product));
     }
 

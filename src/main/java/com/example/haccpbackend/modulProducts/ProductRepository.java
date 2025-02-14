@@ -1,7 +1,6 @@
-package com.example.haccpbackend.moduleProducts;
+package com.example.haccpbackend.modulProducts;
 
 
-import com.example.haccpbackend.moduleProducts.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

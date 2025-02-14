@@ -1,12 +1,10 @@
-package com.example.haccpbackend.moduleUsers;
+package com.example.haccpbackend.modulUsers;
 
-import com.example.haccpbackend.moduleUsers.IServiceUser;
-import com.example.haccpbackend.moduleUsers.User;
-import com.example.haccpbackend.moduleUsers.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.security.core.userdetails.UserDetails;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,11 +23,11 @@ public class ServiceUser implements IServiceUser {
 
 
 
-/*
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
+/*
     public UserDetails createAdminUser() {
         return org.springframework.security.core.userdetails.User.builder()
                 .username("khalil")
@@ -45,6 +43,8 @@ public class ServiceUser implements IServiceUser {
     @Override
     public User createUser(User user) {
        // user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        user.setMotdepasse(passwordEncoder.encode(user.getMotdepasse()));
         return userRepository.save(user);
     }
 
@@ -59,7 +59,7 @@ public class ServiceUser implements IServiceUser {
         //newuser.setPassword(passwordEncoder.encode(newuser.getPassword()));
         return userRepository.findById(id).map(user->{
             user.setFullName(newuser.getFullName());
-            user.setPassword(newuser.getPassword());
+            user.setMotdepasse(newuser.getMotdepasse());
             user.setEmail(newuser.getEmail());
             user.setRole(newuser.getRole());
             return userRepository.save(user);

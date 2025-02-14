@@ -1,4 +1,4 @@
-package com.example.haccpbackend.moduleUsers;
+package com.example.haccpbackend.modulUsers;
 
 
 import jakarta.transaction.Transactional;
@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,7 @@ public class UserContrtoller {
     @Autowired
     private  IServiceUser iServiceUser;
 
-    @Autowired
-    private   UserRepository userRepository;
+
 
     //private final TokenRepository tokenRepository ;
 
@@ -30,8 +30,8 @@ public class UserContrtoller {
     }
 
     @GetMapping("")
-    //@PreAuthorize("hasAuthority('ADMIN')")
-    public List<User> getAllEmploye(){
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<User> getAllUsers(){
 
         return  iServiceUser.getAllUsers();
 
@@ -39,15 +39,15 @@ public class UserContrtoller {
 
 
     @GetMapping("/email/{email}")
-    //@PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    public ResponseEntity<User> getEmployeByEmail(@PathVariable String email){
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email){
         return ResponseEntity.ok(iServiceUser.findUserByEmail(email));
     }
 
 
 
     @PostMapping("")
-   // @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(iServiceUser.createUser(user));
@@ -57,6 +57,7 @@ public class UserContrtoller {
 
 
     @GetMapping("/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> findEmployeById(@PathVariable Long userId){
 
         return ResponseEntity.ok(iServiceUser.findUserById(userId));
@@ -66,7 +67,7 @@ public class UserContrtoller {
 
     @DeleteMapping("/{userId}")
     @Transactional
-    //@PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
 
        //   tokenRepository.clearUserReferences(userId);
@@ -81,6 +82,7 @@ public class UserContrtoller {
 
 
     @PutMapping("update/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     //@PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<User> updateEmploye(@PathVariable Long userId , @Valid @RequestBody User user ){
         return ResponseEntity.status(HttpStatus.CREATED).body(iServiceUser.updateUser(userId ,user));
