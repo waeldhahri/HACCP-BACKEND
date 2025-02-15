@@ -44,7 +44,10 @@ public class Product {
     private byte[] imageOfProduct;
 
 
-    public Product(Long idProduit, String name, String categorie, String origine, LocalDateTime dateDeCreation, Date datePeremption, byte[] imageOfProduct) {
+    private String barcode;
+
+
+    public Product(Long idProduit, String name, String categorie, String origine, LocalDateTime dateDeCreation, Date datePeremption, String barcode, byte[] imageOfProduct) {
         this.idProduit = idProduit;
         this.name = name;
         this.categorie = categorie;
@@ -52,6 +55,7 @@ public class Product {
         this.dateDeCreation = dateDeCreation;
         this.datePeremption = datePeremption;
         this.imageOfProduct = imageOfProduct;
+        this.barcode = barcode ;
     }
 
 
@@ -113,6 +117,15 @@ public class Product {
 
     public void setImageOfProduct(byte[] imageOfProduct) {
         this.imageOfProduct = imageOfProduct;
+    }
+
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 }
 

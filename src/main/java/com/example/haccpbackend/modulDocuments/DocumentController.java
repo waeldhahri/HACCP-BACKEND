@@ -79,7 +79,7 @@ public class DocumentController {
 
 
     @GetMapping("/download/{id}")
-    public ResponseEntity<Resource> downloadDocument(@PathVariable Long id)  throws IOException{
+    public ResponseEntity<Resource> downloadDocument(@PathVariable Long id)  throws IOException {
         Optional<Document> document = documentService.getDocumentById(id);
         if (document.isPresent()) {
             Path path = Paths.get(document.get().getFilePath());

@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -76,5 +77,31 @@ public class ProductController {
     public ResponseEntity<Product> updateProduct(@PathVariable Long id , @Valid @RequestBody Product product ){
         return ResponseEntity.status(HttpStatus.CREATED).body(iServiceProduct.updateproduct(id ,product));
     }
+
+
+
+    @GetMapping("/barcode/{barcode}")
+    public ResponseEntity<Product> getProductByBarcode(@PathVariable String barcode) {
+        return iServiceProduct.getProductByBarcode(barcode)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+              //  .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
+    }
+
+
+    // Mettre à jour un produit via un code-barres
+    @PutMapping("/barcode/{barcode}")
+    public ResponseEntity<Product> updateProductByBarcode(@PathVariable String barcode,
+                                                          @RequestBody Product newproduct) {
+
+
+        try {
+            Product product = iServiceProduct.updateProductByBarcode(barcode, newproduct);
+            return ResponseEntity.ok(product);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 }

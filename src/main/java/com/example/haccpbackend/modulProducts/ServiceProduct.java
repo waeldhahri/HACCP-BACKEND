@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ServiceProduct implements IServiceProduct {
@@ -11,6 +12,12 @@ public class ServiceProduct implements IServiceProduct {
     @Autowired
     private  ProductRepository productRepository;
 
+
+    @Override
+    public Optional<Product> getProductByBarcode(String barcode)  {
+
+        return productRepository.findByBarcode(barcode);
+    }
 
     @Override
     public Product createproduct(Product product) {
@@ -32,9 +39,30 @@ public class ServiceProduct implements IServiceProduct {
                     product.setOrigine(newProduct.getOrigine());
                     product.setCategorie(newProduct.getCategorie());
                     product.setImageOfProduct(newProduct.getImageOfProduct());
+                    product.setBarcode(newProduct.getBarcode());
                     return productRepository.save(product);
                 }
         ).orElseThrow(()-> new RuntimeException(" Product not found "));
+
+
+    }
+
+
+
+    @Override
+    public Product updateProductByBarcode(String barcode, Product newProduct) {
+
+
+        return productRepository.findByBarcode(barcode).map(
+                product -> {
+                    product.setName(newProduct.getName());
+                    product.setOrigine(newProduct.getOrigine());
+                    product.setCategorie(newProduct.getCategorie());
+                    product.setImageOfProduct(newProduct.getImageOfProduct());
+                   // product.setBarcode(newProduct.getBarcode());
+                    return productRepository.save(product);
+                }
+        ).orElseThrow(()-> new RuntimeException("Product not found with barcode: " + barcode));
 
 
     }
