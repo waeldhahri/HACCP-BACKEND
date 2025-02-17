@@ -1,5 +1,6 @@
 package com.example.haccpbackend.modulProducts;
 
+import com.example.haccpbackend.modulFournisseur.Fournisseur;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -47,7 +48,13 @@ public class Product {
     private String barcode;
 
 
-    public Product(Long idProduit, String name, String categorie, String origine, LocalDateTime dateDeCreation, Date datePeremption, String barcode, byte[] imageOfProduct) {
+    @ManyToOne
+    @JoinColumn(name = "fournisseur_id")
+    private Fournisseur fournisseurs;
+
+
+    public Product(Long idProduit, String name, String categorie, String origine, LocalDateTime dateDeCreation, Date datePeremption
+            , String barcode, byte[] imageOfProduct , Fournisseur fournisseur) {
         this.idProduit = idProduit;
         this.name = name;
         this.categorie = categorie;
@@ -56,6 +63,7 @@ public class Product {
         this.datePeremption = datePeremption;
         this.imageOfProduct = imageOfProduct;
         this.barcode = barcode ;
+        this.fournisseurs=fournisseurs;
     }
 
 
@@ -126,6 +134,15 @@ public class Product {
 
     public void setBarcode(String barcode) {
         this.barcode = barcode;
+    }
+
+
+    public Fournisseur getFournisseur() {
+        return fournisseurs;
+    }
+
+    public void setFournisseur(Fournisseur fournisseur) {
+        this.fournisseurs = fournisseur;
     }
 }
 
