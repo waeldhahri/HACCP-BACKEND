@@ -3,6 +3,8 @@ package com.example.haccpbackend.modulProducts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +30,18 @@ public class ServiceProduct implements IServiceProduct {
     public Product findproductById(Long id) {
         return productRepository.findById(id).get();
     }
+
+
+    @Override
+    public List<Product> getProductByDate(LocalDate dateDeCreation) {
+        return productRepository.findByDateDeCreation(dateDeCreation);
+    }
+
+    @Override
+    public Optional<List<Product>> getProductByName(String name) {
+        return productRepository.findByName(name);
+    }
+
 
     @Override
     public Product updateproduct(Long id, Product newProduct) {

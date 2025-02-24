@@ -1,12 +1,14 @@
 package com.example.haccpbackend.modulProducts;
 
 import com.example.haccpbackend.modulFournisseur.Fournisseur;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -34,12 +36,14 @@ public class Product {
     private String origine;
 
     @CreatedDate
+    @JsonFormat(pattern = "dd-MM-yyyy")
     @Column( updatable = false)
-    private LocalDateTime dateDeCreation ;
+    private LocalDate dateDeCreation ;
 
     @LastModifiedDate
+    @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(nullable = true )
-    private Date datePeremption;
+    private LocalDate datePeremption;
 
     @Lob
     private byte[] imageOfProduct;
@@ -53,8 +57,8 @@ public class Product {
     private Fournisseur fournisseurs;
 
 
-    public Product(Long idProduit, String name, String categorie, String origine, LocalDateTime dateDeCreation, Date datePeremption
-            , String barcode, byte[] imageOfProduct , Fournisseur fournisseur) {
+    public Product(Long idProduit, String name, String categorie, String origine, LocalDate dateDeCreation, LocalDate datePeremption
+            , String barcode, byte[] imageOfProduct , Fournisseur fournisseurs) {
         this.idProduit = idProduit;
         this.name = name;
         this.categorie = categorie;
@@ -103,19 +107,19 @@ public class Product {
         this.origine = origine;
     }
 
-    public LocalDateTime getDateDeCreation() {
+    public LocalDate getDateDeCreation() {
         return dateDeCreation;
     }
 
-    public void setDateDeCreation(LocalDateTime dateDeCreation) {
+    public void setDateDeCreation(LocalDate dateDeCreation) {
         this.dateDeCreation = dateDeCreation;
     }
 
-    public Date getDatePeremption() {
+    public LocalDate getDatePeremption() {
         return datePeremption;
     }
 
-    public void setDatePeremption(Date datePeremption) {
+    public void setDatePeremption(LocalDate datePeremption) {
         this.datePeremption = datePeremption;
     }
 

@@ -1,6 +1,7 @@
 package com.example.haccpbackend.modulUsers;
 
 
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,17 @@ public class UserContrtoller {
     @Autowired
     private  IServiceUser iServiceUser;
 
+    @Autowired
+    private ServiceUser serviceUser;
+
 
 
     //private final TokenRepository tokenRepository ;
 
 
-    public UserContrtoller(IServiceUser iServiceUser) {
+    public UserContrtoller(IServiceUser iServiceUser , ServiceUser serviceUser) {
         this.iServiceUser = iServiceUser;
+        this.serviceUser = serviceUser;
     }
 
     @GetMapping("")
@@ -87,6 +92,48 @@ public class UserContrtoller {
     public ResponseEntity<User> updateEmploye(@PathVariable Long userId , @Valid @RequestBody User user ){
         return ResponseEntity.status(HttpStatus.CREATED).body(iServiceUser.updateUser(userId ,user));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Étape 1: Demande de réinitialisation (envoi email)
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+        try {
+            serviceUser.sendResetEmail(email);
+            return ResponseEntity.ok("Email de réinitialisation envoyé !");
+        } catch (MessagingException e) {
+            return ResponseEntity.status(500).body("Erreur lors de l'envoi de l'email");
+        }
+    }
+
+
+
+
+
+    // Étape 2: Réinitialisation du mot de passe
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        try {
+            serviceUser.resetPassword(token, newPassword);
+            return ResponseEntity.ok("Mot de passe réinitialisé avec succès !");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
 
 
 }

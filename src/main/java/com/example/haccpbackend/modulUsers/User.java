@@ -34,7 +34,9 @@ public class User implements UserDetails , Principal {
     public User() {
     }
 
-    public User(Long id, String fullName, String email, String motdepasse, boolean enabled, boolean accountLocked, Role role) {
+    public User(Long id, String fullName, String email, String motdepasse, boolean enabled, boolean accountLocked, Role role
+            , byte[] imageOfUser , String resetToken) {
+
         this.id = id;
         this.fullName = fullName;
         this.email = email;
@@ -42,6 +44,17 @@ public class User implements UserDetails , Principal {
         this.enabled = enabled;
         this.accountLocked = accountLocked;
         this.role = role;
+        this.imageOfUser=imageOfUser;
+        this.resetToken=resetToken;
+
+    }
+
+    public byte[] getImageOfUser() {
+        return imageOfUser;
+    }
+
+    public void setImageOfUser(byte[] imageOfUser) {
+        this.imageOfUser = imageOfUser;
     }
 
     public Long getId() {
@@ -119,6 +132,9 @@ public class User implements UserDetails , Principal {
     private String motdepasse;
 
 
+    @Lob
+    private byte[] imageOfUser;
+
     private boolean enabled=true;
     private boolean accountLocked;
 
@@ -133,6 +149,18 @@ public class User implements UserDetails , Principal {
     @NotNull
     @Column(nullable = false)
     private Role role;
+
+
+    @Column(unique = true)
+    private String resetToken; // Token pour la réinitialisation du mot de passe
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
 
 /*
     @Override

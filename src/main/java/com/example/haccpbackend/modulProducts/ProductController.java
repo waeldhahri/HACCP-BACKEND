@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +57,47 @@ public class ProductController {
     }
 
 
+    @GetMapping("/date/{date}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<Product>> findProductBydate(@PathVariable String date){
+
+
+        try {
+            // Conversion de String → LocalDate avec le format dd-MM-yyyy
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate localDate = LocalDate.parse(date, formatter);
+
+            List<Product> products = iServiceProduct.getProductByDate(localDate);
+            return products.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(products);
+
+        } catch (Exception e) {
+            //return ResponseEntity.badRequest().body(null); // Erreur si la date est mal formatée
+            return ResponseEntity.notFound().build();
+        }
+
+
+
+
+
+
+
+
+
+       //return iServiceProduct.getProductByDate(date).map(ResponseEntity::ok)
+            //.orElse(ResponseEntity.notFound().build());
+
+    }
+
+
+    @GetMapping("/name/{name}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<Product>> findProductByname(@PathVariable String name){
+
+
+        return iServiceProduct.getProductByName(name).map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+
+    }
 
     @DeleteMapping("/{id}")
     @Transactional
