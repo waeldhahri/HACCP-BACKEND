@@ -1,14 +1,21 @@
 package com.example.haccpbackend.modulProducts;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.hibernate.validator.internal.util.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -25,11 +32,21 @@ public class ProductController {
     @Autowired
     private  IServiceProduct iServiceProduct;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private ServiceProduct serviceProduct;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
-    public ProductController( IServiceProduct iServiceProduct) {
+
+    public ProductController( IServiceProduct iServiceProduct , ObjectMapper objectMapper) {
 
         this.iServiceProduct = iServiceProduct;
+        this.objectMapper = objectMapper;
 
     }
 
@@ -41,19 +58,157 @@ public class ProductController {
 
     }
 
+
+
+    @GetMapping("/page")
+    public Page<Product> getAllProduct(Pageable pageable){
+
+        return productRepository.findAllByOrderByIdProduitDesc(pageable);
+
+
+       // return productRepository.findAll();
+
+        //return iServiceProduct.getAllproducts();
+    }
+
+
+
+
+
+
+
+
+
+/*
+
     @PostMapping("")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product){
 
       return ResponseEntity.status(HttpStatus.CREATED).body(iServiceProduct.createproduct(product));
+    }*/
+
+
+
+
+
+
+    @PostMapping(value = "", consumes = {"multipart/form-data"})
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Product> createProduct(/*@Valid @RequestBody Product product*/
+            @RequestPart("product") String productJson ,
+             @RequestPart(value = "file", required = false) MultipartFile file){
+
+
+        try {
+
+            @Valid
+            // Convertir JSON en objet ProductDTO
+            ProductDTO productDTO = objectMapper.readValue(productJson, ProductDTO.class);
+
+            // Créer une nouvelle entité Product
+            @Valid
+            Product product = new Product();
+            product.setName(productDTO.getName());
+            product.setCategorie(productDTO.getCategorie());
+            product.setOrigine(productDTO.getOrigine());
+            product.setBarcode(productDTO.getBarcode());
+
+
+            // Gérer l'image
+            if (file != null) {
+
+                product.setImageOfProduct(file.getBytes());
+
+                // Générer l'URL complète de l'image
+                String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/products/")
+                        .path(product.getIdProduit().toString())
+                        .path("/image")
+                        .toUriString();
+
+                product.setImageUrl(imageUrl);
+
+
+            } else
+
+                    { product.setImageOfProduct(null);
+                        product.setImageUrl(null);
+                        String imageUrl = null;
+                        product.setImageUrl(imageUrl);
+                    }
+
+
+            // Sauvegarder dans la base de données
+            Product savedProduct = iServiceProduct.createproduct(product);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+
+
+           // return ResponseEntity.status(HttpStatus.CREATED).body(iServiceProduct.createproduct(product));
+
+        }
+        catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+
     }
+
+
+
+
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
+
+        Optional<Product> productOptional =productRepository.findById(id);
+        Optional<Product> productOptional2 =productRepository.findById(id);
+
+       // Optional<Product> productOptional = iServiceProduct.findproductById(id);
+        if (productOptional.isEmpty() || productOptional.get().getImageOfProduct() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/jpeg")
+                .body(productOptional.get().getImageOfProduct());
+    }
+
+
+
+
+
+
+
+
+
 
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Product> findProductById(@PathVariable Long id){
 
-        return ResponseEntity.ok(iServiceProduct.findproductById(id));
+        Product product = iServiceProduct.findproductById(id);
+
+        if (product == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Générer l'URL complète de l'image
+        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/products/")
+                .path(product.getIdProduit().toString())
+                .path("/image")
+                .toUriString();
+
+
+        product.setImageUrl(imageUrl);
+
+        return ResponseEntity.ok(product);
+
+
+
+        // return ResponseEntity.ok(iServiceProduct.findproductById(id));
     }
 
 
@@ -116,11 +271,45 @@ public class ProductController {
 
 
 
-    @PutMapping("/update/{id}")
+    @PutMapping(value = "/update/{id}", consumes = {"multipart/form-data"})
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id , @Valid @RequestBody Product product ){
-        return ResponseEntity.status(HttpStatus.CREATED).body(iServiceProduct.updateproduct(id ,product));
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id
+            , @RequestPart("product") String productJson ,  @RequestPart(value = "file", required = false) MultipartFile file)
+
+             {
+
+        /* @Valid @RequestBody Product product ){*/
+        //return ResponseEntity.status(HttpStatus.CREATED).body(iServiceProduct.updateproduct(id ,product));
+
+
+                 try {
+
+
+                     System.out.println(productJson);
+
+
+
+                     // Convertir le JSON en objet ProductDTO
+                     ObjectMapper objectMapper = new ObjectMapper();
+                     ProductDTO productDTO = objectMapper.readValue(productJson, ProductDTO.class);
+
+                     // Appeler le service pour mettre à jour le produit
+                     Product updatedProduct = iServiceProduct.updateproduct(id, productDTO, file);
+
+                     return ResponseEntity.ok(updatedProduct);
+
+                 } catch (Exception e) {
+                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                 }
+
+
+
     }
+
+
+
+
+
 
 
 
@@ -146,6 +335,26 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<String>> getCategories() {
+        List<String> categories = serviceProduct.getCategories();
+        return ResponseEntity.ok(categories);
+    }
+
+
+
+
+    @GetMapping("/names-by-categorie")
+    public ResponseEntity<List<String>> getProductNamesByCategorie(@RequestParam List<String> categories) {
+        List<String> productNames = serviceProduct.getProductNamesByCategorie(categories);
+        return ResponseEntity.ok(productNames);
+    }
+
+
 
 
 }

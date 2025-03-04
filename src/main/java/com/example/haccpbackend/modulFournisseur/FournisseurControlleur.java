@@ -5,6 +5,7 @@ import com.example.haccpbackend.modulProducts.Product;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +27,10 @@ public class FournisseurControlleur {
     public FournisseurControlleur(FournisseurService fournisseurService) {
         this.fournisseurService = fournisseurService;
     }
+
+
+
+
 
 
 

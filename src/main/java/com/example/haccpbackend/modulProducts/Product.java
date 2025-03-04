@@ -2,6 +2,7 @@ package com.example.haccpbackend.modulProducts;
 
 import com.example.haccpbackend.modulFournisseur.Fournisseur;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -45,8 +46,14 @@ public class Product {
     @Column(nullable = true )
     private LocalDate datePeremption;
 
+
+    @JsonIgnore
     @Lob
     private byte[] imageOfProduct;
+
+
+    private String imageUrl ;
+
 
 
     private String barcode;
@@ -58,7 +65,7 @@ public class Product {
 
 
     public Product(Long idProduit, String name, String categorie, String origine, LocalDate dateDeCreation, LocalDate datePeremption
-            , String barcode, byte[] imageOfProduct , Fournisseur fournisseurs) {
+            , String barcode, byte[] imageOfProduct , Fournisseur fournisseurs , String imageUrl) {
         this.idProduit = idProduit;
         this.name = name;
         this.categorie = categorie;
@@ -68,11 +75,15 @@ public class Product {
         this.imageOfProduct = imageOfProduct;
         this.barcode = barcode ;
         this.fournisseurs=fournisseurs;
+        this.imageUrl=imageUrl;
     }
 
 
     public Product() {
     }
+
+
+
 
 
     public Long getIdProduit() {
@@ -148,5 +159,17 @@ public class Product {
     public void setFournisseur(Fournisseur fournisseur) {
         this.fournisseurs = fournisseur;
     }
+
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+
+
 }
 

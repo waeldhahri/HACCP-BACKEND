@@ -1,5 +1,7 @@
 package com.example.haccpbackend.modulProducts;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +18,7 @@ public interface IServiceProduct {
 
     public Optional<List<Product>> getProductByName(String name);
 
-    public Product updateproduct(Long id,Product newProduct);
+    public Product updateproduct(Long id, ProductDTO productDTO, MultipartFile file);
 
     public Product updateProductByBarcode(String barcode , Product newProduct);
 
