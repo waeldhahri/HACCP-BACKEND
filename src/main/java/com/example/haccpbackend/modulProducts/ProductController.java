@@ -79,6 +79,10 @@ public class ProductController {
 
 
 
+
+
+
+
 /*
 
     @PostMapping("")
@@ -109,9 +113,24 @@ public class ProductController {
             // Créer une nouvelle entité Product
             @Valid
             Product product = new Product();
-            product.setName(productDTO.getName());
-            product.setCategorie(productDTO.getCategorie());
-            product.setOrigine(productDTO.getOrigine());
+
+           product.setProduit(productDTO.getProduit());
+           product.setDate(productDTO.getDate());
+           product.setNumeroDuBonDeLivraison(productDTO.getNumeroDeBonLivraison());
+           product.setNumCamion(productDTO.getNumeroTCamion());
+           product.setPropreteCamion(productDTO.getNumeroPropreteCamion());
+           product.setHeureDeLivraison(productDTO.getHeureDeLivraison());
+           product.settProduit(productDTO.gettDeProduit());
+           product.setIntegrite(productDTO.isIntegrite());
+           product.setDlcORddm(productDTO.getDlc());
+           product.setNumeroDeLot(productDTO.getNumeroDeLot());
+           product.setQuantite(productDTO.getQuantite());
+           product.setHeureDeStockage(productDTO.getHeureDeStockage());
+
+
+
+
+
             product.setBarcode(productDTO.getBarcode());
 
 
@@ -243,13 +262,32 @@ public class ProductController {
 
     }
 
-
-    @GetMapping("/name/{name}")
+    @GetMapping("/quantite/{quantite}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<Product>> findProductByname(@PathVariable String name){
+    public ResponseEntity<List<Product>> findProductByQuantite(@PathVariable Double quantite){
+
+        return iServiceProduct.getProductByQuantite(quantite).map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
 
-        return iServiceProduct.getProductByName(name).map(ResponseEntity::ok)
+
+    @GetMapping("/by-fournisseur/{fournisseurId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<Product>> getProductsByFournisseur(@PathVariable Long fournisseurId){
+
+        return iServiceProduct.getProductByFournisseurId(fournisseurId)
+                .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+
+
+    @GetMapping("/produit/{produit}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<Product>> findProductByProduit(@PathVariable String produit){
+
+
+        return iServiceProduct.getProductByProduit(produit).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
 
     }
@@ -339,20 +377,12 @@ public class ProductController {
 
 
 
-    @GetMapping("/categories")
-    public ResponseEntity<List<String>> getCategories() {
-        List<String> categories = serviceProduct.getCategories();
-        return ResponseEntity.ok(categories);
-    }
 
 
 
 
-    @GetMapping("/names-by-categorie")
-    public ResponseEntity<List<String>> getProductNamesByCategorie(@RequestParam List<String> categories) {
-        List<String> productNames = serviceProduct.getProductNamesByCategorie(categories);
-        return ResponseEntity.ok(productNames);
-    }
+
+
 
 
 

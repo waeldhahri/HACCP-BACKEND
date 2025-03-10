@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin()
@@ -23,6 +24,9 @@ public class UserContrtoller {
 
     @Autowired
     private ServiceUser serviceUser;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
 
@@ -63,9 +67,19 @@ public class UserContrtoller {
 
     @GetMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<User> findEmployeById(@PathVariable Long userId){
+    public ResponseEntity<User> findUserById(@PathVariable Long userId){
 
         return ResponseEntity.ok(iServiceUser.findUserById(userId));
+    }
+
+
+
+    public ResponseEntity<User> findUserByUserName(@PathVariable String fullname){
+
+
+        //return ResponseEntity.ok(userRepository.findByUsername(username).isPresent() ? userRepository.findByUsername(username).get():null);
+
+        return userRepository.findByFullName(fullname).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
 
@@ -79,9 +93,21 @@ public class UserContrtoller {
 
         //sessionRepository.clearEmployeeReferences(userId);
 
-        iServiceUser.deleteUser(iServiceUser.findUserById(userId));
+        Optional<User> optionalUser=userRepository.findById(userId);
 
-        return ResponseEntity.noContent().build();
+        if (optionalUser.isPresent()){
+            iServiceUser.deleteUser(optionalUser.get());
+            return ResponseEntity.noContent().build();
+
+        } else {
+
+            return ResponseEntity.notFound().build();
+        }
+
+
+
+        //iServiceUser.deleteUser(iServiceUser.findUserById(userId));
+
     }
 
 

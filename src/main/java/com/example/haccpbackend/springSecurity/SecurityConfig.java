@@ -1,10 +1,13 @@
 package com.example.haccpbackend.springSecurity;
 
 
+import com.example.haccpbackend.registerJWT.JwtFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -17,7 +20,63 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
+
+
+
+    private final JwtFilter jwtAuthFilter;
+
+
+
+    @Autowired
+    private  AuthenticationProvider authenticationProvider;
+
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtAuthFilter = jwtFilter;
+
+
+    }
+
+
+
+
+/*
+    @Bean
+    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception{
+        http.cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(req->
+                        req.requestMatchers(
+                                        "/auth/authenticate","/auth/register"
+
+                                ).permitAll()
+                                .anyRequest().authenticated()
+                ).sessionManagement(session->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
+    */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

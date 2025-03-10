@@ -1,6 +1,7 @@
 package com.example.haccpbackend.modulProducts;
 
 import com.example.haccpbackend.modulFournisseur.Fournisseur;
+import com.example.haccpbackend.modulUsers.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 
@@ -27,24 +29,72 @@ public class Product {
     @Column(name = "produit_id")
     private Long idProduit ;
 
-    @Column(name = "name" , nullable = false )
-    private String name;
+    @Column(name = "produit" , nullable = false , insertable = false)
+    private String produit;
 
-    @Column(nullable = false )
-    private String categorie;
 
-    @Column(nullable = false )
-    private String origine;
 
-    @CreatedDate
+    @Column(name = "date" , insertable = false , updatable = false , nullable = false)
     @JsonFormat(pattern = "dd-MM-yyyy")
-    @Column( updatable = false)
-    private LocalDate dateDeCreation ;
+    private LocalDate date ;
 
-    @LastModifiedDate
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    @Column(nullable = true )
-    private LocalDate datePeremption;
+
+    @ManyToOne
+    @JoinColumn(name = "fournisseur_id")
+    private Fournisseur fournisseurs;
+
+
+    @Column(name = "numero De Bon de Livraison" , insertable = false , nullable = false)
+    private String numeroDuBonDeLivraison ;
+
+
+
+    @Column(name = "numero Camion" , nullable = false)
+    private String numCamion ;
+
+
+
+    @Column(name = "propreté Camion" , nullable = false)
+    private String propreteCamion;
+
+
+
+    @Column(name = "heure de Livraison " , nullable = false)
+    private LocalTime heureDeLivraison;
+
+
+    @Column(name = "t° produit " , nullable = false)
+    private String tProduit;
+
+
+
+    @Column(name = "integrite Emballage" , nullable = false)
+    private boolean integrite;
+
+
+    @Column(name = "DLC or DDM" , nullable = false)
+    private String dlcORddm ;
+
+
+    @Column(name = "N ° de lot " , nullable = false)
+    private String numeroDeLot;
+
+
+    @Column(name = "quantité" , nullable = false)
+    private Double quantite;
+
+
+    @Column(name = "Heure de Stockage" , nullable = false)
+    private LocalTime heureDeStockage;
+
+
+
+
+
+    @ManyToOne
+    @JoinColumn(name = "signature")
+    private User users;
+
 
 
     @JsonIgnore
@@ -59,32 +109,31 @@ public class Product {
     private String barcode;
 
 
-    @ManyToOne
-    @JoinColumn(name = "fournisseur_id")
-    private Fournisseur fournisseurs;
-
-
-    public Product(Long idProduit, String name, String categorie, String origine, LocalDate dateDeCreation, LocalDate datePeremption
-            , String barcode, byte[] imageOfProduct , Fournisseur fournisseurs , String imageUrl) {
+    public Product(Long idProduit, String produit, LocalDate date, Fournisseur fournisseurs, String numeroDuBonDeLivraison, String numCamion,
+                   String propreteCamion, LocalTime heureDeLivraison, String tProduit, boolean integrite, String dlcORddm,
+                   String numeroDeLot, Double quantite, LocalTime heureDeStockage, User users, byte[] imageOfProduct, String imageUrl, String barcode) {
         this.idProduit = idProduit;
-        this.name = name;
-        this.categorie = categorie;
-        this.origine = origine;
-        this.dateDeCreation = dateDeCreation;
-        this.datePeremption = datePeremption;
+        this.produit = produit;
+        this.date = date;
+        this.fournisseurs = fournisseurs;
+        this.numeroDuBonDeLivraison = numeroDuBonDeLivraison;
+        this.numCamion = numCamion;
+        this.propreteCamion = propreteCamion;
+        this.heureDeLivraison = heureDeLivraison;
+        this.tProduit = tProduit;
+        this.integrite = integrite;
+        this.dlcORddm = dlcORddm;
+        this.numeroDeLot = numeroDeLot;
+        this.quantite = quantite;
+        this.heureDeStockage = heureDeStockage;
+        this.users = users;
         this.imageOfProduct = imageOfProduct;
-        this.barcode = barcode ;
-        this.fournisseurs=fournisseurs;
-        this.imageUrl=imageUrl;
+        this.imageUrl = imageUrl;
+        this.barcode = barcode;
     }
-
 
     public Product() {
     }
-
-
-
-
 
     public Long getIdProduit() {
         return idProduit;
@@ -94,44 +143,116 @@ public class Product {
         this.idProduit = idProduit;
     }
 
-    public String getName() {
-        return name;
+    public String getProduit() {
+        return produit;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProduit(String produit) {
+        this.produit = produit;
     }
 
-    public String getCategorie() {
-        return categorie;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setCategorie(String categorie) {
-        this.categorie = categorie;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
-    public String getOrigine() {
-        return origine;
+    public Fournisseur getFournisseurs() {
+        return fournisseurs;
     }
 
-    public void setOrigine(String origine) {
-        this.origine = origine;
+    public void setFournisseurs(Fournisseur fournisseurs) {
+        this.fournisseurs = fournisseurs;
     }
 
-    public LocalDate getDateDeCreation() {
-        return dateDeCreation;
+    public String getNumeroDuBonDeLivraison() {
+        return numeroDuBonDeLivraison;
     }
 
-    public void setDateDeCreation(LocalDate dateDeCreation) {
-        this.dateDeCreation = dateDeCreation;
+    public void setNumeroDuBonDeLivraison(String numeroDuBonDeLivraison) {
+        this.numeroDuBonDeLivraison = numeroDuBonDeLivraison;
     }
 
-    public LocalDate getDatePeremption() {
-        return datePeremption;
+    public String getNumCamion() {
+        return numCamion;
     }
 
-    public void setDatePeremption(LocalDate datePeremption) {
-        this.datePeremption = datePeremption;
+    public void setNumCamion(String numCamion) {
+        this.numCamion = numCamion;
+    }
+
+    public String getPropreteCamion() {
+        return propreteCamion;
+    }
+
+    public void setPropreteCamion(String propreteCamion) {
+        this.propreteCamion = propreteCamion;
+    }
+
+    public LocalTime getHeureDeLivraison() {
+        return heureDeLivraison;
+    }
+
+    public void setHeureDeLivraison(LocalTime heureDeLivraison) {
+        this.heureDeLivraison = heureDeLivraison;
+    }
+
+    public String gettProduit() {
+        return tProduit;
+    }
+
+    public void settProduit(String tProduit) {
+        this.tProduit = tProduit;
+    }
+
+    public boolean isIntegrite() {
+        return integrite;
+    }
+
+    public void setIntegrite(boolean integrite) {
+        this.integrite = integrite;
+    }
+
+    public String getDlcORddm() {
+        return dlcORddm;
+    }
+
+    public void setDlcORddm(String dlcORddm) {
+        this.dlcORddm = dlcORddm;
+    }
+
+    public String getNumeroDeLot() {
+        return numeroDeLot;
+    }
+
+    public void setNumeroDeLot(String numeroDeLot) {
+        this.numeroDeLot = numeroDeLot;
+    }
+
+    public Double getQuantite() {
+        return quantite;
+    }
+
+    public void setQuantite(Double quantite) {
+        this.quantite = quantite;
+    }
+
+    public LocalTime getHeureDeStockage() {
+        return heureDeStockage;
+    }
+
+    public void setHeureDeStockage(LocalTime heureDeStockage) {
+        this.heureDeStockage = heureDeStockage;
+    }
+
+    public User getUsers() {
+        return users;
+    }
+
+    public void setUsers(User users) {
+        this.users = users;
     }
 
     public byte[] getImageOfProduct() {
@@ -142,25 +263,6 @@ public class Product {
         this.imageOfProduct = imageOfProduct;
     }
 
-
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
-    }
-
-
-    public Fournisseur getFournisseur() {
-        return fournisseurs;
-    }
-
-    public void setFournisseur(Fournisseur fournisseur) {
-        this.fournisseurs = fournisseur;
-    }
-
-
     public String getImageUrl() {
         return imageUrl;
     }
@@ -169,7 +271,12 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
+    public String getBarcode() {
+        return barcode;
+    }
 
-
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
 }
 

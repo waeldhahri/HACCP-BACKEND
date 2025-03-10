@@ -16,11 +16,16 @@ public interface IServiceProduct {
 
     public List<Product> getProductByDate(LocalDate dateDeCreation);
 
-    public Optional<List<Product>> getProductByName(String name);
+    public Optional<List<Product>> getProductByProduit(String produit);
+
+    public Optional<List<Product>> getProductByQuantite(Double quantite);
+
+    public Optional<List<Product>> getProductByFournisseurId(Long fournisseurId);
+
 
     public Product updateproduct(Long id, ProductDTO productDTO, MultipartFile file);
 
-    public Product updateProductByBarcode(String barcode , Product newProduct);
+    public Product updateProductByBarcode(String barcode , Product newProduct );
 
     public List<Product> getAllproducts();
 

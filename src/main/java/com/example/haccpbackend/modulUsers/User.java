@@ -1,6 +1,9 @@
 package com.example.haccpbackend.modulUsers;
 
 
+import com.example.haccpbackend.modulProducts.Product;
+import com.example.haccpbackend.moduleTasks.Task;
+import com.example.haccpbackend.registerJWT.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +13,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,27 +30,98 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails , Principal {
 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "User_id", nullable = false )
+    private Long id;
+
+    @NotNull
+    @NotEmpty
+    @NotBlank
+    private String fullName;
+
+    @Email(message = "Please enter a valid email address")
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "motdepasse" , updatable = true , nullable = false )
+    private String motdepasse;
+
+
+
+    @OneToMany(mappedBy = "user")
+    private List<Task> tasks ;
+
+
+    @OneToMany(mappedBy = "users")
+    private List<Product> products;
+
+
+    @OneToMany(mappedBy = "userToken")
+    private List<Token> tokens;
+
+
+    @Lob
+    private byte[] imageOfUser;
+
+    private boolean enabled=true;
+    private boolean accountLocked;
+
+/*
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role")
+    @JsonIgnoreProperties("users")
+    private Role roles;
+
+*/
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Column(nullable = false)
+    private Role role;
+
+
+    @Column(unique = true)
+    private String resetToken; // Token pour la réinitialisation du mot de passe
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
 
 
 
     public User() {
     }
 
-    public User(Long id, String fullName, String email, String motdepasse, boolean enabled, boolean accountLocked, Role role
-            , byte[] imageOfUser , String resetToken) {
 
+    public User(Long id, String fullName, String email, String motdepasse,
+                List<Task> tasks, List<Product> products, byte[] imageOfUser, boolean enabled, boolean accountLocked, Role role, String resetToken) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.motdepasse = motdepasse;
+        this.tasks = tasks;
+        this.products = products;
+        this.imageOfUser = imageOfUser;
         this.enabled = enabled;
         this.accountLocked = accountLocked;
         this.role = role;
-        this.imageOfUser=imageOfUser;
-        this.resetToken=resetToken;
+        this.resetToken = resetToken;
+    }
 
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     public byte[] getImageOfUser() {
@@ -114,81 +189,6 @@ public class User implements UserDetails , Principal {
         this.role = role;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "User_id", nullable = false )
-    private Long id;
-
-    @NotNull
-    @NotEmpty
-    @NotBlank
-    private String fullName;
-
-    @Email(message = "Please enter a valid email address")
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(name = "motdepasse" , updatable = true , nullable = false )
-    private String motdepasse;
-
-
-    @Lob
-    private byte[] imageOfUser;
-
-    private boolean enabled=true;
-    private boolean accountLocked;
-
-/*
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role")
-    @JsonIgnoreProperties("users")
-    private Role roles;
-
-*/
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    @Column(nullable = false)
-    private Role role;
-
-
-    @Column(unique = true)
-    private String resetToken; // Token pour la réinitialisation du mot de passe
-
-    public String getResetToken() {
-        return resetToken;
-    }
-
-    public void setResetToken(String resetToken) {
-        this.resetToken = resetToken;
-    }
-
-/*
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-            return List.of(new SimpleGrantedAuthority("ROLE_"+this.role.name()));
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return !accountLocked;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }*/
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -199,7 +199,7 @@ public class User implements UserDetails , Principal {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
@@ -227,4 +227,12 @@ public class User implements UserDetails , Principal {
         return motdepasse;
     }
 
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
 }
