@@ -1,7 +1,7 @@
 package com.example.haccpbackend.config;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.haccpbackend.modulUsers.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -11,7 +11,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -23,11 +22,13 @@ import java.util.Collections;
 public class BeansConfig {
 
     private final UserDetailsService userDetailService;
+    private final UserRepository userRepository;
 
 
 
-    public BeansConfig(UserDetailsService userDetailService) {
+    public BeansConfig(UserDetailsService userDetailService, UserRepository userRepository) {
         this.userDetailService = userDetailService;
+        this.userRepository = userRepository;
     }
 
 
