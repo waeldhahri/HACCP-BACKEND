@@ -19,7 +19,7 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id ;
 
-    @Column(length = 1000)
+    @Column(length = 1024)
     private String token;
     private LocalDateTime createdAt;
     private LocalDateTime expiredAt;
