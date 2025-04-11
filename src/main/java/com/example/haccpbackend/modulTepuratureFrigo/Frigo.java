@@ -1,6 +1,7 @@
 package com.example.haccpbackend.modulTepuratureFrigo;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -19,15 +20,33 @@ public class Frigo {
 
     @ManyToOne()
     @JoinColumn(nullable = false, name = "categorie_id")
-    private Categorie categorie;
+    private CategorieFrigo categorieFrigo;
 
 
-    @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<TemperatureFrigo> temperatures;
 
+    @JsonIgnore
     @Lob
     private byte[] imageOfFrigo;
 
+    private String imageUrl ;
+
+    public CategorieFrigo getCategorieFrigo() {
+        return categorieFrigo;
+    }
+
+    public void setCategorieFrigo(CategorieFrigo categorieFrigo) {
+        this.categorieFrigo = categorieFrigo;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public Long getId() {
         return id;
@@ -45,12 +64,12 @@ public class Frigo {
         this.name = name;
     }
 
-    public Categorie getCategorie() {
-        return categorie;
+    public CategorieFrigo getCategorie() {
+        return categorieFrigo;
     }
 
-    public void setCategorie(Categorie categorie) {
-        this.categorie = categorie;
+    public void setCategorie(CategorieFrigo categorieFrigo) {
+        this.categorieFrigo = categorieFrigo;
     }
 
     public List<TemperatureFrigo> getTemperatures() {
@@ -70,12 +89,13 @@ public class Frigo {
     }
 
 
-    public Frigo(Long id, String name, Categorie categorie, List<TemperatureFrigo> temperatures, byte[] imageOfFrigo) {
+    public Frigo(Long id, String name, CategorieFrigo categorieFrigo, List<TemperatureFrigo> temperatures, byte[] imageOfFrigo ,String imageUrl ) {
         this.id = id;
         this.name = name;
-        this.categorie = categorie;
+        this.categorieFrigo = categorieFrigo;
         this.temperatures = temperatures;
         this.imageOfFrigo = imageOfFrigo;
+        this.imageUrl=imageUrl;
     }
 
     public Frigo() {

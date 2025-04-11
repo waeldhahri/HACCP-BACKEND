@@ -1,13 +1,17 @@
 package com.example.haccpbackend.modulTepuratureFrigo;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Categorie {
+public class CategorieFrigo {
+
 
 
 
@@ -15,17 +19,22 @@ public class Categorie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id ;
 
+
+    @NotNull
+    @NotEmpty
+    @Column(unique = true , nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "categorie", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "categorieFrigo", cascade = CascadeType.ALL , orphanRemoval = true)
+    @JsonIgnore
     private List<Frigo> frigos = new ArrayList<>();
 
 
-    public Categorie() {
+    public CategorieFrigo() {
     }
 
 
-    public Categorie(Long id, String name, List<Frigo> frigos) {
+    public CategorieFrigo(Long id, String name, List<Frigo> frigos) {
         this.id = id;
         this.name = name;
         this.frigos = frigos;

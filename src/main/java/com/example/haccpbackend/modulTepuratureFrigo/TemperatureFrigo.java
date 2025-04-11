@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 public class TemperatureFrigo {
 
 
+
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -64,4 +67,7 @@ public class TemperatureFrigo {
     public void setFrigo(Frigo frigo) {
         this.frigo = frigo;
     }
+
+
+
 }
