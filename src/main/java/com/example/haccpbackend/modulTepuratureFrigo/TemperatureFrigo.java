@@ -1,10 +1,13 @@
 package com.example.haccpbackend.modulTepuratureFrigo;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class TemperatureFrigo {
 
 
@@ -22,6 +25,9 @@ public class TemperatureFrigo {
     @ManyToOne
     @JoinColumn(name = "frigo_id")
     private Frigo frigo;
+
+    @CreatedDate
+    private LocalDateTime dateTime;
 
 
     public TemperatureFrigo(Long id, double temperature, LocalDateTime dateMesure, Frigo frigo) {

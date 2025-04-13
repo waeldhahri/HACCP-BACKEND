@@ -44,6 +44,9 @@ public class CategorieFrigoController {
         List<CategorieFrigo> categorieFrigo=categorieFrigoService.findCategorieFrigoByname(nameCategorie);
 
 
+
+
+
         if (categorieFrigo.isEmpty()){
 
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -76,7 +79,7 @@ public class CategorieFrigoController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
+    public ResponseEntity<Void> deleteCategorieFrigo(@PathVariable Long id){
 
         iServiceCategorieFrigo.deleteCategorieFrigo(categorieFrigoRepository.findById(id).get());
 

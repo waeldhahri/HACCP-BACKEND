@@ -20,7 +20,6 @@ public interface FrigoRepository extends JpaRepository<Frigo,Long> {
 
 
 
-
    Page<Frigo> findAllByOrderByIdDesc(Pageable pageable);
 
 }
