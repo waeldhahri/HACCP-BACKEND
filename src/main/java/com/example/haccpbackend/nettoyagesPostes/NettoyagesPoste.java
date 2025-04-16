@@ -52,6 +52,7 @@ public class NettoyagesPoste {
 
 
     @LastModifiedDate
+    @JsonFormat(pattern = "HH:mm:ss")
     @Column(name = "validAt")
     private LocalDateTime validAt;
 
@@ -68,7 +69,7 @@ public class NettoyagesPoste {
     private void updateDateAndTime() {
         if (validAt != null) {
             this.lastModifiedDay = validAt.toLocalDate();
-            this.lastModifiedTime = validAt.toLocalTime();
+            this.lastModifiedTime = validAt.toLocalTime().withNano(0);;
         }
     }
 

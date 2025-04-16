@@ -1,6 +1,7 @@
 package com.example.haccpbackend.nettoyagesPostes;
 
 
+import com.example.haccpbackend.ModulSuiviHuile.SuiviHuiles;
 import com.example.haccpbackend.modulTepuratureFrigo.CategorieFrigo;
 import com.example.haccpbackend.modulTepuratureFrigo.Frigo;
 import com.example.haccpbackend.modulTepuratureFrigo.FrigoRequest;
@@ -60,6 +61,10 @@ public class NettoyagePosteController {
 
 
     }
+
+
+
+
 
 
     @GetMapping("/categorie/{categorieName}")
