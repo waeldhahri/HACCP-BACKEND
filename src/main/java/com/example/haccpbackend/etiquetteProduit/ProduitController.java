@@ -34,7 +34,7 @@ public class ProduitController {
     @PostMapping(value = "/add" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
     public ResponseEntity<Produit> ajouterProduit(
             @RequestParam("photo") MultipartFile photo,
-            @RequestParam("produit") String nomProduit,
+            @RequestParam("produitName") String nomProduit,
             @RequestParam("quantite") Double quantite,
             @RequestParam("dlc") boolean dlc,
             @RequestParam("categorieId") Long categorieId

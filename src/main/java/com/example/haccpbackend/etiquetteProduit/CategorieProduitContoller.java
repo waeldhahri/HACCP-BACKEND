@@ -1,0 +1,90 @@
+package com.example.haccpbackend.etiquetteProduit;
+
+
+import com.example.haccpbackend.nettoyagesPostes.CategorieNettoyage;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@CrossOrigin
+@RequestMapping("/api/categorieproduit")
+public class CategorieProduitContoller {
+
+
+
+    private final CategorieProduitRepository categorieProduitRepository;
+
+
+    public CategorieProduitContoller(CategorieProduitRepository categorieProduitRepository) {
+        this.categorieProduitRepository = categorieProduitRepository;
+    }
+
+
+
+
+
+
+    @PostMapping("")
+    public ResponseEntity<CategorieProduit> createCategorieProduit(@Valid @RequestBody CategorieProduit categorieProduit){
+
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(categorieProduitRepository.save(categorieProduit));
+
+    }
+
+
+
+
+
+    @GetMapping("/findAllCategories")
+    public ResponseEntity<List<CategorieProduit>> findAllCategorieProduit(){
+
+        List<CategorieProduit> categorieProduits=categorieProduitRepository.findAll();
+
+        if (categorieProduits.isEmpty()){
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        return ResponseEntity.ok(categorieProduits);
+
+    }
+
+
+
+
+
+
+
+
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Void> deleteCategorieProduit(@PathVariable Long id){
+
+
+        try {
+
+            categorieProduitRepository.delete(categorieProduitRepository.findById(id).get());
+            return ResponseEntity.noContent().build();
+
+        } catch (Exception e){
+
+            return ResponseEntity.notFound().build();
+
+        }
+
+
+
+
+    }
+
+
+
+
+}

@@ -32,14 +32,36 @@ public class CategorieProduit {
     private List<Produit> produits = new ArrayList<>();
 
 
+    public CategorieProduit(Long id, String name, List<Produit> produits) {
+        this.id = id;
+        this.name = name;
+        this.produits = produits;
+    }
 
+    public CategorieProduit() {
+    }
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public List<Produit> getProduits() {
+        return produits;
+    }
 
-
-
-
+    public void setProduits(List<Produit> produits) {
+        this.produits = produits;
+    }
 }

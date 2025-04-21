@@ -14,12 +14,12 @@ public class Produit {
     private Long id;
 
 
-    @Column(name = "produit" , nullable = false , insertable = false)
-    private String produit;
+    @Column(insertable = false)
+    private String produitName;
 
 
 
-    @Column(name = "quantité" , nullable = false)
+    @Column(insertable = false)
     private Double quantite;
 
     @Column(nullable = false)
@@ -40,9 +40,9 @@ public class Produit {
     }
 
 
-    public Produit(Long id, String produit, Double quantite, boolean dlc, String photoUrl, CategorieProduit categorieProduit) {
+    public Produit(Long id, String produitName, Double quantite, boolean dlc, String photoUrl, CategorieProduit categorieProduit) {
         this.id = id;
-        this.produit = produit;
+        this.produitName = produitName;
         this.quantite = quantite;
         this.dlc = dlc;
         this.photoUrl = photoUrl;
@@ -59,11 +59,11 @@ public class Produit {
     }
 
     public String getProduit() {
-        return produit;
+        return produitName;
     }
 
-    public void setProduit(String produit) {
-        this.produit = produit;
+    public void setProduit(String produitName) {
+        this.produitName = produitName;
     }
 
     public Double getQuantite() {

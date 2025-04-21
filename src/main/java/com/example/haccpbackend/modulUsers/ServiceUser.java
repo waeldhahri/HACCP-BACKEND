@@ -30,7 +30,7 @@ public class ServiceUser implements IServiceUser {
     private PasswordEncoder passwordEncoder;
 
 
-    private static final String FRONTEND_RESET_URL = "http://localhost:8080/users/reset-password?token=";
+    private static final String FRONTEND_RESET_URL = "http://localhost:8081/users/reset-password?token=";
 
 
 

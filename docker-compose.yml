@@ -21,7 +21,7 @@ services:
     build: .
     container_name: haccp-backend
     ports:
-      - "8080:8080"
+     - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5433/HACCP
       SPRING_DATASOURCE_USERNAME: postgres
