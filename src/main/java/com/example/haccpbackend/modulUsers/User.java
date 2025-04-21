@@ -2,7 +2,7 @@ package com.example.haccpbackend.modulUsers;
 
 
 import com.example.haccpbackend.modulProducts.Product;
-import com.example.haccpbackend.moduleTasks.Task;
+
 import com.example.haccpbackend.registerJWT.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -53,8 +53,7 @@ public class User implements UserDetails , Principal {
 
 
 
-    @OneToMany(mappedBy = "user")
-    private List<Task> tasks ;
+
 
 
     @OneToMany(mappedBy = "users")
@@ -102,12 +101,12 @@ public class User implements UserDetails , Principal {
 
 
     public User(Long id, String fullName, String email, String motdepasse,
-                List<Task> tasks, List<Product> products, byte[] imageOfUser, boolean enabled, boolean accountLocked, Role role, String resetToken) {
+                 List<Product> products, byte[] imageOfUser, boolean enabled, boolean accountLocked, Role role, String resetToken) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.motdepasse = motdepasse;
-        this.tasks = tasks;
+
         this.products = products;
         this.imageOfUser = imageOfUser;
         this.enabled = enabled;
@@ -228,11 +227,4 @@ public class User implements UserDetails , Principal {
     }
 
 
-    public List<Task> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
-    }
 }
