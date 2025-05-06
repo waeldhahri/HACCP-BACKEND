@@ -48,7 +48,6 @@ public class FournisseurService {
         return fournisseurRepository.findById(id).map(fournisseur -> {
 
             fournisseur.setName(newFournisseur.getName());
-            fournisseur.setContact(newFournisseur.getContact());
             fournisseur.setEmail(newFournisseur.getEmail());
             fournisseur.setPhone(newFournisseur.getPhone());
             fournisseur.setAddress(newFournisseur.getAddress());

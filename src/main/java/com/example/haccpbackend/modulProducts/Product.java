@@ -29,12 +29,12 @@ public class Product {
     @Column(name = "produit_id")
     private Long idProduit ;
 
-    @Column(name = "produit" , nullable = false , insertable = false)
+    @Column(name = "produit" , nullable = false )
     private String produit;
 
 
 
-    @Column(name = "date" , insertable = false , updatable = false , nullable = false)
+    @Column(name = "date" , updatable = false , nullable = false)
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate date ;
 
@@ -44,7 +44,7 @@ public class Product {
     private Fournisseur fournisseurs;
 
 
-    @Column(name = "numero De Bon de Livraison" , insertable = false , nullable = false)
+    @Column(name = "numero De Bon de Livraison" ,  nullable = false)
     private String numeroDuBonDeLivraison ;
 
 

@@ -16,10 +16,11 @@ public class Fournisseur {
     private Long id;
     @Column(nullable = false , unique = true)
     private String name;
-    private String contact ;
 
     @Column(unique = true)
     private String email;
+
+
     private String phone ;
     private String address;
 
@@ -38,11 +39,11 @@ public class Fournisseur {
     private List<FournisseurInteraction> fournisseurInteractionList ;
 
 
-    public Fournisseur(Long id, String name, String contact, String email, String phone, String address, byte[] contractDetails,
+    public Fournisseur(Long id, String name, String email, String phone, String address, byte[] contractDetails,
                        List<Product> productsFournisseur) {
         this.id = id;
         this.name = name;
-        this.contact = contact;
+
         this.email = email;
         this.phone = phone;
         this.address = address;
@@ -71,13 +72,7 @@ public class Fournisseur {
         this.name = name;
     }
 
-    public String getContact() {
-        return contact;
-    }
 
-    public void setContact(String contact) {
-        this.contact = contact;
-    }
 
     public String getEmail() {
         return email;

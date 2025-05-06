@@ -2,9 +2,15 @@ package com.example.haccpbackend.etiquetteProduit;
 
 
 import com.example.haccpbackend.modulTepuratureFrigo.CategorieFrigo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDate;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Produit {
 
 
@@ -14,16 +20,22 @@ public class Produit {
     private Long id;
 
 
-    @Column(insertable = false)
-    private String produitName;
+    @Column(nullable = false)
+    private String produitname;
 
 
 
-    @Column(insertable = false)
+    @Column
     private Double quantite;
 
     @Column(nullable = false)
     private boolean dlc;
+
+
+
+    @CreatedDate
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateDeStockage;
 
 
     @Column
@@ -39,17 +51,21 @@ public class Produit {
     public Produit() {
     }
 
-
-    public Produit(Long id, String produitName, Double quantite, boolean dlc, String photoUrl, CategorieProduit categorieProduit) {
+    public Produit(Long id, String produitname, Double quantite, boolean dlc, LocalDate dateDeStockage,
+                   String photoUrl, CategorieProduit categorieProduit) {
         this.id = id;
-        this.produitName = produitName;
+        this.produitname = produitname;
         this.quantite = quantite;
         this.dlc = dlc;
+        this.dateDeStockage = dateDeStockage;
         this.photoUrl = photoUrl;
         this.categorieProduit = categorieProduit;
     }
 
+
     //
+
+
     public Long getId() {
         return id;
     }
@@ -58,12 +74,12 @@ public class Produit {
         this.id = id;
     }
 
-    public String getProduit() {
-        return produitName;
+    public String getProduitName() {
+        return produitname;
     }
 
-    public void setProduit(String produitName) {
-        this.produitName = produitName;
+    public void setProduitName(String produitname) {
+        this.produitname = produitname;
     }
 
     public Double getQuantite() {
@@ -82,14 +98,13 @@ public class Produit {
         this.dlc = dlc;
     }
 
-    public CategorieProduit getCategorieProduit() {
-        return categorieProduit;
+    public LocalDate getDateDeStockage() {
+        return dateDeStockage;
     }
 
-    public void setCategorieProduit(CategorieProduit categorieProduit) {
-        this.categorieProduit = categorieProduit;
+    public void setDateDeStockage(LocalDate dateDeStockage) {
+        this.dateDeStockage = dateDeStockage;
     }
-
 
     public String getPhotoUrl() {
         return photoUrl;
@@ -97,5 +112,13 @@ public class Produit {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public CategorieProduit getCategorieProduit() {
+        return categorieProduit;
+    }
+
+    public void setCategorieProduit(CategorieProduit categorieProduit) {
+        this.categorieProduit = categorieProduit;
     }
 }

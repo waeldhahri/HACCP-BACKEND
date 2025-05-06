@@ -10,8 +10,11 @@ services:
       POSTGRES_DB: HACCP
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 98964876
+
+      POSTGRES_PORT: 5432  # Ou gardez le port par défaut
+
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -23,7 +26,7 @@ services:
     ports:
      - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5433/HACCP
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/HACCP
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 98964876
 

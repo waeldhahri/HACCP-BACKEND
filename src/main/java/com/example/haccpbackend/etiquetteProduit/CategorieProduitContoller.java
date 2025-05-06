@@ -29,7 +29,7 @@ public class CategorieProduitContoller {
 
 
 
-    @PostMapping("")
+    @PostMapping("/add")
     public ResponseEntity<CategorieProduit> createCategorieProduit(@Valid @RequestBody CategorieProduit categorieProduit){
 
 

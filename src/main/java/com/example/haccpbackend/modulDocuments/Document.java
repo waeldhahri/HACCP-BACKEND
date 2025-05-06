@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table( name = "documents")
-@Getter
 public class Document {
 
 
