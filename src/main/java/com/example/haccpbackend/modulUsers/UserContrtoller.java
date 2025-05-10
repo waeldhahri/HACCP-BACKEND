@@ -1,10 +1,13 @@
 package com.example.haccpbackend.modulUsers;
 
 
+import com.example.haccpbackend.modulProducts.Product;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +22,8 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UserContrtoller {
 
+
+
     @Autowired
     private  IServiceUser iServiceUser;
 
@@ -30,8 +35,6 @@ public class UserContrtoller {
 
 
 
-    //private final TokenRepository tokenRepository ;
-
 
     public UserContrtoller(IServiceUser iServiceUser , ServiceUser serviceUser) {
         this.iServiceUser = iServiceUser;
@@ -39,24 +42,86 @@ public class UserContrtoller {
     }
 
     @GetMapping("")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public List<User> getAllUsers(){
+    //@PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<User>> getAllUsers(){
 
-        return  iServiceUser.getAllUsers();
+
+        List<User> users = iServiceUser.getAllUsers();
+        if (users != null && !users.isEmpty()) {
+            return ResponseEntity.ok(users);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
 
     }
+
+
+
+    @GetMapping("/page")
+    @Transactional
+    public Page<User> getAllUsersByPage(Pageable pageable){
+
+
+        return userRepository.findAllByOrderByIdDesc(pageable);
+
+    }
+
 
 
     @GetMapping("/email/{email}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @Transactional
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email){
-        return ResponseEntity.ok(iServiceUser.findUserByEmail(email));
+
+
+        User emailuser = iServiceUser.findUserByEmail(email);
+
+        if (emailuser != null ){
+
+            return ResponseEntity.ok(iServiceUser.findUserByEmail(email));
+        } else {
+
+             return ResponseEntity.notFound().build();
+
+        }
+
+
     }
+
+
+
+
+    @GetMapping("/role/{role}")
+    @Transactional
+//@PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> getUserByRole3(@PathVariable String role) {
+        Role matchedRole = null;
+
+        for (Role r : Role.values()) {
+            if (r.name().equalsIgnoreCase(role)) {
+                matchedRole = r;
+                break;
+            }
+        }
+
+        if (matchedRole == null) {
+            return ResponseEntity.badRequest().body("Le rôle '" + role + "' n'existe pas.");
+        }
+
+        List<User> roleUsers = iServiceUser.findUserByRole(matchedRole);
+        if (roleUsers != null && !roleUsers.isEmpty()) {
+            return ResponseEntity.ok(roleUsers);
+        } else {
+            return ResponseEntity.status(404).body("Aucun utilisateur trouvé avec le rôle '" + matchedRole + "'.");
+        }
+    }
+
 
 
 
     @PostMapping("")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(iServiceUser.createUser(user));
@@ -65,35 +130,65 @@ public class UserContrtoller {
 
 
 
+
+    @GetMapping("/fullname/{fullname}")
+    @Transactional
+    public ResponseEntity<User> getUserByFullname(@PathVariable String fullname) {
+        Optional<User> fullnameUser = userRepository.findByFullName(fullname);
+
+        return fullnameUser
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     @GetMapping("/{userId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @Transactional
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> findUserById(@PathVariable Long userId){
 
-        return ResponseEntity.ok(iServiceUser.findUserById(userId));
+
+
+        User idUser = iServiceUser.findUserById(userId);
+
+        if (idUser != null){
+
+            return ResponseEntity.ok(iServiceUser.findUserById(userId));
+
+        } else {
+
+            return ResponseEntity.notFound().build();
+
+        }
+
+
+
     }
 
-
-
-    public ResponseEntity<User> findUserByUserName(@PathVariable String fullname){
-
-
-        //return ResponseEntity.ok(userRepository.findByUsername(username).isPresent() ? userRepository.findByUsername(username).get():null);
-
-        return userRepository.findByFullName(fullname).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
 
 
 
     @DeleteMapping("/{userId}")
     @Transactional
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
 
        //   tokenRepository.clearUserReferences(userId);
 
         //sessionRepository.clearEmployeeReferences(userId);
 
-        Optional<User> optionalUser=userRepository.findById(userId);
+        Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isPresent()){
             iServiceUser.deleteUser(optionalUser.get());
@@ -106,17 +201,19 @@ public class UserContrtoller {
 
 
 
-        //iServiceUser.deleteUser(iServiceUser.findUserById(userId));
+
 
     }
 
 
 
     @PutMapping("update/{userId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     //@PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<User> updateEmploye(@PathVariable Long userId , @Valid @RequestBody User user ){
-        return ResponseEntity.status(HttpStatus.CREATED).body(iServiceUser.updateUser(userId ,user));
+    public ResponseEntity<User> updateUser(@PathVariable Long userId , @Valid @RequestBody User user ){
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(iServiceUser.updateUser(userId ,user));
+
     }
 
 
@@ -135,6 +232,7 @@ public class UserContrtoller {
 
     // Étape 1: Demande de réinitialisation (envoi email)
     @PostMapping("/forgot-password")
+    @Transactional
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
         try {
             serviceUser.sendResetEmail(email);
@@ -150,6 +248,7 @@ public class UserContrtoller {
 
     // Étape 2: Réinitialisation du mot de passe
     @PostMapping("/reset-password")
+    @Transactional
     public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
         try {
             serviceUser.resetPassword(token, newPassword);
@@ -159,6 +258,23 @@ public class UserContrtoller {
         }
     }
 
+
+
+
+    @GetMapping("/{id}/image")
+    //@PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
+
+        Optional<User> userOptional=userRepository.findById(id);
+
+        if (userOptional.isEmpty() || userOptional.get().getImageOfUser() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/jpeg")
+                .body(userOptional.get().getImageOfUser());
+    }
 
 
 

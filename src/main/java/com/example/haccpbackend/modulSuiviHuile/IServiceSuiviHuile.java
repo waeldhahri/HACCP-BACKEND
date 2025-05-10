@@ -1,7 +1,5 @@
-package com.example.haccpbackend.ModulSuiviHuile;
+package com.example.haccpbackend.modulSuiviHuile;
 
-import com.example.haccpbackend.nettoyagesPostes.NettoyagePosteRequest;
-import com.example.haccpbackend.nettoyagesPostes.NettoyagesPoste;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;

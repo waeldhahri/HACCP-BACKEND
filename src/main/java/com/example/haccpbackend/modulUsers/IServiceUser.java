@@ -18,7 +18,7 @@ public interface IServiceUser {
     User findUserByEmail(String email);
 
 
-    List<User> findUserByRole(String roleName);
+    List<User> findUserByRole(Role roleName);
 
 
 }

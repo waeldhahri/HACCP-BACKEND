@@ -3,7 +3,9 @@ package com.example.haccpbackend.modulUsers;
 
 import com.example.haccpbackend.modulProducts.Product;
 
+import com.example.haccpbackend.modulTepuratureFrigo.Frigo;
 import com.example.haccpbackend.registerJWT.Token;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.security.auth.Subject;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 //import org.springframework.security.core.GrantedAuthority;
@@ -55,28 +58,28 @@ public class User implements UserDetails , Principal {
 
 
 
-
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users" )
     private List<Product> products;
 
 
-    @OneToMany(mappedBy = "userToken")
-    private List<Token> tokens;
+    @OneToMany(mappedBy = "userToken" , cascade = CascadeType.ALL , orphanRemoval = true)
+    @JsonIgnore
+    private List<Token> tokens = new ArrayList<>();
 
 
+    @Column(name = "imageOfUser")
     @Lob
+    @JsonIgnore
     private byte[] imageOfUser;
+
+    @Column(name = "imageUrl")
+    private String imageUrl ;
 
     private boolean enabled=true;
     private boolean accountLocked;
 
-/*
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role")
-    @JsonIgnoreProperties("users")
-    private Role roles;
 
-*/
+
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(nullable = false)
@@ -100,15 +103,16 @@ public class User implements UserDetails , Principal {
     }
 
 
-    public User(Long id, String fullName, String email, String motdepasse,
-                 List<Product> products, byte[] imageOfUser, boolean enabled, boolean accountLocked, Role role, String resetToken) {
+    public User(Long id, String fullName, String email, String motdepasse, List<Product> products,
+                List<Token> tokens, byte[] imageOfUser, String imageUrl, boolean enabled, boolean accountLocked, Role role, String resetToken) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.motdepasse = motdepasse;
-
         this.products = products;
+        this.tokens = tokens;
         this.imageOfUser = imageOfUser;
+        this.imageUrl = imageUrl;
         this.enabled = enabled;
         this.accountLocked = accountLocked;
         this.role = role;
@@ -188,6 +192,22 @@ public class User implements UserDetails , Principal {
         this.role = role;
     }
 
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public List<Token> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(List<Token> tokens) {
+        this.tokens = tokens;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

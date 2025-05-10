@@ -1,11 +1,6 @@
 package com.example.haccpbackend.nettoyagesPostes;
 
 
-import com.example.haccpbackend.ModulSuiviHuile.SuiviHuiles;
-import com.example.haccpbackend.modulTepuratureFrigo.CategorieFrigo;
-import com.example.haccpbackend.modulTepuratureFrigo.Frigo;
-import com.example.haccpbackend.modulTepuratureFrigo.FrigoRequest;
-import com.example.haccpbackend.modulUsers.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -74,6 +75,17 @@ public class AuthenticationService {
         user.setEmail(request.getEmail());
         user.setMotdepasse(passwordEncoder.encode(request.getMotdepasse()));
         user.setRole(userRole);
+        //user.setImageUrl(request.getImageUrl());
+        user.setImageOfUser(request.getImageOfUser());
+
+        user = userRepository.save(user);
+
+        user.setImageUrl(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/users/")
+                .path(user.getId().toString())
+                .path("/image")
+                .toUriString());
+
 
 
         userRepository.save(user);

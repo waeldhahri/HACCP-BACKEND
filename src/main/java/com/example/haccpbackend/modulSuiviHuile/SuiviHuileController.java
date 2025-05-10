@@ -1,8 +1,6 @@
-package com.example.haccpbackend.ModulSuiviHuile;
+package com.example.haccpbackend.modulSuiviHuile;
 
 
-import com.example.haccpbackend.modulFournisseur.Fournisseur;
-import com.example.haccpbackend.nettoyagesPostes.NettoyagesPoste;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

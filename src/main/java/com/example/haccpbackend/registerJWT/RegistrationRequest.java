@@ -1,6 +1,8 @@
 package com.example.haccpbackend.registerJWT;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Lob;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -33,6 +35,30 @@ public class RegistrationRequest {
     @NotNull
     private String role ;
 
+    @JsonIgnore
+    @Lob
+    private byte[] imageOfUser;
+
+
+    private String imageUrl ;
+
+
+
+    public byte[] getImageOfUser() {
+        return imageOfUser;
+    }
+
+    public void setImageOfUser(byte[] imageOfUser) {
+        this.imageOfUser = imageOfUser;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public String getFullname() {
         return fullname;
@@ -64,5 +90,24 @@ public class RegistrationRequest {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+
+
+
+
+
+    public RegistrationRequest() {
+
+    }
+
+
+    public RegistrationRequest(String fullname, String email, String motdepasse, String role, byte[] imageOfUser, String imageUrl) {
+        this.fullname = fullname;
+        this.email = email;
+        this.motdepasse = motdepasse;
+        this.role = role;
+        this.imageOfUser = imageOfUser;
+        this.imageUrl = imageUrl;
     }
 }

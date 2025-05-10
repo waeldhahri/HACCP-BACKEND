@@ -1,5 +1,8 @@
 package com.example.haccpbackend.modulUsers;
 
+import com.example.haccpbackend.modulProducts.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,11 +13,16 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long> {
 
     Optional<User> findByEmail(String Email);
-    List<User> findUserByRole(String role);
+    List<User> findUserByRole(Role role);
 
     Optional<User> findByFullName(String fullname);
 
 
     Optional<User> findByResetToken(String resetToken);
+
+
+    Page<User> findAllByOrderByIdDesc(Pageable pageable);
+
+
 
 }

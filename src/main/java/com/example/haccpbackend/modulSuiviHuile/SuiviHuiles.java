@@ -1,4 +1,4 @@
-package com.example.haccpbackend.ModulSuiviHuile;
+package com.example.haccpbackend.modulSuiviHuile;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;

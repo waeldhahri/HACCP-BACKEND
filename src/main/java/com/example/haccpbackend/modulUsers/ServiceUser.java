@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,25 @@ public class ServiceUser implements IServiceUser {
     private PasswordEncoder passwordEncoder;
 
 
-    private static final String FRONTEND_RESET_URL = "http://localhost:8081/users/reset-password?token=";
+    //private static final String FRONTEND_RESET_URL = "http://localhost:8080/users/reset-password?token=";
+
+    //private static final String FRONTEND_RESET_URL = ServletUriComponentsBuilder.fromCurrentContextPath().path("/users/reset-password?token=").toUriString();
+
+
+
+    public String getResetPasswordUrl(String token) {
+        return ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/users/reset-password")
+                .queryParam("token", token)
+                .toUriString();
+    }
+
+
+
+
+
+
 
 
 
@@ -48,15 +67,38 @@ public class ServiceUser implements IServiceUser {
         user.setResetToken(token);
         userRepository.save(user);
 
-        String resetLink = FRONTEND_RESET_URL + token;
+
+
+
+
+        // Construction dynamique du lien de réinitialisation
+        String resetLink = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/users/reset-password")
+                .queryParam("token", token)
+                .toUriString();
+
+
+
+        String content = "<p>Bonjour,</p>"
+                + "<p>Nous avons reçu une demande de réinitialisation de votre mot de passe.</p>"
+                + "<p>Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous :</p>"
+                + "<p><a href=\"" + resetLink + "\">Réinitialiser mon mot de passe</a></p>"
+                + "<br>"
+                + "<p>Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail. "
+                + "Votre mot de passe actuel restera inchangé.</p>"
+                + "<br>"
+                + "<p>Cordialement,<br>L'équipe support</p>";
+
+
 
         // Envoi de l'email
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(email);
         helper.setSubject("Réinitialisation de votre mot de passe");
-        helper.setText("Cliquez sur le lien suivant pour réinitialiser votre mot de passe : " + resetLink);
-
+       // helper.setText("Cliquez sur le lien suivant pour réinitialiser votre mot de passe : " + resetLink);
+        helper.setText(content, true);
         mailSender.send(message);
     }
 
@@ -100,16 +142,17 @@ public class ServiceUser implements IServiceUser {
 
     @Override
     public User findUserById(Long id) {
-        return userRepository.findById(id).get();
+        return userRepository.findById(id)
+                .orElse(null);
     }
 
     @Override
     public User updateUser(Long id , User newuser) {
 
-        //newuser.setPassword(passwordEncoder.encode(newuser.getPassword()));
+
         return userRepository.findById(id).map(user->{
             user.setFullName(newuser.getFullName());
-            user.setMotdepasse(newuser.getMotdepasse());
+            user.setMotdepasse(passwordEncoder.encode(newuser.getPassword()));
             user.setEmail(newuser.getEmail());
             user.setRole(newuser.getRole());
             return userRepository.save(user);
@@ -138,7 +181,9 @@ public class ServiceUser implements IServiceUser {
     }
 
     @Override
-    public List<User> findUserByRole(String roleName) {
+    public List<User> findUserByRole(Role roleName) {
+
         return userRepository.findUserByRole(roleName);
+
     }
 }

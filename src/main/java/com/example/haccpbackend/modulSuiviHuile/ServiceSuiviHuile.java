@@ -1,14 +1,11 @@
-package com.example.haccpbackend.ModulSuiviHuile;
+package com.example.haccpbackend.modulSuiviHuile;
 
 
-import com.example.haccpbackend.modulUsers.User;
-import com.example.haccpbackend.nettoyagesPostes.NettoyagesPoste;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
