@@ -66,6 +66,7 @@ public class FrigoController {
     }
 
     @GetMapping("/categorie/{categorieName}")
+    @Transactional
     public ResponseEntity<List<Frigo>> findFrigoByCategorie(@PathVariable String categorieName){
 
 
@@ -83,6 +84,7 @@ public class FrigoController {
 
 
     @PostMapping(value = "/add" , /*consumes = MediaType.MULTIPART_FORM_DATA_VALUE*/ consumes = {"multipart/form-data"})
+    @Transactional
     public ResponseEntity<Frigo> createFrigo(
             @RequestPart("frigo") String frigoJson,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) throws IOException {
@@ -106,6 +108,10 @@ public class FrigoController {
             Frigo frigo = new Frigo();
             frigo.setName(frigoRequest.getName());
             frigo.setCategorie(categorie);
+
+            if (frigoRepository.findFirstByNameAndCategorieFrigo(frigo.getName(), frigo.getCategorieFrigo()).isPresent()) {
+                throw new RuntimeException("Un frigo avec ce nom existe déjà dans cette catégorie.");
+            }
 
             Frigo savedFrigo = frigoRepository.save(frigo);
 
@@ -175,6 +181,7 @@ public class FrigoController {
 
 
     @PutMapping(value = "/update/{id}", consumes = {"multipart/form-data"})
+    @Transactional
     public ResponseEntity<Frigo> updateFrigo(@PathVariable Long id
             , @RequestPart("frigo") String frigoJson , @RequestPart(value = "file", required = false) MultipartFile file)
 
@@ -214,7 +221,7 @@ public class FrigoController {
     @DeleteMapping("/{id}")
     @Transactional
    // @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Void> deleteFrigo(@PathVariable Long id){
+        public ResponseEntity<Void> deleteFrigo(@PathVariable Long id){
 
 
         try {

@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -29,7 +30,7 @@ public class CategorieFrigoController {
 
 
 
-    @PostMapping("")
+    @PostMapping("/add")
     public ResponseEntity<CategorieFrigo> createCategorieFrigo(@Valid @RequestBody CategorieFrigo categorieFrigo){
 
 
@@ -39,7 +40,7 @@ public class CategorieFrigoController {
 
 
     @GetMapping("/findCategorieByName/{nameCategorie}")
-    public ResponseEntity<List<CategorieFrigo>> findCategorieFrigo(@PathVariable String nameCategorie){
+    public ResponseEntity<List<CategorieFrigo>> findCategorieFrigoByName(@PathVariable String nameCategorie){
 
         List<CategorieFrigo> categorieFrigo=categorieFrigoService.findCategorieFrigoByname(nameCategorie);
 
@@ -49,7 +50,7 @@ public class CategorieFrigoController {
 
         if (categorieFrigo.isEmpty()){
 
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 
         }
 
@@ -79,12 +80,16 @@ public class CategorieFrigoController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Void> deleteCategorieFrigo(@PathVariable Long id){
+    public ResponseEntity<Void> deleteCategorieFrigo(@PathVariable Long id) {
 
-        iServiceCategorieFrigo.deleteCategorieFrigo(categorieFrigoRepository.findById(id).get());
+        Optional<CategorieFrigo> categorieFrigoOptional = categorieFrigoRepository.findById(id);
 
-
-        return ResponseEntity.noContent().build();
+        if (categorieFrigoOptional.isPresent()) {
+            iServiceCategorieFrigo.deleteCategorieFrigo(categorieFrigoOptional.get());
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 

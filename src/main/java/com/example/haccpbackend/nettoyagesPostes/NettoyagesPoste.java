@@ -16,6 +16,9 @@ import java.time.LocalTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {"nameOfPoste", "categorieNettoyage_id", "createdDay"})
+)
 public class NettoyagesPoste {
 
 
@@ -33,8 +36,20 @@ public class NettoyagesPoste {
     private String nameOfPoste ;
 
     @Column(nullable = false )
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreatedDate
     private LocalDateTime dateOfCreation;
+
+
+    @Column(name = "createdDay")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate createdDay;
+
+    @Column(name = "createdTime")
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime createdTime;
+
+
 
 
 
@@ -71,6 +86,11 @@ public class NettoyagesPoste {
             this.lastModifiedDay = validAt.toLocalDate();
             this.lastModifiedTime = validAt.toLocalTime().withNano(0);;
         }
+
+        if (dateOfCreation != null) {
+            this.createdDay = dateOfCreation.toLocalDate();
+            this.createdTime = dateOfCreation.toLocalTime().withNano(0);;
+        }
     }
 
 
@@ -103,13 +123,16 @@ public class NettoyagesPoste {
     public NettoyagesPoste() {
     }
 
-    public NettoyagesPoste(Long id, String nameOfPoste, LocalDateTime dateOfCreation, String note, String validePar,
-                           boolean valide, LocalDateTime validAt, LocalDate lastModifiedDay, LocalTime lastModifiedTime,
-                           CategorieNettoyage categorieNettoyage, byte[] imageOfPosteBefore, byte[] imageOfPosteAfter,
-                           String imageBeforeUrl, String imageAfterUrl) {
+
+    public NettoyagesPoste(Long id, String nameOfPoste, LocalDateTime dateOfCreation, LocalDate createdDay, LocalTime createdTime,
+                           String note, String validePar, boolean valide, LocalDateTime validAt, LocalDate lastModifiedDay, LocalTime lastModifiedTime,
+                           CategorieNettoyage categorieNettoyage, byte[] imageOfPosteBefore, byte[] imageOfPosteAfter, String imageBeforeUrl,
+                           String imageAfterUrl) {
         this.id = id;
         this.nameOfPoste = nameOfPoste;
         this.dateOfCreation = dateOfCreation;
+        this.createdDay = createdDay;
+        this.createdTime = createdTime;
         this.note = note;
         this.validePar = validePar;
         this.valide = valide;
@@ -122,20 +145,6 @@ public class NettoyagesPoste {
         this.imageBeforeUrl = imageBeforeUrl;
         this.imageAfterUrl = imageAfterUrl;
     }
-
-
-
-
-
-
-
-
-    /*
-    @PrePersist
-    protected void onCreate() {
-        date = LocalDateTime.now();
-    }*/
-
 
     public Long getId() {
         return id;
@@ -249,5 +258,22 @@ public class NettoyagesPoste {
 
     public void setImageAfterUrl(String imageAfterUrl) {
         this.imageAfterUrl = imageAfterUrl;
+    }
+
+
+    public LocalDate getCreatedDay() {
+        return createdDay;
+    }
+
+    public void setCreatedDay(LocalDate createdDay) {
+        this.createdDay = createdDay;
+    }
+
+    public LocalTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(LocalTime createdTime) {
+        this.createdTime = createdTime;
     }
 }

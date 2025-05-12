@@ -7,7 +7,7 @@ import java.time.LocalTime;
 public class NettoyagePosteRequest {
 
 
-
+    private String nameOfPoste;
     private String name;
     private Long categorieId;
 
@@ -29,8 +29,10 @@ public class NettoyagePosteRequest {
     public NettoyagePosteRequest() {
     }
 
-    public NettoyagePosteRequest(String name, Long categorieId,
+
+    public NettoyagePosteRequest(String nameOfPoste, String name, Long categorieId,
                                  String categorie, String note, String validePar, boolean valide, LocalDate dateOfCreation, LocalTime timeOfCreation) {
+        this.nameOfPoste = nameOfPoste;
         this.name = name;
         this.categorieId = categorieId;
         this.categorie = categorie;
@@ -40,6 +42,9 @@ public class NettoyagePosteRequest {
         this.dateOfCreation = dateOfCreation;
         this.timeOfCreation = timeOfCreation;
     }
+
+
+
 
     public String getNote() {
         return note;
@@ -104,4 +109,15 @@ public class NettoyagePosteRequest {
     public void setCategorie(String categorie) {
         this.categorie = categorie;
     }
+
+
+    public String getNameOfPoste() {
+        return nameOfPoste;
+    }
+
+    public void setNameOfPoste(String nameOfPoste) {
+        this.nameOfPoste = nameOfPoste;
+    }
+
+
 }

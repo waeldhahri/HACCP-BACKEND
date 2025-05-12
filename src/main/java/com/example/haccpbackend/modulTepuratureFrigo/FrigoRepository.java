@@ -22,4 +22,11 @@ public interface FrigoRepository extends JpaRepository<Frigo,Long> {
 
    Page<Frigo> findAllByOrderByIdDesc(Pageable pageable);
 
+
+
+   Optional<Frigo> findFirstByNameAndCategorieFrigo(String name, CategorieFrigo categorieFrigo);
+
+
+
+
 }

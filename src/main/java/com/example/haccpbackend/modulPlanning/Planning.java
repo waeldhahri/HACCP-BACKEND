@@ -14,12 +14,20 @@ import java.time.LocalTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {"tache", "categorie_id", "createdDay"})
+)
 public class Planning {
 
 
-    public Planning(Long id, String tache, PlanningCategorie planningCategorie, LocalDateTime createdAt, LocalDate createdDay, LocalTime createdTime) {
+
+
+
+    public Planning(Long id, String tache, boolean checked, PlanningCategorie planningCategorie,
+                    LocalDateTime createdAt, LocalDate createdDay, LocalTime createdTime) {
         this.id = id;
         this.tache = tache;
+        this.checked = checked;
         this.planningCategorie = planningCategorie;
         this.createdAt = createdAt;
         this.createdDay = createdDay;
@@ -39,8 +47,13 @@ public class Planning {
     private Long id;
 
 
-    @Column(unique = true )
+    @Column()
     private String tache;
+
+
+
+    @Column(name = "checked")
+    private boolean checked = false;
 
 
     @ManyToOne()
@@ -53,7 +66,7 @@ public class Planning {
 
 
     @CreatedDate
-    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
@@ -64,6 +77,8 @@ public class Planning {
     @Column(name = "createdTime")
     @JsonFormat(pattern = "HH:mm")
     private LocalTime createdTime;
+
+
 
     @PrePersist
     @PreUpdate
@@ -125,5 +140,11 @@ public class Planning {
         this.createdTime = createdTime;
     }
 
+    public boolean isChecked() {
+        return checked;
+    }
 
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
 }

@@ -7,8 +7,10 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "categorie_id"})
+)
 public class Frigo {
-
 
 
 

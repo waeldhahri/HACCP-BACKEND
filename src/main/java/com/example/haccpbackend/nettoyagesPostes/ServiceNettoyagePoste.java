@@ -1,9 +1,7 @@
 package com.example.haccpbackend.nettoyagesPostes;
 
 
-import com.example.haccpbackend.modulTepuratureFrigo.CategorieFrigo;
-import com.example.haccpbackend.modulTepuratureFrigo.Frigo;
-import com.example.haccpbackend.modulTepuratureFrigo.FrigoRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,7 +73,7 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
     public NettoyagesPoste validatePosteNettoyage(Long id, NettoyagePosteRequest nettoyagePosteRequest, MultipartFile file1,MultipartFile file2) {
 
 
-
+            System.out.println("ID reçu dans le controller: " + id);
 
 
             NettoyagesPoste existingPoste = posteRepository.findById(id).orElseThrow(() -> new RuntimeException("Poste not found"));
@@ -90,6 +88,7 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
             existingPoste.setValidAt(LocalDateTime.now());
             existingPoste.setLastModifiedDay(LocalDate.now());
             existingPoste.setLastModifiedTime(LocalTime.now());
+            existingPoste.setNameOfPoste(nettoyagePosteRequest.getNameOfPoste());
 
 
 
@@ -149,18 +148,41 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
 
 
     @Scheduled(cron = "0 0 0 * * *") // Chaque jour à minuit
-    public void genererTachesPourNouveauJour() {
+    @Transactional
+    public void genererPostePourNouveauJour() {
 
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime yesterday = today.minusDays(1);
-
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
 
         // On récupère les tâches d’hier pour les répliquer
-        List<NettoyagesPoste> postesHier = posteRepository.findByDateOfCreation(yesterday);
+        List<NettoyagesPoste> postesHier=posteRepository.findByCreatedDay(yesterday);
 
 
 
         for (NettoyagesPoste poste : postesHier) {
+
+
+            // Vérifie si une poste identique (même nom + même catégorie) existe déjà pour aujourd'hui
+            boolean existeDeja = posteRepository
+                    .findFirstByNameOfPosteAndCategorieNettoyageAndCreatedDay(
+
+                            poste.getNameOfPoste(),
+                            poste.getCategorieNettoyage(),
+                            today
+                    )
+                    .isPresent();
+
+            if (existeDeja) {
+                continue; // ignore les doublons
+            }
+
+
+
+
+
+
+
+
             NettoyagesPoste copie = new NettoyagesPoste();
 
 
@@ -178,6 +200,8 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
             copie.setValide(false);
             copie.setLastModifiedDay(null);
             copie.setLastModifiedTime(null);
+            copie.setCreatedDay(LocalDate.now());
+            copie.setCreatedTime(LocalTime.now());
 
 
 

@@ -1,10 +1,14 @@
 package com.example.haccpbackend.nettoyagesPostes;
 
 
+import com.example.haccpbackend.modulPlanning.Planning;
+import com.example.haccpbackend.modulPlanning.PlanningCategorie;
+import com.example.haccpbackend.modulTepuratureFrigo.CategorieFrigo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
@@ -14,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/nettoyageposte")
@@ -77,26 +82,36 @@ public class NettoyagePosteController {
 
     }
 
-
-
     @PostMapping(value = "/addPoste")
-    public ResponseEntity<NettoyagesPoste> createPosteNettoyage(@Valid @RequestBody NettoyagesPoste nettoyagesPoste){
+    public ResponseEntity<?> createPosteNettoyage(@Valid @RequestBody NettoyagesPoste nettoyagesPoste,
+                                                  @RequestParam("categorieId") Long categorieId) {
 
+        CategorieNettoyage categorieNettoyage = categorieNettoyageRepository.findById(categorieId)
+                .orElseThrow(() -> new RuntimeException("Catégorie introuvable"));
 
-        NettoyagesPoste nettoyagesPoste1 = iServiceNettoyagePoste.createNettoyagePoste(nettoyagesPoste);
+        nettoyagesPoste.setCategorieNettoyage(categorieNettoyage);
 
-        if (nettoyagesPoste1 == null){
+        try {
+            Optional<NettoyagesPoste> existing = nettoyagePosteRepository
+                    .findFirstByNameOfPosteAndCategorieNettoyageAndCreatedDay(
+                            nettoyagesPoste.getNameOfPoste(),
+                            nettoyagesPoste.getCategorieNettoyage(),
+                            nettoyagesPoste.getCreatedDay());
 
+            if (existing.isPresent()) {
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body("Une poste avec ce nom existe déjà dans cette catégorie pour cette date.");
+            }
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            NettoyagesPoste saved = iServiceNettoyagePoste.createNettoyagePoste(nettoyagesPoste);
+            return ResponseEntity.ok(saved);
 
-
-
+        } catch (DataIntegrityViolationException ex) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("Une poste avec ce nom existe déjà dans cette catégorie pour cette date (vérification base).");
         }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(nettoyagesPoste1);
-
-
     }
 
 
@@ -107,7 +122,15 @@ public class NettoyagePosteController {
 
 
 
-            @PostMapping(value = "/add" , /*consumes = MediaType.MULTIPART_FORM_DATA_VALUE*/ consumes = {"multipart/form-data"})
+
+/*
+
+
+
+
+            @PostMapping(value = "/add" , */
+/*consumes = MediaType.MULTIPART_FORM_DATA_VALUE*//*
+ consumes = {"multipart/form-data"})
             public ResponseEntity<NettoyagesPoste> createPoste(
             @RequestPart("poste") String posteJson,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) throws IOException {
@@ -184,6 +207,7 @@ public class NettoyagePosteController {
     }
 
 
+*/
 
 
 
@@ -225,6 +249,8 @@ public class NettoyagePosteController {
 
     {
 
+        System.out.println("ID reçu dans le controller: " + id);
+
         try {
 
 
@@ -244,6 +270,7 @@ public class NettoyagePosteController {
 
 
         } catch (Exception e) {
+            System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 

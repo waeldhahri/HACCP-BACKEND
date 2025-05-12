@@ -133,8 +133,8 @@ public class UserContrtoller {
 
     @GetMapping("/fullname/{fullname}")
     @Transactional
-    public ResponseEntity<User> getUserByFullname(@PathVariable String fullname) {
-        Optional<User> fullnameUser = userRepository.findByFullName(fullname);
+    public ResponseEntity<List<User>> getUserByFullname(@PathVariable String fullname) {
+        Optional<List<User>> fullnameUser = userRepository.findByFullName(fullname);
 
         return fullnameUser
                 .map(ResponseEntity::ok)

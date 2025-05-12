@@ -47,7 +47,7 @@ public class PlanningCategorieController {
 
         if (planningCategories.isEmpty()){
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
 
         return ResponseEntity.ok(planningCategories);
