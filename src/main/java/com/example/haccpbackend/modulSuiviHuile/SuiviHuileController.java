@@ -1,15 +1,17 @@
 package com.example.haccpbackend.modulSuiviHuile;
 
 
+import com.example.haccpbackend.nettoyagesPostes.NettoyagePosteRequest;
+import com.example.haccpbackend.nettoyagesPostes.NettoyagesPoste;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,18 +43,14 @@ public class SuiviHuileController {
     }
 
 
-
-
-
     @GetMapping("/page")
     @Transactional
-    public Page<SuiviHuiles> findAllFriteuses(Pageable pageable){
+    public Page<SuiviHuiles> findAllFriteuses(Pageable pageable) {
 
 
         return suiviHuileRepository.findAllByOrderByIdDesc(pageable);
 
     }
-
 
 
     @GetMapping("/huileDejour")
@@ -74,7 +72,7 @@ public class SuiviHuileController {
 
     @GetMapping("/findByDate/{date}")
     @Transactional
-    public ResponseEntity<List<SuiviHuiles>> findFristeuseByDate(@PathVariable LocalDate date){
+    public ResponseEntity<List<SuiviHuiles>> findFristeuseByDate(@PathVariable LocalDate date) {
 
 
         List<SuiviHuiles> friteuseByDate = iServiceSuiviHuile.findFriteuseByDate(date);
@@ -90,13 +88,10 @@ public class SuiviHuileController {
         }
 
 
-
-
     }
 
 
-
-    // Modifier un fournisseur
+    // Modifier un friteuse
     @PutMapping("/{id}")
     public ResponseEntity<SuiviHuiles> updateFriteuse(@PathVariable Long id, @RequestBody SuiviHuiles newFriteuse) {
 
@@ -106,35 +101,13 @@ public class SuiviHuileController {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @PostMapping("/add")
-    public ResponseEntity<SuiviHuiles> createFriteuse(@Valid @RequestBody SuiviHuiles friteuse){
+    public ResponseEntity<SuiviHuiles> createFriteuse(@Valid @RequestBody SuiviHuiles friteuse) {
 
         SuiviHuiles friteuse1 = iServiceSuiviHuile.createFruiteuse(friteuse);
 
 
-        if (friteuse1 == null){
+        if (friteuse1 == null) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
@@ -147,14 +120,10 @@ public class SuiviHuileController {
     }
 
 
-
-
-
-
     @DeleteMapping("/{id}")
     @Transactional
     // @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Void> deleteFriteuse(@PathVariable Long id){
+    public ResponseEntity<Void> deleteFriteuse(@PathVariable Long id) {
 
 
         try {
@@ -164,8 +133,44 @@ public class SuiviHuileController {
             return ResponseEntity.noContent().build();
 
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+
+    }
+
+
+    @PutMapping(value = "/validateHuile/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<SuiviHuiles> validateHuile(@PathVariable Long id
+            , @RequestPart("huile") String suiviHuileJson , @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        System.out.println("ID reçu dans le controller: " + id);
+
+        try {
+
+
+
+            System.out.println(suiviHuileJson);
+
+
+
+            // Convertir le JSON en objet suiviHuileDTO
+            ObjectMapper objectMapper = new ObjectMapper();
+            SuiviHuileDto suiviHuileDto = objectMapper.readValue(suiviHuileJson, SuiviHuileDto.class);
+
+
+
+
+            // Appeler le service pour mettre à jour le friteuse
+            SuiviHuiles suiviHuiles1 = serviceSuiviHuile.validateHuile(id, suiviHuileDto, file);
+
+            return ResponseEntity.ok(suiviHuiles1);
+
+
+        } catch (Exception e) {
+            System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
@@ -176,4 +181,33 @@ public class SuiviHuileController {
 
 
 
+
+
+
+
+    @GetMapping("/imageAfter/{id}")
+    public ResponseEntity<byte[]> getFriteuseImage(@PathVariable Long id) {
+
+        SuiviHuiles suiviHuiles= suiviHuileRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Friteuse non trouvé"));
+
+
+        byte[] image = suiviHuiles.getImageOfFriteuseAfter();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaTypeFactory.getMediaType("image.jpg")
+                .orElse(MediaType.APPLICATION_OCTET_STREAM));
+        headers.setContentLength(image.length);
+
+        return new ResponseEntity<>(image, headers, HttpStatus.OK);
+    }
+
+
 }
+
+
+
+
+
+
+

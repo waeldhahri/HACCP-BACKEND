@@ -84,12 +84,12 @@ public class NettoyagesPoste {
     private void updateDateAndTime() {
         if (validAt != null) {
             this.lastModifiedDay = validAt.toLocalDate();
-            this.lastModifiedTime = validAt.toLocalTime().withNano(0);;
+            this.lastModifiedTime = validAt.toLocalTime().withNano(0);
         }
 
         if (dateOfCreation != null) {
             this.createdDay = dateOfCreation.toLocalDate();
-            this.createdTime = dateOfCreation.toLocalTime().withNano(0);;
+            this.createdTime = dateOfCreation.toLocalTime().withNano(0);
         }
     }
 

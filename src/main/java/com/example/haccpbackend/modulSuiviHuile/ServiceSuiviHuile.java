@@ -1,11 +1,18 @@
 package com.example.haccpbackend.modulSuiviHuile;
 
 
+import com.example.haccpbackend.nettoyagesPostes.CategorieNettoyage;
+import com.example.haccpbackend.nettoyagesPostes.NettoyagePosteRequest;
+import com.example.haccpbackend.nettoyagesPostes.NettoyagesPoste;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -36,12 +43,12 @@ public class ServiceSuiviHuile implements IServiceSuiviHuile{
 
     @Override
     public List<SuiviHuiles> findFriteuseDeJour() {
-        return suiviHuileRepository.findByDateOfCreation(LocalDate.now());
+        return suiviHuileRepository.findByCreatedDay(LocalDate.now());
     }
 
     @Override
     public List<SuiviHuiles> findFriteuseByDate(LocalDate date) {
-        return suiviHuileRepository.findByDateOfCreation(date);
+        return suiviHuileRepository.findByCreatedDay(date);
     }
 
     @Override
@@ -80,7 +87,7 @@ public class ServiceSuiviHuile implements IServiceSuiviHuile{
         // On récupère les tâches d’hier pour les répliquer
 
 
-        List<SuiviHuiles> suiviHuileHier = suiviHuileRepository.findByDateOfCreation(yesterday);
+        List<SuiviHuiles> suiviHuileHier = suiviHuileRepository.findByCreatedDay(yesterday);
 
 
 
@@ -90,7 +97,9 @@ public class ServiceSuiviHuile implements IServiceSuiviHuile{
             SuiviHuiles copie = new SuiviHuiles();
 
             copie.setNameOfFriteuse(suiviHuiles.getNameOfFriteuse());
-            copie.setDateOfCreation(LocalDate.now());
+            copie.setDateOfCreation(LocalDateTime.now());
+            copie.setCreatedDay(LocalDate.now());
+            copie.setCreatedTime(LocalTime.now());
             copie.setNote(null);
             //copie.setLastModifiedDay(null);
             //copie.setLastModifiedTime(null);
@@ -108,6 +117,52 @@ public class ServiceSuiviHuile implements IServiceSuiviHuile{
 
         }
     }
+
+
+
+
+
+    public SuiviHuiles  validateHuile(Long id, SuiviHuileDto suiviHuileDto, MultipartFile file) {
+
+
+        System.out.println("ID reçu dans le controller: " + id);
+
+        SuiviHuiles existingFriteuse = suiviHuileRepository.findById(id).orElseThrow(() -> new RuntimeException("Friteuse not found"));
+
+        existingFriteuse.setValide(true);
+        existingFriteuse.setNote(suiviHuileDto.getNote());
+
+
+
+
+        if (file != null && !file.isEmpty()) {
+            try {
+                byte[] imageBytes1 = file.getBytes();
+                existingFriteuse.setImageOfFriteuseAfter(imageBytes1);
+
+                // Générer l'URL complète de l'image
+                String imageUrl1 = ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/api/suiviHuile/")
+                        .path("/imageAfter/")
+                        .path(existingFriteuse.getId().toString())
+                        .toUriString();
+
+                existingFriteuse.setImageFriteuseUrl(imageUrl1);
+
+
+            } catch (IOException e) {
+                throw new RuntimeException("Erreur lors du téléchargement du fichier", e);
+            }
+        }
+
+
+
+        return suiviHuileRepository.save(existingFriteuse);
+
+
+
+    }
+
 
 
 }

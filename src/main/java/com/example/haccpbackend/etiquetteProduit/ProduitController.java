@@ -49,10 +49,13 @@ public class ProduitController {
             @RequestParam("dlc") boolean dlc,
             @RequestParam("categorieId") Long categorieId
     ) {
-        String urlS3 = s3Service.uploadFile(photo, "produits/" + photo.getOriginalFilename());
 
         CategorieProduit categorie = categorieProduitRepository.findById(categorieId)
                 .orElseThrow(() -> new RuntimeException("Catégorie introuvable"));
+
+        String urlS3 = s3Service.uploadFile(photo, "produits/" + photo.getOriginalFilename());
+
+
 
         Produit produit = new Produit();
         produit.setProduitName(nomProduit);

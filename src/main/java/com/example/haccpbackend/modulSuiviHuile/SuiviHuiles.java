@@ -22,12 +22,14 @@ public class SuiviHuiles {
     }
 
 
-    public SuiviHuiles(Long id, String nameOfFriteuse, LocalDate dateOfCreation, String note, String validePar,
-                       boolean valide, byte[] imageOfFriteuseAfter, String imageFriteuseUrl, LocalDateTime validAt,
-                       LocalDate lastModifiedDay, LocalTime lastModifiedTime) {
+    public SuiviHuiles(Long id, String nameOfFriteuse, LocalDateTime dateOfCreation, LocalDate createdDay
+            , LocalTime createdTime, String note, String validePar, boolean valide
+            , byte[] imageOfFriteuseAfter, String imageFriteuseUrl, LocalDateTime validAt, LocalDate lastModifiedDay, LocalTime lastModifiedTime) {
         this.id = id;
         this.nameOfFriteuse = nameOfFriteuse;
         this.dateOfCreation = dateOfCreation;
+        this.createdDay = createdDay;
+        this.createdTime = createdTime;
         this.note = note;
         this.validePar = validePar;
         this.valide = valide;
@@ -37,10 +39,6 @@ public class SuiviHuiles {
         this.lastModifiedDay = lastModifiedDay;
         this.lastModifiedTime = lastModifiedTime;
     }
-
-
-
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,8 +50,19 @@ public class SuiviHuiles {
 
 
     @Column(nullable = false )
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreatedDate
-    private LocalDate dateOfCreation;
+    private LocalDateTime dateOfCreation;
+
+
+
+    @Column(name = "createdDay")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate createdDay;
+
+    @Column(name = "createdTime")
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime createdTime;
 
 
     private String note;
@@ -93,6 +102,12 @@ public class SuiviHuiles {
             this.lastModifiedDay = validAt.toLocalDate();
             this.lastModifiedTime = validAt.toLocalTime().withNano(0);
         }
+        if (dateOfCreation != null) {
+            this.createdDay = dateOfCreation.toLocalDate();
+            this.createdTime = dateOfCreation.toLocalTime().withNano(0);;
+        }
+
+
     }
 
 
@@ -112,11 +127,11 @@ public class SuiviHuiles {
         this.nameOfFriteuse = nameOfFriteuse;
     }
 
-    public LocalDate getDateOfCreation() {
+    public LocalDateTime getDateOfCreation() {
         return dateOfCreation;
     }
 
-    public void setDateOfCreation(LocalDate dateOfCreation) {
+    public void setDateOfCreation(LocalDateTime dateOfCreation) {
         this.dateOfCreation = dateOfCreation;
     }
 
@@ -182,5 +197,22 @@ public class SuiviHuiles {
 
     public void setLastModifiedTime(LocalTime lastModifiedTime) {
         this.lastModifiedTime = lastModifiedTime;
+    }
+
+
+    public LocalDate getCreatedDay() {
+        return createdDay;
+    }
+
+    public void setCreatedDay(LocalDate createdDay) {
+        this.createdDay = createdDay;
+    }
+
+    public LocalTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(LocalTime createdTime) {
+        this.createdTime = createdTime;
     }
 }

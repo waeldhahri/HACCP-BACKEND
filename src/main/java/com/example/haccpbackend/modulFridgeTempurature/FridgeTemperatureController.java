@@ -19,12 +19,12 @@ public class FridgeTemperatureController {
     private FridgeTemperatureService service;
 
 
-
+/*
     @PostMapping("/record")
     public ResponseEntity<FridgeTemperature> recordTemperature(@RequestParam String fridgeName, @RequestParam double temperature) {
         return ResponseEntity.ok(service.saveTemperature(fridgeName, temperature));
     }
-
+*/
 
 
 }
