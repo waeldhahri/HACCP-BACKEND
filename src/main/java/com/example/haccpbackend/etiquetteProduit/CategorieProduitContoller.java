@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class CategorieProduitContoller {
 
 
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<CategorieProduit> createCategorieProduit(@Valid @RequestBody CategorieProduit categorieProduit){
 
 
@@ -42,6 +44,7 @@ public class CategorieProduitContoller {
 
 
     @GetMapping("/findAllCategories")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<CategorieProduit>> findAllCategorieProduit(){
 
         List<CategorieProduit> categorieProduits=categorieProduitRepository.findAll();
@@ -64,6 +67,7 @@ public class CategorieProduitContoller {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<Void> deleteCategorieProduit(@PathVariable Long id){
 

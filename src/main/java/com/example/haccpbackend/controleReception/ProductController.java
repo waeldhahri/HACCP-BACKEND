@@ -406,6 +406,7 @@ public class ProductController {
 
 
     @GetMapping("/barcode/{barcode}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<Product> getProductByBarcode(@PathVariable String barcode) {
         return iServiceProduct.getProductByBarcode(barcode)

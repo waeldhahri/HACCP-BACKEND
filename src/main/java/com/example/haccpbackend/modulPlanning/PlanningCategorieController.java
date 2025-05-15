@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class PlanningCategorieController {
 
 
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<PlanningCategorie> createPlanningCategorie(@Valid @RequestBody PlanningCategorie planningCategorie){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(planningCategorieRepository.save(planningCategorie));
@@ -41,6 +43,7 @@ public class PlanningCategorieController {
 
 
     @GetMapping("/findAllCategories")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<PlanningCategorie>> findAllPlanningCategorie(){
 
         List<PlanningCategorie> planningCategories=planningCategorieRepository.findAll();
@@ -56,6 +59,7 @@ public class PlanningCategorieController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<Void> deletePlanningCategorie(@PathVariable Long id){
 

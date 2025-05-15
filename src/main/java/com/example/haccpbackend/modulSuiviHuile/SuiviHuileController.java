@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,6 +45,7 @@ public class SuiviHuileController {
 
 
     @GetMapping("/page")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public Page<SuiviHuiles> findAllFriteuses(Pageable pageable) {
 
@@ -54,6 +56,7 @@ public class SuiviHuileController {
 
 
     @GetMapping("/huileDejour")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<List<SuiviHuiles>> findFriteuseDeJour() {
 
@@ -71,6 +74,7 @@ public class SuiviHuileController {
 
 
     @GetMapping("/findByDate/{date}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<List<SuiviHuiles>> findFristeuseByDate(@PathVariable LocalDate date) {
 
@@ -93,6 +97,7 @@ public class SuiviHuileController {
 
     // Modifier un friteuse
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<SuiviHuiles> updateFriteuse(@PathVariable Long id, @RequestBody SuiviHuiles newFriteuse) {
 
         return ResponseEntity.ok(iServiceSuiviHuile.updateFriteuse(id, newFriteuse));
@@ -102,6 +107,7 @@ public class SuiviHuileController {
 
 
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<SuiviHuiles> createFriteuse(@Valid @RequestBody SuiviHuiles friteuse) {
 
         SuiviHuiles friteuse1 = iServiceSuiviHuile.createFruiteuse(friteuse);
@@ -121,6 +127,7 @@ public class SuiviHuileController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     // @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteFriteuse(@PathVariable Long id) {
@@ -143,6 +150,7 @@ public class SuiviHuileController {
 
 
     @PutMapping(value = "/validateHuile/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<SuiviHuiles> validateHuile(@PathVariable Long id
             , @RequestPart("huile") String suiviHuileJson , @RequestPart(value = "file", required = false) MultipartFile file) {
 
@@ -186,6 +194,7 @@ public class SuiviHuileController {
 
 
     @GetMapping("/imageAfter/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<byte[]> getFriteuseImage(@PathVariable Long id) {
 
         SuiviHuiles suiviHuiles= suiviHuileRepository.findById(id)

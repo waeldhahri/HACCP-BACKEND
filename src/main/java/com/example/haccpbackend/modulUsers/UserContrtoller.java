@@ -59,6 +59,7 @@ public class UserContrtoller {
 
 
     @GetMapping("/page")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public Page<User> getAllUsersByPage(Pageable pageable){
 
@@ -70,6 +71,7 @@ public class UserContrtoller {
 
 
     @GetMapping("/email/{email}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email){
@@ -93,6 +95,7 @@ public class UserContrtoller {
 
 
     @GetMapping("/role/{role}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
 //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getUserByRole3(@PathVariable String role) {
@@ -121,6 +124,7 @@ public class UserContrtoller {
 
 
     @PostMapping("")
+    @PreAuthorize("hasAuthority('ADMIN')")
     //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user){
 
@@ -132,6 +136,7 @@ public class UserContrtoller {
 
 
     @GetMapping("/fullname/{fullname}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<List<User>> getUserByFullname(@PathVariable String fullname) {
         Optional<List<User>> fullnameUser = userRepository.findByFullName(fullname);
@@ -154,6 +159,7 @@ public class UserContrtoller {
 
 
     @GetMapping("/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> findUserById(@PathVariable Long userId){
@@ -180,6 +186,7 @@ public class UserContrtoller {
 
 
     @DeleteMapping("/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
@@ -208,6 +215,7 @@ public class UserContrtoller {
 
 
     @PutMapping("update/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     //@PreAuthorize("hasAuthority('ADMIN')")
     //@PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<User> updateUser(@PathVariable Long userId , @Valid @RequestBody User user ){
@@ -232,6 +240,7 @@ public class UserContrtoller {
 
     // Étape 1: Demande de réinitialisation (envoi email)
     @PostMapping("/forgot-password")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
         try {
@@ -248,6 +257,7 @@ public class UserContrtoller {
 
     // Étape 2: Réinitialisation du mot de passe
     @PostMapping("/reset-password")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
         try {
@@ -262,6 +272,7 @@ public class UserContrtoller {
 
 
     @GetMapping("/{id}/image")
+    @PreAuthorize("hasAuthority('ADMIN')")
     //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
 

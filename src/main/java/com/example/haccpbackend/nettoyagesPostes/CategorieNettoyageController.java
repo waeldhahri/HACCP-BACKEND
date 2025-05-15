@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class CategorieNettoyageController {
 
 
     @PostMapping("")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<CategorieNettoyage> createCategorieNettoyage(@Valid @RequestBody CategorieNettoyage categorieNettoyage){
 
 
@@ -43,6 +45,7 @@ public class CategorieNettoyageController {
 
 
     @GetMapping("/findAllCategories")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<CategorieNettoyage>> findAllCategorieNettoyage(){
 
         List<CategorieNettoyage> categorieNettoyages=iServiceCategorieNettoyage.findAllCategoriesNettoyage();
@@ -60,6 +63,7 @@ public class CategorieNettoyageController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<Void> deleteCategorieNettoyage(@PathVariable Long id){
 

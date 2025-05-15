@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,6 +41,7 @@ public class DocumentController {
 
 
     @PostMapping("/upload")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Document> uploadDocument(@RequestParam("file") MultipartFile file,
                                                    @RequestParam(value = "keywords", required = false) String keywords) {
         try {
@@ -52,22 +54,26 @@ public class DocumentController {
 
 
     @GetMapping("")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<Document>> getAllDocuments() {
         return ResponseEntity.ok(documentService.getAllDocuments());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Document> getDocumentById(@PathVariable Long id) {
         Optional<Document> document = documentService.getDocumentById(id);
         return document.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<Document>> searchDocuments(@RequestParam("keyword") String keyword) {
         return ResponseEntity.ok(documentService.searchByKeyword(keyword));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteDocument(@PathVariable Long id) {
         try {
             boolean deleted = documentService.deleteDocument(id);
@@ -79,6 +85,7 @@ public class DocumentController {
 
 
     @GetMapping("/download/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Resource> downloadDocument(@PathVariable Long id)  throws IOException {
         Optional<Document> document = documentService.getDocumentById(id);
         if (document.isPresent()) {

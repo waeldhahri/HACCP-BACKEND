@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -35,6 +36,7 @@ public class PlanningController {
 
 
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> createPlanning(
             @Valid @RequestBody Planning planning,
             @RequestParam("categorieId") Long categorieId) {
@@ -70,6 +72,7 @@ public class PlanningController {
 
 
     @GetMapping("/today")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<Planning>> getPlanningsDuJour() {
         LocalDate today = LocalDate.now();
         List<Planning> plannings = planningRepository.findByCreatedDay(today);
@@ -80,6 +83,7 @@ public class PlanningController {
 
 
     @GetMapping("/by-day")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<Planning>> getPlanningsParJour(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         List<Planning> plannings = planningRepository.findByCreatedDay(date);
 
@@ -98,6 +102,7 @@ public class PlanningController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     // @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deletePlanning(@PathVariable Long id){

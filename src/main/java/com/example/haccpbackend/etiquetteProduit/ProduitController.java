@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,6 +43,7 @@ public class ProduitController {
 
 
     @PostMapping(value = "/add" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Produit> ajouterProduit(
             @RequestParam("photo") MultipartFile photo,
             @RequestParam("produitname") String nomProduit,
@@ -75,6 +77,7 @@ public class ProduitController {
 
 
     @GetMapping("/photo-by-date")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<String>> getPhotoUrl(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
         List<Produit> produits = produitRepository.findAllByDateDeStockage(date);
@@ -97,6 +100,7 @@ public class ProduitController {
 
 
     @GetMapping("/categorie/{categorieName}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<Produit>> findProduitByCategorie(@PathVariable String categorieName){
 
 

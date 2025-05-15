@@ -32,6 +32,7 @@ public class FournisseurControlleur {
 
 
     @GetMapping("")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<Fournisseur> getAllFournisseur(){
 
         return fournisseurService.getAllFourniseurs();

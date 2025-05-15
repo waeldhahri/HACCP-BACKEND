@@ -58,6 +58,7 @@ public class FrigoController {
 
 
     @GetMapping("/page")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public Page<Frigo> findAllFrigos(Pageable pageable){
 
@@ -66,6 +67,7 @@ public class FrigoController {
     }
 
     @GetMapping("/categorie/{categorieName}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<List<Frigo>> findFrigoByCategorie(@PathVariable String categorieName){
 
@@ -84,6 +86,7 @@ public class FrigoController {
 
 
     @PostMapping(value = "/add" , /*consumes = MediaType.MULTIPART_FORM_DATA_VALUE*/ consumes = {"multipart/form-data"})
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<Frigo> createFrigo(
             @RequestPart("frigo") String frigoJson,
@@ -160,6 +163,7 @@ public class FrigoController {
 
 
     @GetMapping("/image/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<byte[]> getFrigoImage(@PathVariable Long id) {
         Frigo frigo = frigoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Frigo non trouvé"));
@@ -181,6 +185,7 @@ public class FrigoController {
 
 
     @PutMapping(value = "/update/{id}", consumes = {"multipart/form-data"})
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<Frigo> updateFrigo(@PathVariable Long id
             , @RequestPart("frigo") String frigoJson , @RequestPart(value = "file", required = false) MultipartFile file)
@@ -219,6 +224,7 @@ public class FrigoController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
    // @PreAuthorize("hasAuthority('ADMIN')")
         public ResponseEntity<Void> deleteFrigo(@PathVariable Long id){

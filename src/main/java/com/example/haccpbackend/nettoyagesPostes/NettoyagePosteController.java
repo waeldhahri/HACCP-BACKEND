@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -54,6 +55,7 @@ public class NettoyagePosteController {
 
 
     @GetMapping("/page")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     public Page<NettoyagesPoste> findAllNettoyagesPoste(Pageable pageable){
 
@@ -68,6 +70,7 @@ public class NettoyagePosteController {
 
 
     @GetMapping("/categorie/{categorieName}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<NettoyagesPoste>> findNettoyagesPosteByCategorie(@PathVariable String categorieName){
 
         List<NettoyagesPoste> nettoyagesPostes=serviceNettoyagePoste.findNettoyagesPosteByCategorie(categorieName);
@@ -83,6 +86,7 @@ public class NettoyagePosteController {
     }
 
     @PostMapping(value = "/addPoste")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> createPosteNettoyage(@Valid @RequestBody NettoyagesPoste nettoyagesPoste,
                                                   @RequestParam("categorieId") Long categorieId) {
 
@@ -221,6 +225,7 @@ public class NettoyagePosteController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     // @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deletePost(@PathVariable Long id){
@@ -243,6 +248,7 @@ public class NettoyagePosteController {
 
 
     @PutMapping(value = "/validatePost/{id}", consumes = {"multipart/form-data"})
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<NettoyagesPoste> validatePost(@PathVariable Long id
             , @RequestPart("poste") String posteJson , @RequestPart(value = "file1", required = false) MultipartFile file1 ,
                                                         @RequestPart(value = "file2", required = false) MultipartFile file2)
@@ -281,6 +287,7 @@ public class NettoyagePosteController {
 
 
     @GetMapping("/imageBefore/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<byte[]> getPosteBeforeImage(@PathVariable Long id) {
 
         NettoyagesPoste nettoyagesPoste= nettoyagePosteRepository.findById(id)
@@ -299,6 +306,7 @@ public class NettoyagePosteController {
 
 
     @GetMapping("/imageAfter/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<byte[]> getPosteAfterImage(@PathVariable Long id) {
 
         NettoyagesPoste nettoyagesPoste= nettoyagePosteRepository.findById(id)
