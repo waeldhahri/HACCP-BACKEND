@@ -1,4 +1,4 @@
-package com.example.haccpbackend.modulProducts;
+package com.example.haccpbackend.controleReception;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class ServiceProduct implements IServiceProduct {
     }
 
     @Override
-    public Optional<List<Product>> getProductByProduit(String produit) {
+    public List<Product> getProductByProduit(String produit) {
         return productRepository.findByProduit(produit);
     }
 
@@ -53,7 +53,7 @@ public class ServiceProduct implements IServiceProduct {
     }
 
     @Override
-    public Optional<List<Product>> getProductByFournisseurId(Long fournisseurId) {
+    public List<Product> getProductByFournisseurId(Long fournisseurId) {
        return productRepository.findByFournisseurs_Id(fournisseurId);
     }
 

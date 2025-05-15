@@ -1,7 +1,5 @@
 package com.example.haccpbackend.modulTepuratureFrigo;
 
-import com.example.haccpbackend.modulProducts.Product;
-
 import java.util.List;
 
 public interface IServiceCategorieFrigo {

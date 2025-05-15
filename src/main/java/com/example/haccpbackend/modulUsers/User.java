@@ -1,9 +1,8 @@
 package com.example.haccpbackend.modulUsers;
 
 
-import com.example.haccpbackend.modulProducts.Product;
+import com.example.haccpbackend.controleReception.Product;
 
-import com.example.haccpbackend.modulTepuratureFrigo.Frigo;
 import com.example.haccpbackend.registerJWT.Token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -11,17 +10,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.security.auth.Subject;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,9 +1,8 @@
-package com.example.haccpbackend.modulProducts;
+package com.example.haccpbackend.controleReception;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,11 +15,11 @@ public interface IServiceProduct {
 
     public List<Product> getProductByDate(LocalDate dateDeCreation);
 
-    public Optional<List<Product>> getProductByProduit(String produit);
+    public List<Product> getProductByProduit(String produit);
 
     public Optional<List<Product>> getProductByQuantite(Double quantite);
 
-    public Optional<List<Product>> getProductByFournisseurId(Long fournisseurId);
+    public List<Product> getProductByFournisseurId(Long fournisseurId);
 
 
     public Product updateproduct(Long id, ProductDTO productDTO, MultipartFile file);

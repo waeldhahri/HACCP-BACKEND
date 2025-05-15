@@ -1,6 +1,7 @@
 package com.example.haccpbackend.registerJWT;
 
 import com.example.haccpbackend.modulUsers.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
 

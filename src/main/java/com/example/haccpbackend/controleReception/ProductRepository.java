@@ -1,4 +1,4 @@
-package com.example.haccpbackend.modulProducts;
+package com.example.haccpbackend.controleReception;
 
 
 import com.example.haccpbackend.modulFournisseur.Fournisseur;
@@ -18,7 +18,7 @@ public interface ProductRepository  extends JpaRepository<Product,Long> {
 
    List<Product> findByDate(LocalDate date);
 
-   Optional<List<Product>> findByProduit (String produit) ;
+  List<Product> findByProduit (String produit) ;
 
 
 
@@ -30,7 +30,7 @@ public interface ProductRepository  extends JpaRepository<Product,Long> {
 
 
 
-   Optional<List<Product>> findByFournisseurs_Id(Long fournisseur_id);
+   List<Product> findByFournisseurs_Id(Long fournisseur_id);
 
 
 

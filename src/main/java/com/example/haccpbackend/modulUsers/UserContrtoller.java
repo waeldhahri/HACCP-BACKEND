@@ -1,7 +1,6 @@
 package com.example.haccpbackend.modulUsers;
 
 
-import com.example.haccpbackend.modulProducts.Product;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -42,7 +41,8 @@ public class UserContrtoller {
     }
 
     @GetMapping("")
-    //@PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Transactional
     public ResponseEntity<List<User>> getAllUsers(){
 
 

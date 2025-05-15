@@ -16,8 +16,7 @@ public class FournisseurService {
     @Autowired
     private FournisseurRepository fournisseurRepository;
 
-    @Autowired
-    private FournisseurInteractionRepo fournisseurInteractionRepo;
+
 
 
 
@@ -35,8 +34,11 @@ public class FournisseurService {
 
 
     public Fournisseur getFournisseurById(Long id){
+
         return fournisseurRepository.findById(id).get();
-    }
+
+        }
+
 
 
 
@@ -51,8 +53,8 @@ public class FournisseurService {
             fournisseur.setEmail(newFournisseur.getEmail());
             fournisseur.setPhone(newFournisseur.getPhone());
             fournisseur.setAddress(newFournisseur.getAddress());
-            fournisseur.setProductsFournisseur(newFournisseur.getProductsFournisseur());
-            fournisseur.setContractDetails(newFournisseur.getContractDetails());
+
+
 
 
 
@@ -67,7 +69,7 @@ public class FournisseurService {
         fournisseurRepository.delete(fournisseur);
     }
 
-
+/*
 
     //ajouter une interaction
     public FournisseurInteraction addInteraction ( Long id , FournisseurInteraction interaction){
@@ -92,7 +94,7 @@ public class FournisseurService {
     }
 
 
-
+*/
 
 
 

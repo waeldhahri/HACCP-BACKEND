@@ -1,4 +1,4 @@
-package com.example.haccpbackend.modulProducts;
+package com.example.haccpbackend.controleReception;
 
 import com.example.haccpbackend.modulFournisseur.Fournisseur;
 import com.example.haccpbackend.modulUsers.User;
@@ -6,14 +6,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 
 
 @Entity
@@ -60,6 +56,7 @@ public class Product {
 
 
     @Column(name = "heure de Livraison " , nullable = false)
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime heureDeLivraison;
 
 
@@ -85,6 +82,7 @@ public class Product {
 
 
     @Column(name = "Heure de Stockage" , nullable = false)
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime heureDeStockage;
 
 
@@ -278,5 +276,6 @@ public class Product {
     public void setBarcode(String barcode) {
         this.barcode = barcode;
     }
+
 }
 

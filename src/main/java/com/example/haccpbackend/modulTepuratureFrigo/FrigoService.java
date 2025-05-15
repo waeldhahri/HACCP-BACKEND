@@ -1,8 +1,6 @@
 package com.example.haccpbackend.modulTepuratureFrigo;
 
 
-import com.example.haccpbackend.modulProducts.Product;
-import com.example.haccpbackend.modulProducts.ProductDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;

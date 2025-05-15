@@ -1,4 +1,6 @@
-package com.example.haccpbackend.modulProducts;
+package com.example.haccpbackend.controleReception;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -10,6 +12,9 @@ public class ProductDTO {
 
 
 
+    private Long fournisseurid;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date ;
 
 
@@ -50,12 +55,10 @@ public class ProductDTO {
     private String imageUrl; // URL de l'image
 
 
-
-
-
-    public ProductDTO(LocalDate date, String produit, String numeroDeBonLivraison, String numeroTCamion,
-                      String numeroPropreteCamion, LocalTime heureDeLivraison, String tDeProduit, boolean integrite,
-                      String dlc, String numeroDeLot, Double quantite, LocalTime heureDeStockage, String signature, String barcode, String imageUrl) {
+    public ProductDTO(Long fournisseur_id, LocalDate date, String produit, String numeroDeBonLivraison, String numeroTCamion,
+                      String numeroPropreteCamion, LocalTime heureDeLivraison, String tDeProduit, boolean integrite, String dlc,
+                      String numeroDeLot, Double quantite, LocalTime heureDeStockage, String signature, String barcode, String imageUrl) {
+        this.fournisseurid = fournisseur_id;
         this.date = date;
         this.produit = produit;
         this.numeroDeBonLivraison = numeroDeBonLivraison;
@@ -72,7 +75,6 @@ public class ProductDTO {
         this.barcode = barcode;
         this.imageUrl = imageUrl;
     }
-
 
     public LocalDate getDate() {
         return date;
@@ -193,4 +195,15 @@ public class ProductDTO {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+
+    public Long getFournisseurid() {
+        return fournisseurid;
+    }
+
+    public void setFournisseur_id(Long fournisseurid) {
+        this.fournisseurid = fournisseurid;
+    }
+
+
 }

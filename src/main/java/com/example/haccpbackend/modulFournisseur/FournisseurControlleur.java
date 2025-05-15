@@ -1,18 +1,15 @@
 package com.example.haccpbackend.modulFournisseur;
 
 
-import com.example.haccpbackend.modulProducts.Product;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/fournisseurs")
@@ -41,7 +38,8 @@ public class FournisseurControlleur {
 
     }
 
-    @PostMapping("")
+    @PostMapping("/add")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Fournisseur> createFournisseur(@Valid @RequestBody Fournisseur fournisseur){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(fournisseurService.addFournisseur(fournisseur));
@@ -49,6 +47,7 @@ public class FournisseurControlleur {
 
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Fournisseur> findFournisseurById(@PathVariable Long id){
 
 
@@ -68,6 +67,7 @@ public class FournisseurControlleur {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteFournisseur(@PathVariable Long id){
@@ -87,6 +87,7 @@ public class FournisseurControlleur {
 
     // Modifier un fournisseur
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Fournisseur> updateFournisseur(@PathVariable Long id, @RequestBody Fournisseur fournisseur) {
 
         return ResponseEntity.ok(fournisseurService.updateFournisseur(id , fournisseur));
@@ -96,7 +97,7 @@ public class FournisseurControlleur {
 
 
 
-
+/*
 
     // Ajouter une interaction pour un fournisseur
     @PostMapping("/{id}/interactions")
@@ -117,5 +118,5 @@ public class FournisseurControlleur {
 
         //return ResponseEntity.ok(supplierService.getSupplierInteractions(id));
     }
-
+*/
 }

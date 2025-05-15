@@ -1,7 +1,8 @@
 package com.example.haccpbackend.modulFournisseur;
 
 
-import com.example.haccpbackend.modulProducts.Product;
+import com.example.haccpbackend.controleReception.Product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -26,17 +27,17 @@ public class Fournisseur {
 
 
     @Lob
+    @JsonIgnore
     private byte[] contractDetails;
 
 
     @OneToMany(mappedBy = "fournisseurs" , cascade = CascadeType.ALL , orphanRemoval = true)
     @JsonIgnoreProperties("fournisseurs")
+    @JsonIgnore
     private List<Product> productsFournisseur;
 
 
-    @OneToMany(mappedBy = "fournisseurs" , cascade = CascadeType.ALL , orphanRemoval = true)
-    @JsonIgnoreProperties("fournisseurs")
-    private List<FournisseurInteraction> fournisseurInteractionList ;
+
 
 
     public Fournisseur(Long id, String name, String email, String phone, String address, byte[] contractDetails,

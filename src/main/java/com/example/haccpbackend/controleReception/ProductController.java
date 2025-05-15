@@ -1,10 +1,12 @@
-package com.example.haccpbackend.modulProducts;
+package com.example.haccpbackend.controleReception;
 
 
+import com.example.haccpbackend.modulFournisseur.Fournisseur;
+import com.example.haccpbackend.modulFournisseur.FournisseurRepository;
+import com.example.haccpbackend.modulTepuratureFrigo.CategorieFrigo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.hibernate.validator.internal.util.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +20,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,17 +42,22 @@ public class ProductController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private FournisseurRepository fournisseurRepository;
 
 
-    public ProductController( IServiceProduct iServiceProduct , ObjectMapper objectMapper) {
-
+    public ProductController(IServiceProduct iServiceProduct, ProductRepository productRepository
+            , ServiceProduct serviceProduct, ObjectMapper objectMapper, FournisseurRepository fournisseurRepository) {
         this.iServiceProduct = iServiceProduct;
+        this.productRepository = productRepository;
+        this.serviceProduct = serviceProduct;
         this.objectMapper = objectMapper;
-
+        this.fournisseurRepository = fournisseurRepository;
     }
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @Transactional
     public List<Product> getAllProducts(){
 
         return iServiceProduct.getAllproducts();
@@ -61,6 +67,8 @@ public class ProductController {
 
 
     @GetMapping("/page")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Transactional
     public Page<Product> getAllProduct(Pageable pageable){
 
         return productRepository.findAllByOrderByIdProduitDesc(pageable);
@@ -97,11 +105,11 @@ public class ProductController {
 
 
 
-    @PostMapping(value = "", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/add", consumes = {"multipart/form-data"})
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Product> createProduct(/*@Valid @RequestBody Product product*/
             @RequestPart("product") String productJson ,
-             @RequestPart(value = "file", required = false) MultipartFile file){
+             @RequestPart(value = "file", required = false) MultipartFile file) throws IOException{
 
 
         try {
@@ -109,6 +117,12 @@ public class ProductController {
             @Valid
             // Convertir JSON en objet ProductDTO
             ProductDTO productDTO = objectMapper.readValue(productJson, ProductDTO.class);
+
+
+            // Récupère la fournisseur
+            Fournisseur fournisseur = fournisseurRepository.findById(productDTO.getFournisseurid())
+                    .orElseThrow(() -> new RuntimeException("Fourniseur non trouvée"));
+
 
             // Créer une nouvelle entité Product
             @Valid
@@ -126,12 +140,16 @@ public class ProductController {
            product.setNumeroDeLot(productDTO.getNumeroDeLot());
            product.setQuantite(productDTO.getQuantite());
            product.setHeureDeStockage(productDTO.getHeureDeStockage());
+           product.setFournisseurs(fournisseur);
 
 
 
 
 
             product.setBarcode(productDTO.getBarcode());
+
+
+            Product savedproduct = productRepository.save(product);
 
 
             // Gérer l'image
@@ -163,7 +181,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
 
 
-           // return ResponseEntity.status(HttpStatus.CREATED).body(iServiceProduct.createproduct(product));
+
 
         }
         catch (IOException e) {
@@ -178,6 +196,7 @@ public class ProductController {
 
 
     @GetMapping("/{id}/image")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
 
         Optional<Product> productOptional =productRepository.findById(id);
@@ -233,6 +252,7 @@ public class ProductController {
 
     @GetMapping("/date/{date}")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @Transactional
     public ResponseEntity<List<Product>> findProductBydate(@PathVariable String date){
 
 
@@ -264,6 +284,7 @@ public class ProductController {
 
     @GetMapping("/quantite/{quantite}")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @Transactional
     public ResponseEntity<List<Product>> findProductByQuantite(@PathVariable Double quantite){
 
         return iServiceProduct.getProductByQuantite(quantite).map(ResponseEntity::ok)
@@ -274,21 +295,44 @@ public class ProductController {
 
     @GetMapping("/by-fournisseur/{fournisseurId}")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @Transactional
     public ResponseEntity<List<Product>> getProductsByFournisseur(@PathVariable Long fournisseurId){
 
-        return iServiceProduct.getProductByFournisseurId(fournisseurId)
-                .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+
+        List<Product> products = iServiceProduct.getProductByFournisseurId(fournisseurId);
+
+
+        if (products.isEmpty()){
+
+            return ResponseEntity.notFound().build();
+
+        } else {
+
+            return ResponseEntity.ok(products);
+
+        }
+
+
     }
 
 
 
     @GetMapping("/produit/{produit}")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @Transactional
     public ResponseEntity<List<Product>> findProductByProduit(@PathVariable String produit){
 
+        List<Product> products = iServiceProduct.getProductByProduit(produit);
 
-        return iServiceProduct.getProductByProduit(produit).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        if (products.isEmpty()){
+
+            return ResponseEntity.notFound().build();
+
+        } else {
+
+            return ResponseEntity.ok(products);
+
+        }
 
     }
 
@@ -301,9 +345,19 @@ public class ProductController {
 
         //sessionRepository.clearEmployeeReferences(userId);
 
+        try {
+
+
+
         iServiceProduct.deleteproduct(iServiceProduct.findproductById(id));
 
         return ResponseEntity.noContent().build();
+
+        }
+        catch (Exception e){
+
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 
@@ -352,6 +406,7 @@ public class ProductController {
 
 
     @GetMapping("/barcode/{barcode}")
+    @Transactional
     public ResponseEntity<Product> getProductByBarcode(@PathVariable String barcode) {
         return iServiceProduct.getProductByBarcode(barcode)
                 .map(ResponseEntity::ok)
