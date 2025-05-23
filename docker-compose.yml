@@ -5,6 +5,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
+
     container_name: haccp-postgres
     environment:
       POSTGRES_DB: HACCP
@@ -13,15 +14,14 @@ services:
 
       POSTGRES_PORT: 5432  # Ou gardez le port par défaut
 
-    ports:
-      - "5433:5432"
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - haccp-network
+
 
   backend:
-    build: .
+    image: haccp-backend
+    #build: .
     container_name: haccp-backend
     ports:
      - "8080:8080"
@@ -32,15 +32,12 @@ services:
 
       AWS_REGION: eu-west-3
       AWS_S3_BUCKET_NAME: kh-haccp-hp
-      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+     # AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+     # AWS_SECRET_KEY: ${AWS_SECRET_KEY}
     depends_on:
       - postgres
-    networks:
-      - haccp-network
+
 
 volumes:
   postgres_data:
 
-networks:
-  haccp-network:
