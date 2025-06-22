@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -69,13 +70,13 @@ public class FrigoController {
     @GetMapping("/categorie/{categorieName}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
-    public ResponseEntity<List<Frigo>> findFrigoByCategorie(@PathVariable String categorieName){
+    public ResponseEntity<?> findFrigoByCategorie(@PathVariable String categorieName){
 
 
         List<Frigo> frigos = frigoService.findFrigoByCategorie(categorieName);
 
         if (frigos.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.ok(Collections.emptyMap());
         }
 
         return ResponseEntity.ok(frigos);
@@ -233,7 +234,7 @@ public class FrigoController {
         try {
 
             iServiceFrigo.deleteFrigo(frigoRepository.findById(id).get());
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
 
         } catch (Exception e){
 

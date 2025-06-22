@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,14 +44,14 @@ public class UserContrtoller {
     @GetMapping("")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
-    public ResponseEntity<List<User>> getAllUsers(){
+    public ResponseEntity<?> getAllUsers(){
 
 
         List<User> users = iServiceUser.getAllUsers();
         if (users != null && !users.isEmpty()) {
             return ResponseEntity.ok(users);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(Collections.emptyMap());
         }
 
 
@@ -74,7 +75,7 @@ public class UserContrtoller {
     @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     //@PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email){
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email){
 
 
         User emailuser = iServiceUser.findUserByEmail(email);
@@ -84,7 +85,7 @@ public class UserContrtoller {
             return ResponseEntity.ok(iServiceUser.findUserByEmail(email));
         } else {
 
-             return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(Collections.emptyMap());
 
         }
 
@@ -162,7 +163,7 @@ public class UserContrtoller {
     @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
     //@PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<User> findUserById(@PathVariable Long userId){
+    public ResponseEntity<?> findUserById(@PathVariable Long userId){
 
 
 
@@ -174,7 +175,7 @@ public class UserContrtoller {
 
         } else {
 
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(Collections.emptyMap());
 
         }
 
@@ -199,7 +200,7 @@ public class UserContrtoller {
 
         if (optionalUser.isPresent()){
             iServiceUser.deleteUser(optionalUser.get());
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
 
         } else {
 
@@ -274,12 +275,12 @@ public class UserContrtoller {
     @GetMapping("/{id}/image")
     @PreAuthorize("hasAuthority('ADMIN')")
     //@PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
+    public ResponseEntity<?> getImage(@PathVariable Long id) {
 
         Optional<User> userOptional=userRepository.findById(id);
 
         if (userOptional.isEmpty() || userOptional.get().getImageOfUser() == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.ok(Collections.emptyMap());
         }
 
         return ResponseEntity.ok()

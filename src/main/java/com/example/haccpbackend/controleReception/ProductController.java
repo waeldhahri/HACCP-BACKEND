@@ -20,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -202,7 +203,7 @@ public class ProductController {
         Optional<Product> productOptional =productRepository.findById(id);
         Optional<Product> productOptional2 =productRepository.findById(id);
 
-       // Optional<Product> productOptional = iServiceProduct.findproductById(id);
+
         if (productOptional.isEmpty() || productOptional.get().getImageOfProduct() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -224,13 +225,15 @@ public class ProductController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Product> findProductById(@PathVariable Long id){
+    public ResponseEntity<?> findProductById(@PathVariable Long id){
 
         Product product = iServiceProduct.findproductById(id);
 
         if (product == null) {
-            return ResponseEntity.notFound().build();
+            // Retourner HTTP 200 avec un JSON vide : {}
+            return ResponseEntity.ok(Collections.emptyMap());
         }
+
 
         // Générer l'URL complète de l'image
         String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -253,28 +256,30 @@ public class ProductController {
     @GetMapping("/date/{date}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
-    public ResponseEntity<List<Product>> findProductBydate(@PathVariable String date){
+    public ResponseEntity<?> findProductBydate(@PathVariable String date){
 
 
-        try {
+
             // Conversion de String → LocalDate avec le format dd-MM-yyyy
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             LocalDate localDate = LocalDate.parse(date, formatter);
 
             List<Product> products = iServiceProduct.getProductByDate(localDate);
-            return products.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(products);
 
+        if (products.isEmpty()) {
+            // Retourner HTTP 200 avec un JSON vide : {}
+            return ResponseEntity.ok(Collections.emptyMap());
+        }else {
+
+
+            return ResponseEntity.ok(products);
+            // return products.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(products);
+        }
+        /*
         } catch (Exception e) {
             //return ResponseEntity.badRequest().body(null); // Erreur si la date est mal formatée
             return ResponseEntity.notFound().build();
-        }
-
-
-
-
-
-
-
+        }*/
 
 
        //return iServiceProduct.getProductByDate(date).map(ResponseEntity::ok)
@@ -282,13 +287,29 @@ public class ProductController {
 
     }
 
+
+
+
+
     @GetMapping("/quantite/{quantite}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
-    public ResponseEntity<List<Product>> findProductByQuantite(@PathVariable Double quantite){
+    public ResponseEntity<?> findProductByQuantite(@PathVariable Double quantite){
 
-        return iServiceProduct.getProductByQuantite(quantite).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+
+       List<Product> products = iServiceProduct.getProductByQuantite(quantite);
+
+
+        if (products.isEmpty()) {
+            // Retourner HTTP 200 avec un JSON vide : {}
+            return ResponseEntity.ok(Collections.emptyMap());
+        }else {
+
+            return ResponseEntity.ok(products);
+        }
+
+        //return iServiceProduct.getProductByQuantite(quantite).map(ResponseEntity::ok).orElse(ResponseEntity::badRequest;
+
     }
 
 
@@ -296,21 +317,23 @@ public class ProductController {
     @GetMapping("/by-fournisseur/{fournisseurId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
-    public ResponseEntity<List<Product>> getProductsByFournisseur(@PathVariable Long fournisseurId){
+    public ResponseEntity<?> getProductsByFournisseur(@PathVariable Long fournisseurId){
 
 
         List<Product> products = iServiceProduct.getProductByFournisseurId(fournisseurId);
 
 
-        if (products.isEmpty()){
 
-            return ResponseEntity.notFound().build();
 
-        } else {
+        if (products.isEmpty()) {
+            // Retourner HTTP 200 avec un JSON vide : {}
+            return ResponseEntity.ok(Collections.emptyMap());
+        }else {
 
             return ResponseEntity.ok(products);
-
         }
+
+
 
 
     }
@@ -320,19 +343,21 @@ public class ProductController {
     @GetMapping("/produit/{produit}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
-    public ResponseEntity<List<Product>> findProductByProduit(@PathVariable String produit){
+    public ResponseEntity<?> findProductByProduit(@PathVariable String produit){
 
         List<Product> products = iServiceProduct.getProductByProduit(produit);
 
-        if (products.isEmpty()){
 
-            return ResponseEntity.notFound().build();
 
-        } else {
+        if (products.isEmpty()) {
+            // Retourner HTTP 200 avec un JSON vide : {}
+            return ResponseEntity.ok(Collections.emptyMap());
+        }else {
 
             return ResponseEntity.ok(products);
-
         }
+
+
 
     }
 
@@ -351,7 +376,7 @@ public class ProductController {
 
         iServiceProduct.deleteproduct(iServiceProduct.findproductById(id));
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
 
         }
         catch (Exception e){

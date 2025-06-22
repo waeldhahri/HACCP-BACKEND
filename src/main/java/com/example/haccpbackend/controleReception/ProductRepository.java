@@ -26,7 +26,7 @@ public interface ProductRepository  extends JpaRepository<Product,Long> {
 
 
 
-   Optional<List<Product>> findByQuantiteLessThanEqual(Double quantite);
+   List<Product> findByQuantiteLessThanEqual(Double quantite);
 
 
 

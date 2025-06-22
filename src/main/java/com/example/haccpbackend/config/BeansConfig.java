@@ -2,9 +2,12 @@ package com.example.haccpbackend.config;
 
 
 import com.example.haccpbackend.modulUsers.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.NonNullApi;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -80,7 +83,7 @@ public class BeansConfig {
 
     }
 */
-
+/*
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -88,13 +91,34 @@ public class BeansConfig {
         configuration.setAllowedOrigins(List.of("*")); // adapte l’URL à ton frontend
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("Authorization")); // expose le header au frontend
         configuration.setAllowCredentials(true); // si tu utilises des cookies / sessions
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+*/
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        return new CorsConfigurationSource() {
+            @Override
+            public CorsConfiguration getCorsConfiguration(@NonNull HttpServletRequest request) {
+                CorsConfiguration config = new CorsConfiguration();
+                String origin = request.getHeader("Origin");
 
+                if (origin != null && !origin.isEmpty()) {
+                    config.setAllowedOrigins(List.of(origin)); // accepte dynamiquement l'origine
+                }
+
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                config.setAllowedHeaders(List.of("*"));
+                config.setExposedHeaders(List.of("Authorization")); // expose le header au frontend
+                config.setAllowCredentials(true); // nécessaire si tu envoies le token via Authorization
+                return config;
+            }
+        };
+    }
 
 }

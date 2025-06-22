@@ -80,7 +80,7 @@ public class FournisseurControlleur {
 
         fournisseurService.deleteFournisseur(fournisseurService.getFournisseurById(id));
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
 
     }
 

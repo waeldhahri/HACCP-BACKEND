@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,19 +73,109 @@ public class NettoyagePosteController {
 
     @GetMapping("/categorie/{categorieName}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<NettoyagesPoste>> findNettoyagesPosteByCategorie(@PathVariable String categorieName){
+    @Transactional
+    public ResponseEntity<?> findNettoyagesPosteByCategorie(@PathVariable String categorieName){
 
         List<NettoyagesPoste> nettoyagesPostes=serviceNettoyagePoste.findNettoyagesPosteByCategorie(categorieName);
 
 
         if (nettoyagesPostes.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.ok(Collections.emptyMap());
         }
 
         return ResponseEntity.ok(nettoyagesPostes);
 
 
     }
+
+
+    @GetMapping("/categorie/{categorieName}/rapport")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> findNettoyagesPosteByCategorieAndGetRapportpdf(@PathVariable String categorieName) throws IOException {
+        List<NettoyagesPoste> nettoyagesPostes = serviceNettoyagePoste.findNettoyagesPosteByCategorie(categorieName);
+
+        if (nettoyagesPostes.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyMap());
+        }
+
+        byte[] pdfBytes = serviceNettoyagePoste.generatePdfReport(nettoyagesPostes, categorieName);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "rapport_" + categorieName + ".pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+
+
+
+    @GetMapping("/categorie/{categorieName}/{email}/rapport2")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> findNettoyagesPosteByCategorieAndGetRapportpdf2(@PathVariable String categorieName , @PathVariable String email)
+                                                                                                                                    throws IOException {
+        List<NettoyagesPoste> nettoyagesPostes = serviceNettoyagePoste.findNettoyagesPosteByCategorie(categorieName);
+
+        if (nettoyagesPostes.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyMap());
+        }
+
+        // 1. Générer le PDF
+        byte[] pdfBytes = serviceNettoyagePoste.generatePdfReport(nettoyagesPostes, categorieName);
+
+        // 2. Envoyer l'email avec le PDF en pièce jointe
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(pdfBytes);
+
+            serviceNettoyagePoste.sendEmailWithPdf(
+                    email,                       // <-- à adapter
+                    "Rapport - " + categorieName,
+                    "Veuillez trouver ci-joint le rapport de nettoyage pour la catégorie : " + categorieName,
+                    baos
+            );
+        } catch (Exception e) {
+            e.printStackTrace(); // ou logger
+            return ResponseEntity.status(500).body(null); // erreur serveur
+        }
+
+        // 3. Retourner le PDF comme réponse HTTP
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "rapport_" + categorieName + ".pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @PostMapping(value = "/addPoste")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -234,7 +326,7 @@ public class NettoyagePosteController {
         try {
 
             iServiceNettoyagePoste.deleteNettoyagePoste(nettoyagePosteRepository.findById(id).get());
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
 
         } catch (Exception e){
 

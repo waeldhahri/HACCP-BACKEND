@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,10 +74,16 @@ public class PlanningController {
 
     @GetMapping("/today")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<Planning>> getPlanningsDuJour() {
+    public ResponseEntity<?> getPlanningsDuJour() {
         LocalDate today = LocalDate.now();
         List<Planning> plannings = planningRepository.findByCreatedDay(today);
-        return ResponseEntity.ok(plannings);
+
+        if (plannings.isEmpty()){
+            return ResponseEntity.ok(Collections.emptyMap());
+        } else {
+            return ResponseEntity.ok(plannings);
+        }
+
     }
 
 
@@ -84,11 +91,11 @@ public class PlanningController {
 
     @GetMapping("/by-day")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<Planning>> getPlanningsParJour(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public ResponseEntity<?> getPlanningsParJour(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         List<Planning> plannings = planningRepository.findByCreatedDay(date);
 
         if (plannings.isEmpty()){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(Collections.emptyMap());
         } else {
             return ResponseEntity.ok(plannings);
         }
@@ -111,7 +118,7 @@ public class PlanningController {
         try {
 
             planningRepository.delete(planningRepository.findById(id).get());
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
 
         } catch (Exception e){
 

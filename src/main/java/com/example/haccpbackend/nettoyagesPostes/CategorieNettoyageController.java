@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -46,13 +47,13 @@ public class CategorieNettoyageController {
 
     @GetMapping("/findAllCategories")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<CategorieNettoyage>> findAllCategorieNettoyage(){
+    public ResponseEntity<?> findAllCategorieNettoyage(){
 
         List<CategorieNettoyage> categorieNettoyages=iServiceCategorieNettoyage.findAllCategoriesNettoyage();
 
         if (categorieNettoyages.isEmpty()){
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.ok(Collections.emptyMap());
         }
 
         return ResponseEntity.ok(categorieNettoyages);
@@ -70,7 +71,7 @@ public class CategorieNettoyageController {
 
         try {
             iServiceCategorieNettoyage.deleteCategoriesNettoyage(categorieNettoyageRepository.findById(id).get());
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
         } catch (Exception e){
 
             return ResponseEntity.notFound().build();

@@ -4,6 +4,7 @@ package com.example.haccpbackend.registerJWT;
 
 import com.example.haccpbackend.modulUsers.Role;
 import com.example.haccpbackend.modulUsers.User;
+import com.example.haccpbackend.modulUsers.UserDto;
 import com.example.haccpbackend.modulUsers.UserRepository;
 import jakarta.mail.MessagingException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -106,17 +107,19 @@ public class AuthenticationService {
 
         var claims = new HashMap<String, Object>();
         var user = ((User) auth.getPrincipal());
-        claims.put("fullName", user.getUsername());
+        claims.put("email", user.getUsername());
+
 
         var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
         saveToken(user, jwtToken);
 
         System.out.println("Token enregistré");
 
-
+        UserDto userDTO = new UserDto(user.getId(), user.getFullName(), user.getEmail(), user.getRole().name());
 
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .user(userDTO)
                 .build();
     }
 

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -58,13 +59,13 @@ public class SuiviHuileController {
     @GetMapping("/huileDejour")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
-    public ResponseEntity<List<SuiviHuiles>> findFriteuseDeJour() {
+    public ResponseEntity<?> findFriteuseDeJour() {
 
         List<SuiviHuiles> friteuseDeJour = iServiceSuiviHuile.findFriteuseDeJour();
 
         if (friteuseDeJour.isEmpty()) {
 
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.ok(Collections.emptyMap());
         } else {
 
             return ResponseEntity.ok(friteuseDeJour);
@@ -76,7 +77,7 @@ public class SuiviHuileController {
     @GetMapping("/findByDate/{date}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Transactional
-    public ResponseEntity<List<SuiviHuiles>> findFristeuseByDate(@PathVariable LocalDate date) {
+    public ResponseEntity<?> findFristeuseByDate(@PathVariable LocalDate date) {
 
 
         List<SuiviHuiles> friteuseByDate = iServiceSuiviHuile.findFriteuseByDate(date);
@@ -84,7 +85,7 @@ public class SuiviHuileController {
 
         if (friteuseByDate.isEmpty()) {
 
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.ok(Collections.emptyMap());
         } else {
 
             return ResponseEntity.ok(friteuseByDate);
@@ -137,7 +138,7 @@ public class SuiviHuileController {
 
             iServiceSuiviHuile.deleteFriteuse(suiviHuileRepository.findById(id).get());
 
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
 
 
         } catch (Exception e) {

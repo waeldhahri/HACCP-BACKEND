@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -78,12 +79,12 @@ public class ProduitController {
 
     @GetMapping("/photo-by-date")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<String>> getPhotoUrl(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    public ResponseEntity<?> getPhotoUrl(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
         List<Produit> produits = produitRepository.findAllByDateDeStockage(date);
 
         if (produits.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(Collections.emptyMap());
         }
 
         List<String> photoUrls = produits.stream()
@@ -101,7 +102,7 @@ public class ProduitController {
 
     @GetMapping("/categorie/{categorieName}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<Produit>> findProduitByCategorie(@PathVariable String categorieName){
+    public ResponseEntity<?> findProduitByCategorie(@PathVariable String categorieName){
 
 
 
@@ -114,7 +115,7 @@ public class ProduitController {
 
         if (produits.isEmpty()) {
 
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.ok(Collections.emptyMap());
 
         }
 

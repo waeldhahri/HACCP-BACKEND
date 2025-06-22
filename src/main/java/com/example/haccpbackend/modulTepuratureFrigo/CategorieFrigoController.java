@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +43,7 @@ public class CategorieFrigoController {
 
     @GetMapping("/findCategorieByName/{nameCategorie}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<CategorieFrigo>> findCategorieFrigoByName(@PathVariable String nameCategorie){
+    public ResponseEntity<?> findCategorieFrigoByName(@PathVariable String nameCategorie){
 
         List<CategorieFrigo> categorieFrigo=categorieFrigoService.findCategorieFrigoByname(nameCategorie);
 
@@ -52,7 +53,7 @@ public class CategorieFrigoController {
 
         if (categorieFrigo.isEmpty()){
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.ok(Collections.emptyMap());
 
         }
 
@@ -66,13 +67,13 @@ public class CategorieFrigoController {
 
     @GetMapping("/findAllCategories")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<CategorieFrigo>> findAllCategorieFrigo(){
+    public ResponseEntity<?> findAllCategorieFrigo(){
 
         List<CategorieFrigo> categorieFrigos=categorieFrigoService.findAllCategoriesFrigo();
 
         if (categorieFrigos.isEmpty()){
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.ok(Collections.emptyMap());
         }
 
         return ResponseEntity.ok(categorieFrigos);
@@ -90,7 +91,7 @@ public class CategorieFrigoController {
 
         if (categorieFrigoOptional.isPresent()) {
             iServiceCategorieFrigo.deleteCategorieFrigo(categorieFrigoOptional.get());
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
         }

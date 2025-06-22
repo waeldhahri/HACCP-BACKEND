@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -44,13 +45,13 @@ public class PlanningCategorieController {
 
     @GetMapping("/findAllCategories")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<PlanningCategorie>> findAllPlanningCategorie(){
+    public ResponseEntity<?> findAllPlanningCategorie(){
 
         List<PlanningCategorie> planningCategories=planningCategorieRepository.findAll();
 
         if (planningCategories.isEmpty()){
 
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.ok(Collections.emptyMap());
         }
 
         return ResponseEntity.ok(planningCategories);
@@ -67,7 +68,7 @@ public class PlanningCategorieController {
         try {
 
             planningCategorieRepository.delete(planningCategorieRepository.findById(id).get());
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
 
         } catch (Exception e){
 

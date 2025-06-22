@@ -17,7 +17,7 @@ public interface IServiceProduct {
 
     public List<Product> getProductByProduit(String produit);
 
-    public Optional<List<Product>> getProductByQuantite(Double quantite);
+    public List<Product> getProductByQuantite(Double quantite);
 
     public List<Product> getProductByFournisseurId(Long fournisseurId);
 

@@ -33,7 +33,7 @@ public class ServiceProduct implements IServiceProduct {
 
     @Override
     public Product findproductById(Long id) {
-        return productRepository.findById(id).get();
+        return productRepository.findById(id).orElse(null);
     }
 
 
@@ -48,7 +48,7 @@ public class ServiceProduct implements IServiceProduct {
     }
 
     @Override
-    public Optional<List<Product>> getProductByQuantite(Double quantite) {
+    public List<Product> getProductByQuantite(Double quantite) {
         return productRepository.findByQuantiteLessThanEqual(quantite);
     }
 

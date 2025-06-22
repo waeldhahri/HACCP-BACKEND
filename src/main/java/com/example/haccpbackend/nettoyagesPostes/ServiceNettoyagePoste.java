@@ -1,17 +1,33 @@
 package com.example.haccpbackend.nettoyagesPostes;
 
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfWriter;
+
+import java.io.ByteArrayOutputStream;
+
+
 
 @Service
 public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
@@ -22,6 +38,10 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
     private final NettoyagePosteRepository posteRepository;
 
     private final CategorieNettoyageRepository categorieNettoyageRepository;
+
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     public ServiceNettoyagePoste(NettoyagePosteRepository posteRepository, CategorieNettoyageRepository categorieNettoyageRepository) {
         this.posteRepository = posteRepository;
@@ -211,5 +231,78 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
 
         }
     }
+
+
+
+
+    @Transactional
+    public byte[] generatePdfReport(List<NettoyagesPoste> nettoyages, String categorieName) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Document document = new Document();
+
+        try {
+            PdfWriter.getInstance(document, out);
+            document.open();
+
+            document.add(new Paragraph("Rapport de Nettoyage - Catégorie : " + categorieName));
+            document.add(new Paragraph("Nombre total : " + nettoyages.size()));
+            document.add(new Paragraph(" "));
+
+            for (NettoyagesPoste n : nettoyages) {
+                document.add(new Paragraph("Poste : " + n.getNameOfPoste()));
+                document.add(new Paragraph("Date : " + n.getCreatedDay()));
+                document.add(new Paragraph("Effectué par : " + n.getValidePar()));
+                document.add(new Paragraph("-------------------------------------------"));
+            }
+
+            document.close();
+        } catch (DocumentException e) {
+            throw new IOException("Erreur lors de la génération du PDF", e);
+        }
+
+        return out.toByteArray();
+    }
+
+
+
+
+
+
+
+
+    public void sendEmailWithPdf(String toEmail, String subject, String body, ByteArrayOutputStream pdfStream)
+            throws MessagingException {
+
+        MimeMessage message = mailSender.createMimeMessage();
+
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(toEmail);
+        helper.setSubject(subject);
+        helper.setText(body);
+        helper.addAttachment("rapport.pdf", new ByteArrayResource(pdfStream.toByteArray()));
+
+        mailSender.send(message);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
