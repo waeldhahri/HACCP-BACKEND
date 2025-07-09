@@ -53,7 +53,7 @@ public class CategorieNettoyageController {
 
         if (categorieNettoyages.isEmpty()){
 
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
         return ResponseEntity.ok(categorieNettoyages);

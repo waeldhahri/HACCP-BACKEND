@@ -1,5 +1,7 @@
 package com.example.haccpbackend.modulUsers;
 
+import com.example.haccpbackend.organisation.Organisation;
+
 public class UserDto {
 
 
@@ -9,16 +11,18 @@ public class UserDto {
         private String email;
         private String role;
 
+        private String organisation;
+
         // Constructeurs, getters, setters
 
 
-    public UserDto(Long id, String fullname, String email, String role) {
+    public UserDto(Long id, String fullname, String email, String role, String organisation) {
         this.id = id;
         this.fullname = fullname;
         this.email = email;
         this.role = role;
+        this.organisation = organisation;
     }
-
 
     public UserDto() {
     }
@@ -54,5 +58,14 @@ public class UserDto {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+
+    public String getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(String organisation) {
+        this.organisation = organisation;
     }
 }

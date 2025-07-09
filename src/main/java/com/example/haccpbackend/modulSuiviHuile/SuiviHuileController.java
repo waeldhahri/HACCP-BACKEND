@@ -65,7 +65,7 @@ public class SuiviHuileController {
 
         if (friteuseDeJour.isEmpty()) {
 
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         } else {
 
             return ResponseEntity.ok(friteuseDeJour);
@@ -85,7 +85,7 @@ public class SuiviHuileController {
 
         if (friteuseByDate.isEmpty()) {
 
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         } else {
 
             return ResponseEntity.ok(friteuseByDate);

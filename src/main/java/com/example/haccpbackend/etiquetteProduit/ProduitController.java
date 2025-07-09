@@ -84,7 +84,7 @@ public class ProduitController {
         List<Produit> produits = produitRepository.findAllByDateDeStockage(date);
 
         if (produits.isEmpty()) {
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
         List<String> photoUrls = produits.stream()
@@ -115,7 +115,7 @@ public class ProduitController {
 
         if (produits.isEmpty()) {
 
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
 
         }
 

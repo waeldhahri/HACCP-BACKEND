@@ -51,7 +51,7 @@ public class PlanningCategorieController {
 
         if (planningCategories.isEmpty()){
 
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
         return ResponseEntity.ok(planningCategories);

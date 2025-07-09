@@ -1,6 +1,9 @@
 package com.example.haccpbackend.registerJWT;
 
 
+import com.example.haccpbackend.modulTepuratureFrigo.CategorieFrigo;
+import com.example.haccpbackend.organisation.Organisation;
+import com.example.haccpbackend.organisation.OrganisationRepository;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -29,11 +32,16 @@ import org.springframework.core.io.Resource;
 public class AuthenticationController {
 
     private final AuthenticationService service;
+    private final OrganisationRepository organisationRepository;
 
 
-    public AuthenticationController(AuthenticationService service) {
+    public AuthenticationController(AuthenticationService service, OrganisationRepository organisationRepository) {
         this.service = service;
+        this.organisationRepository = organisationRepository;
     }
+
+
+
 
     @PostMapping(value = "/register" , consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -44,8 +52,16 @@ public class AuthenticationController {
                                       @RequestParam("email") String email,
                                       @RequestParam("motdepasse") String motdepasse,
                                       @RequestParam("role") String role,
+                                      @RequestParam("organisationId") Long organisationId,
                                       @RequestPart(value = "image", required = false) MultipartFile imageFile) throws MessagingException, IOException {
 
+
+
+
+
+        // Récupère la organisation
+        Organisation organisation = organisationRepository.findById(organisationId)
+                .orElseThrow(() -> new RuntimeException("Organisation non trouvée"));
 
 
         RegistrationRequest request= new RegistrationRequest();
@@ -53,6 +69,8 @@ public class AuthenticationController {
         request.setFullname(fullname);
         request.setMotdepasse(motdepasse);
         request.setRole(role);
+        request.setOrganisation(organisation);
+
 
 
 

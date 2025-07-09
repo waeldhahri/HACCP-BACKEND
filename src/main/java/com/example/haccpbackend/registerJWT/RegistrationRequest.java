@@ -1,6 +1,7 @@
 package com.example.haccpbackend.registerJWT;
 
 
+import com.example.haccpbackend.organisation.Organisation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.Email;
@@ -41,6 +42,11 @@ public class RegistrationRequest {
 
 
     private String imageUrl ;
+
+    @NotEmpty(message = "ROLE cannot be empty")
+    @NotBlank
+    @NotNull
+    private Organisation organisation;
 
 
 
@@ -92,22 +98,26 @@ public class RegistrationRequest {
         this.role = role;
     }
 
+    public Organisation getOrganisation() {
+        return organisation;
+    }
 
-
-
-
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
+    }
 
     public RegistrationRequest() {
 
     }
 
 
-    public RegistrationRequest(String fullname, String email, String motdepasse, String role, byte[] imageOfUser, String imageUrl) {
+    public RegistrationRequest(String fullname, String email, String motdepasse, String role, byte[] imageOfUser, String imageUrl, Organisation organisation) {
         this.fullname = fullname;
         this.email = email;
         this.motdepasse = motdepasse;
         this.role = role;
         this.imageOfUser = imageOfUser;
         this.imageUrl = imageUrl;
+        this.organisation = organisation;
     }
 }

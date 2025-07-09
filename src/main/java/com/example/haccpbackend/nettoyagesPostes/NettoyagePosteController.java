@@ -80,7 +80,7 @@ public class NettoyagePosteController {
 
 
         if (nettoyagesPostes.isEmpty()) {
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
         return ResponseEntity.ok(nettoyagesPostes);
@@ -95,7 +95,7 @@ public class NettoyagePosteController {
         List<NettoyagesPoste> nettoyagesPostes = serviceNettoyagePoste.findNettoyagesPosteByCategorie(categorieName);
 
         if (nettoyagesPostes.isEmpty()) {
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
         byte[] pdfBytes = serviceNettoyagePoste.generatePdfReport(nettoyagesPostes, categorieName);
@@ -119,7 +119,7 @@ public class NettoyagePosteController {
         List<NettoyagesPoste> nettoyagesPostes = serviceNettoyagePoste.findNettoyagesPosteByCategorie(categorieName);
 
         if (nettoyagesPostes.isEmpty()) {
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
         // 1. Générer le PDF

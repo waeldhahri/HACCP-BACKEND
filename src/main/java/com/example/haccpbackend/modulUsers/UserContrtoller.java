@@ -51,7 +51,7 @@ public class UserContrtoller {
         if (users != null && !users.isEmpty()) {
             return ResponseEntity.ok(users);
         } else {
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
 
@@ -85,7 +85,7 @@ public class UserContrtoller {
             return ResponseEntity.ok(iServiceUser.findUserByEmail(email));
         } else {
 
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
 
         }
 
@@ -175,7 +175,7 @@ public class UserContrtoller {
 
         } else {
 
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
 
         }
 
@@ -280,7 +280,7 @@ public class UserContrtoller {
         Optional<User> userOptional=userRepository.findById(id);
 
         if (userOptional.isEmpty() || userOptional.get().getImageOfUser() == null) {
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
         return ResponseEntity.ok()

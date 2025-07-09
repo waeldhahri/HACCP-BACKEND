@@ -52,7 +52,7 @@ public class CategorieProduitContoller {
 
         if (categorieProduits.isEmpty()){
 
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
         return ResponseEntity.ok(categorieProduits);

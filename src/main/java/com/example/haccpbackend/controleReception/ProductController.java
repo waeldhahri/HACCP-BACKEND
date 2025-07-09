@@ -231,7 +231,7 @@ public class ProductController {
 
         if (product == null) {
             // Retourner HTTP 200 avec un JSON vide : {}
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
 
@@ -268,7 +268,7 @@ public class ProductController {
 
         if (products.isEmpty()) {
             // Retourner HTTP 200 avec un JSON vide : {}
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }else {
 
 
@@ -302,7 +302,7 @@ public class ProductController {
 
         if (products.isEmpty()) {
             // Retourner HTTP 200 avec un JSON vide : {}
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }else {
 
             return ResponseEntity.ok(products);
@@ -327,7 +327,7 @@ public class ProductController {
 
         if (products.isEmpty()) {
             // Retourner HTTP 200 avec un JSON vide : {}
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }else {
 
             return ResponseEntity.ok(products);
@@ -351,7 +351,7 @@ public class ProductController {
 
         if (products.isEmpty()) {
             // Retourner HTTP 200 avec un JSON vide : {}
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }else {
 
             return ResponseEntity.ok(products);

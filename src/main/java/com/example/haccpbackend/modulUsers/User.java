@@ -3,7 +3,9 @@ package com.example.haccpbackend.modulUsers;
 
 import com.example.haccpbackend.controleReception.Product;
 
+import com.example.haccpbackend.organisation.Organisation;
 import com.example.haccpbackend.registerJWT.Token;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -79,6 +81,15 @@ public class User implements UserDetails , Principal {
     private Role role;
 
 
+
+    @ManyToOne
+    @JoinColumn(name = "organisation_id")
+    @JsonBackReference
+    private Organisation organisation;
+
+
+
+
     @Column(unique = true)
     private String resetToken; // Token pour la réinitialisation du mot de passe
 
@@ -96,8 +107,8 @@ public class User implements UserDetails , Principal {
     }
 
 
-    public User(Long id, String fullName, String email, String motdepasse, List<Product> products,
-                List<Token> tokens, byte[] imageOfUser, String imageUrl, boolean enabled, boolean accountLocked, Role role, String resetToken) {
+    public User(Long id, String fullName, String email, String motdepasse, List<Product> products, List<Token> tokens, byte[] imageOfUser,
+                String imageUrl, boolean enabled, boolean accountLocked, Role role, Organisation organisation, String resetToken) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
@@ -109,6 +120,7 @@ public class User implements UserDetails , Principal {
         this.enabled = enabled;
         this.accountLocked = accountLocked;
         this.role = role;
+        this.organisation = organisation;
         this.resetToken = resetToken;
     }
 
@@ -200,6 +212,15 @@ public class User implements UserDetails , Principal {
 
     public void setTokens(List<Token> tokens) {
         this.tokens = tokens;
+    }
+
+
+    public Organisation getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 
     @Override

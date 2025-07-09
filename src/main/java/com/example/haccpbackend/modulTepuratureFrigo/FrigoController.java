@@ -76,7 +76,7 @@ public class FrigoController {
         List<Frigo> frigos = frigoService.findFrigoByCategorie(categorieName);
 
         if (frigos.isEmpty()) {
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
         return ResponseEntity.ok(frigos);

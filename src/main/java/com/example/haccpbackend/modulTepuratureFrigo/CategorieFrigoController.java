@@ -53,7 +53,7 @@ public class CategorieFrigoController {
 
         if (categorieFrigo.isEmpty()){
 
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
 
         }
 
@@ -73,7 +73,7 @@ public class CategorieFrigoController {
 
         if (categorieFrigos.isEmpty()){
 
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
         return ResponseEntity.ok(categorieFrigos);

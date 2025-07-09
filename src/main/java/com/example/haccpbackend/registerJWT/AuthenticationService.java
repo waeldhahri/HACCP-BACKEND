@@ -6,6 +6,7 @@ import com.example.haccpbackend.modulUsers.Role;
 import com.example.haccpbackend.modulUsers.User;
 import com.example.haccpbackend.modulUsers.UserDto;
 import com.example.haccpbackend.modulUsers.UserRepository;
+import com.example.haccpbackend.organisation.Organisation;
 import jakarta.mail.MessagingException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -78,6 +79,7 @@ public class AuthenticationService {
         user.setRole(userRole);
         //user.setImageUrl(request.getImageUrl());
         user.setImageOfUser(request.getImageOfUser());
+        user.setOrganisation(request.getOrganisation());
 
         user = userRepository.save(user);
 
@@ -115,7 +117,11 @@ public class AuthenticationService {
 
         System.out.println("Token enregistré");
 
-        UserDto userDTO = new UserDto(user.getId(), user.getFullName(), user.getEmail(), user.getRole().name());
+        Organisation org = user.getOrganisation();
+
+        String organisationName = (org != null) ? org.getName() : null;
+
+        UserDto userDTO = new UserDto(user.getId(), user.getFullName(), user.getEmail(), user.getRole().name() , organisationName);
 
         return AuthenticationResponse.builder()
                 .token(jwtToken)

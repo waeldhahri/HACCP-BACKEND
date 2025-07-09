@@ -79,7 +79,7 @@ public class PlanningController {
         List<Planning> plannings = planningRepository.findByCreatedDay(today);
 
         if (plannings.isEmpty()){
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         } else {
             return ResponseEntity.ok(plannings);
         }
@@ -95,7 +95,7 @@ public class PlanningController {
         List<Planning> plannings = planningRepository.findByCreatedDay(date);
 
         if (plannings.isEmpty()){
-            return ResponseEntity.ok(Collections.emptyMap());
+            return ResponseEntity.ok(Collections.emptyList());
         } else {
             return ResponseEntity.ok(plannings);
         }
