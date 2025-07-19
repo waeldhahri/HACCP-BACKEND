@@ -1,7 +1,9 @@
 package com.example.haccpbackend.modulTepuratureFrigo;
 
 
+import com.example.haccpbackend.modulPlanning.modulePlanningVersion2.planningFrigo.PlanningFrigo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -23,6 +25,10 @@ public class Frigo {
     @ManyToOne()
     @JoinColumn(nullable = false, name = "categorie_id")
     private CategorieFrigo categorieFrigo;
+
+    @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL , orphanRemoval = true )
+    @JsonManagedReference
+    private List<PlanningFrigo> planningFrigos;
 
 
     @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL , orphanRemoval = true)
@@ -90,14 +96,24 @@ public class Frigo {
         this.imageOfFrigo = imageOfFrigo;
     }
 
+    public List<PlanningFrigo> getPlanningFrigos() {
+        return planningFrigos;
+    }
 
-    public Frigo(Long id, String name, CategorieFrigo categorieFrigo, List<TemperatureFrigo> temperatures, byte[] imageOfFrigo ,String imageUrl ) {
+    public void setPlanningFrigos(List<PlanningFrigo> planningFrigos) {
+        this.planningFrigos = planningFrigos;
+    }
+
+
+    public Frigo(Long id, String name, CategorieFrigo categorieFrigo, List<PlanningFrigo> planningFrigos,
+                 List<TemperatureFrigo> temperatures, byte[] imageOfFrigo, String imageUrl) {
         this.id = id;
         this.name = name;
         this.categorieFrigo = categorieFrigo;
+        this.planningFrigos = planningFrigos;
         this.temperatures = temperatures;
         this.imageOfFrigo = imageOfFrigo;
-        this.imageUrl=imageUrl;
+        this.imageUrl = imageUrl;
     }
 
     public Frigo() {

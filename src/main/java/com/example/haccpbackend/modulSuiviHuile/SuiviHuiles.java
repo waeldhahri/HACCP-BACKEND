@@ -1,7 +1,10 @@
 package com.example.haccpbackend.modulSuiviHuile;
 
+import com.example.haccpbackend.modulPlanning.modulePlanningVersion2.planningFrigo.PlanningFrigo;
+import com.example.haccpbackend.modulPlanning.modulePlanningVersion2.planningHuile.PlanningHuile;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -11,6 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 
 @Entity
@@ -21,15 +25,17 @@ public class SuiviHuiles {
     public SuiviHuiles() {
     }
 
-
-    public SuiviHuiles(Long id, String nameOfFriteuse, LocalDateTime dateOfCreation, LocalDate createdDay
-            , LocalTime createdTime, String note, String validePar, boolean valide
-            , byte[] imageOfFriteuseAfter, String imageFriteuseUrl, LocalDateTime validAt, LocalDate lastModifiedDay, LocalTime lastModifiedTime) {
+    public SuiviHuiles(Long id, String nameOfFriteuse, LocalDateTime dateOfCreation,
+                       LocalDate createdDay, LocalTime createdTime, List<PlanningHuile> planningHuiles,
+                       String note, String validePar, boolean valide, byte[] imageOfFriteuseAfter,
+                       String imageFriteuseUrl,
+                       LocalDateTime validAt, LocalDate lastModifiedDay, LocalTime lastModifiedTime) {
         this.id = id;
         this.nameOfFriteuse = nameOfFriteuse;
         this.dateOfCreation = dateOfCreation;
         this.createdDay = createdDay;
         this.createdTime = createdTime;
+        this.planningHuiles = planningHuiles;
         this.note = note;
         this.validePar = validePar;
         this.valide = valide;
@@ -63,6 +69,10 @@ public class SuiviHuiles {
     @Column(name = "createdTime")
     @JsonFormat(pattern = "HH:mm")
     private LocalTime createdTime;
+
+    @OneToMany(mappedBy = "suiviHuile", cascade = CascadeType.ALL , orphanRemoval = true )
+    @JsonManagedReference
+    private List<PlanningHuile> planningHuiles;
 
 
     private String note;
@@ -214,5 +224,13 @@ public class SuiviHuiles {
 
     public void setCreatedTime(LocalTime createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public List<PlanningHuile> getPlanningHuiles() {
+        return planningHuiles;
+    }
+
+    public void setPlanningHuiles(List<PlanningHuile> planningHuiles) {
+        this.planningHuiles = planningHuiles;
     }
 }

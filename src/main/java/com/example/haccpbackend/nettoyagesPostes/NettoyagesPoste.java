@@ -1,9 +1,12 @@
 package com.example.haccpbackend.nettoyagesPostes;
 
 
+import com.example.haccpbackend.modulPlanning.modulePlanningVersion2.planningFrigo.PlanningFrigo;
+import com.example.haccpbackend.modulPlanning.modulePlanningVersion2.planningNettoyagePoste.PlanningNettoyagePoste;
 import com.example.haccpbackend.modulTepuratureFrigo.CategorieFrigo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,6 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -100,6 +104,11 @@ public class NettoyagesPoste {
     private CategorieNettoyage categorieNettoyage;
 
 
+    @OneToMany(mappedBy = "nettoyagePoste", cascade = CascadeType.ALL , orphanRemoval = true )
+    @JsonManagedReference
+    private List<PlanningNettoyagePoste> planningNettoyagePostes;
+
+
 
     @JsonIgnore
     @Lob
@@ -124,10 +133,12 @@ public class NettoyagesPoste {
     }
 
 
-    public NettoyagesPoste(Long id, String nameOfPoste, LocalDateTime dateOfCreation, LocalDate createdDay, LocalTime createdTime,
-                           String note, String validePar, boolean valide, LocalDateTime validAt, LocalDate lastModifiedDay, LocalTime lastModifiedTime,
-                           CategorieNettoyage categorieNettoyage, byte[] imageOfPosteBefore, byte[] imageOfPosteAfter, String imageBeforeUrl,
-                           String imageAfterUrl) {
+    public NettoyagesPoste(Long id, String nameOfPoste, LocalDateTime dateOfCreation,
+                           LocalDate createdDay, LocalTime createdTime, String note, String validePar,
+                           boolean valide, LocalDateTime validAt, LocalDate lastModifiedDay,
+                           LocalTime lastModifiedTime, CategorieNettoyage categorieNettoyage,
+                           List<PlanningNettoyagePoste> planningNettoyagePostes, byte[] imageOfPosteBefore,
+                           byte[] imageOfPosteAfter, String imageBeforeUrl, String imageAfterUrl) {
         this.id = id;
         this.nameOfPoste = nameOfPoste;
         this.dateOfCreation = dateOfCreation;
@@ -140,6 +151,7 @@ public class NettoyagesPoste {
         this.lastModifiedDay = lastModifiedDay;
         this.lastModifiedTime = lastModifiedTime;
         this.categorieNettoyage = categorieNettoyage;
+        this.planningNettoyagePostes = planningNettoyagePostes;
         this.imageOfPosteBefore = imageOfPosteBefore;
         this.imageOfPosteAfter = imageOfPosteAfter;
         this.imageBeforeUrl = imageBeforeUrl;
@@ -275,5 +287,13 @@ public class NettoyagesPoste {
 
     public void setCreatedTime(LocalTime createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public List<PlanningNettoyagePoste> getPlanningNettoyagePostes() {
+        return planningNettoyagePostes;
+    }
+
+    public void setPlanningNettoyagePostes(List<PlanningNettoyagePoste> planningNettoyagePostes) {
+        this.planningNettoyagePostes = planningNettoyagePostes;
     }
 }

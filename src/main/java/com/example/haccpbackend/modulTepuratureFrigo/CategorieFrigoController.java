@@ -32,7 +32,7 @@ public class CategorieFrigoController {
 
 
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<CategorieFrigo> createCategorieFrigo(@Valid @RequestBody CategorieFrigo categorieFrigo){
 
 
@@ -42,7 +42,7 @@ public class CategorieFrigoController {
 
 
     @GetMapping("/findCategorieByName/{nameCategorie}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<?> findCategorieFrigoByName(@PathVariable String nameCategorie){
 
         List<CategorieFrigo> categorieFrigo=categorieFrigoService.findCategorieFrigoByname(nameCategorie);
@@ -66,7 +66,7 @@ public class CategorieFrigoController {
 
 
     @GetMapping("/findAllCategories")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<?> findAllCategorieFrigo(){
 
         List<CategorieFrigo> categorieFrigos=categorieFrigoService.findAllCategoriesFrigo();
@@ -83,7 +83,7 @@ public class CategorieFrigoController {
 
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
     public ResponseEntity<Void> deleteCategorieFrigo(@PathVariable Long id) {
 
