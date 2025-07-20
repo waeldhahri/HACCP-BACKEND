@@ -35,7 +35,7 @@ public class PlanningController {
         this.planningCategorieRepository = planningCategorieRepository;
     }
 
-
+/*
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> createPlanning(
@@ -128,6 +128,6 @@ public class PlanningController {
 
     }
 
-
+*/
 
 }

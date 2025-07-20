@@ -1,4 +1,4 @@
-package com.example.haccpbackend.modulDocuments;
+package com.example.haccpbackend.others.mail.modulDocuments;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

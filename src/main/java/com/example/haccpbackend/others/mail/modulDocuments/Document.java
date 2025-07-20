@@ -1,8 +1,7 @@
-package com.example.haccpbackend.modulDocuments;
+package com.example.haccpbackend.others.mail.modulDocuments;
 
 import jakarta.persistence.*;
 
-import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;

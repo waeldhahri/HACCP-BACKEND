@@ -1,6 +1,8 @@
 package com.example.haccpbackend.nettoyagesPostes;
 
 
+import com.itextpdf.text.Image;
+import com.lowagie.text.pdf.PdfPTable;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
@@ -30,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 
 
 @Service
+@Transactional
 public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
 
 
@@ -251,7 +254,16 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
             for (NettoyagesPoste n : nettoyages) {
                 document.add(new Paragraph("Poste : " + n.getNameOfPoste()));
                 document.add(new Paragraph("Date : " + n.getCreatedDay()));
-                document.add(new Paragraph("Effectué par : " + n.getValidePar()));
+                document.add(new Paragraph("Note : " + n.getNote()));
+                document.add(new Paragraph("Valide : " + n.isValide()));
+
+                if(n.isValide()){
+
+                document.add(new Paragraph("ValideAt : " + n.getValidAt().withSecond(0)));
+
+                }
+
+
                 document.add(new Paragraph("-------------------------------------------"));
             }
 
@@ -269,6 +281,70 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
 
 
 
+    @Transactional
+    public byte[] generatePdfReportTable(List<NettoyagesPoste> nettoyages, String categorieName) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Document document = new Document();
+
+        try {
+            PdfWriter.getInstance(document, out);
+            document.open();
+
+            // Titre et résumé
+            document.add(new Paragraph("Rapport de Nettoyage poste " + categorieName));
+            document.add(new Paragraph("Nombre total : " + nettoyages.size()));
+
+
+            document.add(new Paragraph(" ")); // espace
+
+            // Créer un tableau avec 5 colonnes
+            PdfPTable table = new PdfPTable(5);
+            table.setWidthPercentage(100);
+            table.setSpacingBefore(10f);
+            table.setSpacingAfter(10f);
+
+            // En-têtes de colonnes
+            table.addCell("Poste");
+            table.addCell("Date");
+            table.addCell("Note");
+            table.addCell("Valide");
+            table.addCell("Validé à");
+
+            // Contenu du tableau
+            for (NettoyagesPoste n : nettoyages) {
+                table.addCell(n.getNameOfPoste());
+                table.addCell(n.getCreatedDay().toString());
+                table.addCell(n.getNote());
+
+                if (n.isValide()) {
+
+                    table.addCell("oui");
+                    //table.addCell(String.valueOf(n.isValide()));
+
+                }else {
+
+                    table.addCell("non");
+                }
+                table.addCell(
+                        (n.isValide() && n.getValidAt() != null)
+                                ? n.getValidAt().withSecond(0).withNano(0).toString()
+                                : "-"
+                );
+            }
+
+            // Ajouter le tableau au document
+            document.add(table);
+
+            document.close();
+        } catch (DocumentException e) {
+            throw new IOException("Erreur lors de la génération du PDF", e);
+        }
+
+        return out.toByteArray();
+    }
+
+
+
 
     public void sendEmailWithPdf(String toEmail, String subject, String body, ByteArrayOutputStream pdfStream)
             throws MessagingException {
@@ -283,21 +359,6 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
 
         mailSender.send(message);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

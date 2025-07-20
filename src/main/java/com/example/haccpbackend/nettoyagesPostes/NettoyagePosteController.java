@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +59,7 @@ public class NettoyagePosteController {
 
 
     @GetMapping("/page")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
     public Page<NettoyagesPoste> findAllNettoyagesPoste(Pageable pageable){
 
@@ -72,7 +74,7 @@ public class NettoyagePosteController {
 
 
     @GetMapping("/categorie/{categorieName}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
     public ResponseEntity<?> findNettoyagesPosteByCategorie(@PathVariable String categorieName){
 
@@ -90,7 +92,7 @@ public class NettoyagePosteController {
 
 
     @GetMapping("/categorie/{categorieName}/rapport")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<?> findNettoyagesPosteByCategorieAndGetRapportpdf(@PathVariable String categorieName) throws IOException {
         List<NettoyagesPoste> nettoyagesPostes = serviceNettoyagePoste.findNettoyagesPosteByCategorie(categorieName);
 
@@ -113,10 +115,12 @@ public class NettoyagePosteController {
 
 
     @GetMapping("/categorie/{categorieName}/{email}/rapport2")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> findNettoyagesPosteByCategorieAndGetRapportpdf2(@PathVariable String categorieName , @PathVariable String email)
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<?> findNettoyagesPosteByCategorieAndGetRapportpdf2(@PathVariable String categorieName ,
+                                                                             @PathVariable String email)
                                                                                                                                     throws IOException {
-        List<NettoyagesPoste> nettoyagesPostes = serviceNettoyagePoste.findNettoyagesPosteByCategorie(categorieName);
+        List<NettoyagesPoste> nettoyagesPostes =
+                serviceNettoyagePoste.findNettoyagesPosteByCategorie(categorieName);
 
         if (nettoyagesPostes.isEmpty()) {
             return ResponseEntity.ok(Collections.emptyList());
@@ -156,6 +160,170 @@ public class NettoyagePosteController {
 
 
 
+    @GetMapping("/categorie/{categorieName}/{email}/rapportTable")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<?> findNettoyagesPosteByCategorieAndGetRapportpdfTable(
+            @PathVariable String categorieName,
+            @PathVariable String email) throws IOException {
+
+        // 1. Récupérer les nettoyages par catégorie
+        List<NettoyagesPoste> nettoyagesPostes =
+                serviceNettoyagePoste.findNettoyagesPosteByCategorie(categorieName);
+
+        // 2. Si la liste est vide, on retourne une liste vide
+        if (nettoyagesPostes.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        // 3. Générer le PDF en mémoire
+        byte[] pdfBytes = serviceNettoyagePoste.generatePdfReportTable(nettoyagesPostes, categorieName);
+
+        // 4. Envoyer l’email avec le PDF en pièce jointe
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(pdfBytes); // écrire le contenu dans un flux pour l’email
+
+            serviceNettoyagePoste.sendEmailWithPdf(
+                    email,
+                    "Rapport - " + categorieName,
+                    "Veuillez trouver ci-joint le rapport de nettoyage pour la catégorie : " + categorieName,
+                    baos
+            );
+        } catch (Exception e) {
+            e.printStackTrace(); // ou utiliser un logger
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur lors de l'envoi de l'email.");
+        }
+
+        // 5. Retourner le PDF dans la réponse HTTP
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "rapport_" + categorieName + ".pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+
+
+    @GetMapping("/AllNettoyagesPoste/{email}/rapportTableByDate")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<?> findAllNettoyagesPosteGetRapportPdfTableByDate(
+            @PathVariable String email,
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date)
+            throws IOException {
+
+        // 1. Récupérer tous les nettoyages
+        List<NettoyagesPoste> nettoyagesPostes = nettoyagePosteRepository.findAll();
+
+        // 2. Filtrer par date exacte
+        List<NettoyagesPoste> nettoyagesFiltres = nettoyagesPostes.stream()
+                .filter(n -> n.getCreatedDay() != null && n.getCreatedDay().equals(date))
+                .toList();
+
+        // 3. Vérifier si la liste est vide
+        if (nettoyagesFiltres.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        // 4. Générer le PDF
+        byte[] pdfBytes = serviceNettoyagePoste.generatePdfReportTable(
+                nettoyagesFiltres,
+                "pour la date :  " + date.toString()
+        );
+
+        // 5. Envoyer Email
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(pdfBytes);
+
+            serviceNettoyagePoste.sendEmailWithPdf(
+                    email,
+                    "Rapport Nettoyage Poste - " + date,
+                    "Veuillez trouver ci-joint le rapport de nettoyage poste à la date : " + date,
+                    baos
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur lors de l'envoi de l'email.");
+        }
+
+        // 6. Retourner le PDF
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "rapport_nettoyage_poste_" + date + ".pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+
+
+
+    @GetMapping("/AllNettoyagesPoste/{email}/rapportTableBetweenDates")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<?> findAllNettoyagesPosteGetRapportPdfTableBetweenDates(
+            @PathVariable String email,
+            @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) throws IOException {
+
+        // 1. Récupérer tous les nettoyages
+        List<NettoyagesPoste> nettoyagesPostes = nettoyagePosteRepository.findAll();
+
+        // 2. Filtrer ceux entre startDate et endDate inclus
+        List<NettoyagesPoste> nettoyagesFiltres = nettoyagesPostes.stream()
+                .filter(n -> {
+                    LocalDate createdDay = n.getCreatedDay();
+                    return createdDay != null &&
+                            (createdDay.isEqual(startDate) || createdDay.isAfter(startDate)) &&
+                            (createdDay.isEqual(endDate) || createdDay.isBefore(endDate));
+                })
+                .toList();
+
+        // 3. Vérifier si vide
+        if (nettoyagesFiltres.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        // 4. Générer le PDF
+        byte[] pdfBytes = serviceNettoyagePoste.generatePdfReportTable(
+                nettoyagesFiltres,
+                "du " + startDate + " au " + endDate
+        );
+
+        // 5. Envoyer Email
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(pdfBytes);
+
+            serviceNettoyagePoste.sendEmailWithPdf(
+                    email,
+                    "Rapport Nettoyage Poste du " + startDate + " au " + endDate,
+                    "Veuillez trouver ci-joint le rapport de nettoyage poste entre " + startDate + " et " + endDate,
+                    baos
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur lors de l'envoi de l'email.");
+        }
+
+        // 6. Retourner le PDF en HTTP
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData(
+                "attachment",
+                "rapport_nettoyage_poste_" + startDate + "_to_" + endDate + ".pdf"
+        );
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
 
 
 
@@ -178,7 +346,7 @@ public class NettoyagePosteController {
 
 
     @PostMapping(value = "/addPoste")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<?> createPosteNettoyage(@Valid @RequestBody NettoyagesPoste nettoyagesPoste,
                                                   @RequestParam("categorieId") Long categorieId) {
 
@@ -317,7 +485,7 @@ public class NettoyagePosteController {
 
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
     // @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deletePost(@PathVariable Long id){
@@ -340,7 +508,7 @@ public class NettoyagePosteController {
 
 
     @PutMapping(value = "/validatePost/{id}", consumes = {"multipart/form-data"})
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<NettoyagesPoste> validatePost(@PathVariable Long id
             , @RequestPart("poste") String posteJson , @RequestPart(value = "file1", required = false) MultipartFile file1 ,
                                                         @RequestPart(value = "file2", required = false) MultipartFile file2)
@@ -379,7 +547,7 @@ public class NettoyagePosteController {
 
 
     @GetMapping("/imageBefore/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<byte[]> getPosteBeforeImage(@PathVariable Long id) {
 
         NettoyagesPoste nettoyagesPoste= nettoyagePosteRepository.findById(id)
@@ -398,7 +566,7 @@ public class NettoyagePosteController {
 
 
     @GetMapping("/imageAfter/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<byte[]> getPosteAfterImage(@PathVariable Long id) {
 
         NettoyagesPoste nettoyagesPoste= nettoyagePosteRepository.findById(id)

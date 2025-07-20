@@ -1,4 +1,4 @@
-package com.example.haccpbackend.mail;
+package com.example.haccpbackend.others.mail;
 
 
 import jakarta.mail.MessagingException;

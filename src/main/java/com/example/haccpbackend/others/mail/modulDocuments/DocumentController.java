@@ -1,26 +1,8 @@
-package com.example.haccpbackend.modulDocuments;
+package com.example.haccpbackend.others.mail.modulDocuments;
 
 
-import org.springframework.core.io.Resource;
-
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.nio.file.StandardCopyOption;
-import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -38,7 +20,7 @@ public class DocumentController {
         this.documentService = documentService;
     }
 
-
+/*
 
     @PostMapping("/upload")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -132,7 +114,7 @@ public class DocumentController {
 
 
 
-
+*/
 
 
 

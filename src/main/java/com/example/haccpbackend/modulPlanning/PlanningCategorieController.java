@@ -29,7 +29,7 @@ public class PlanningCategorieController {
     }
 
 
-
+/*
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -80,7 +80,7 @@ public class PlanningCategorieController {
 
     }
 
-
+*/
 
 
 

@@ -9,11 +9,14 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -211,6 +214,145 @@ public class SuiviHuileController {
 
         return new ResponseEntity<>(image, headers, HttpStatus.OK);
     }
+
+
+
+
+
+    @GetMapping("/AllSuiviHuiles/{email}/rapportTableByDate")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<?> findAllSuiviHuileGetRapportPdfTableByDate(
+            @PathVariable String email,
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date)
+            throws IOException {
+
+        // 1. Récupérer tous les nettoyages
+        List<SuiviHuiles>   suiviHuiles = suiviHuileRepository.findAll();
+
+        // 2. Filtrer par date exacte
+        List<SuiviHuiles> suiviHuilesFiltre = suiviHuiles.stream()
+                .filter(n -> n.getCreatedDay() != null && n.getCreatedDay().equals(date))
+                .toList();
+
+        // 3. Vérifier si la liste est vide
+        if (suiviHuilesFiltre.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        // 4. Générer le PDF
+        byte[] pdfBytes = serviceSuiviHuile.generatePdfReportTable(
+                suiviHuilesFiltre,
+                "pour la date :  " + date.toString()
+        );
+
+        // 5. Envoyer Email
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(pdfBytes);
+
+            serviceSuiviHuile.sendEmailWithPdf(
+                    email,
+                    "Rapport Nettoyage Poste - " + date,
+                    "Veuillez trouver ci-joint le rapport de nettoyage poste à la date : " + date,
+                    baos
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur lors de l'envoi de l'email.");
+        }
+
+        // 6. Retourner le PDF
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "rapport_nettoyage_poste_" + date + ".pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+
+
+
+    @GetMapping("/AllSuiviHuile/{email}/rapportTableBetweenDates")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<?> findAllNettoyagesPosteGetRapportPdfTableBetweenDates(
+            @PathVariable String email,
+            @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) throws IOException {
+
+        // 1. Récupérer tous les nettoyages
+        List<SuiviHuiles>   suiviHuiles = suiviHuileRepository.findAll();
+
+        // 2. Filtrer ceux entre startDate et endDate inclus
+        List<SuiviHuiles> suiviHuileFiltre = suiviHuiles.stream()
+                .filter(n -> {
+                    LocalDate createdDay = n.getCreatedDay();
+                    return createdDay != null &&
+                            (createdDay.isEqual(startDate) || createdDay.isAfter(startDate)) &&
+                            (createdDay.isEqual(endDate) || createdDay.isBefore(endDate));
+                })
+                .toList();
+
+        // 3. Vérifier si vide
+        if (suiviHuileFiltre.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        // 4. Générer le PDF
+        byte[] pdfBytes = serviceSuiviHuile.generatePdfReportTable(
+                suiviHuileFiltre,
+                "du " + startDate + " au " + endDate
+        );
+
+        // 5. Envoyer Email
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(pdfBytes);
+
+            serviceSuiviHuile.sendEmailWithPdf(
+                    email,
+                    "Rapport Nettoyage Poste du " + startDate + " au " + endDate,
+                    "Veuillez trouver ci-joint le rapport de nettoyage poste entre " + startDate + " et " + endDate,
+                    baos
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur lors de l'envoi de l'email.");
+        }
+
+        // 6. Retourner le PDF en HTTP
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData(
+                "attachment",
+                "rapport_nettoyage_poste_" + startDate + "_to_" + endDate + ".pdf"
+        );
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
