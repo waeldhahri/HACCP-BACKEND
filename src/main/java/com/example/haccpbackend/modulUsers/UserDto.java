@@ -11,17 +11,17 @@ public class UserDto {
         private String email;
         private String role;
 
-        private String organisation;
+        private Long organisationID;
 
         // Constructeurs, getters, setters
 
 
-    public UserDto(Long id, String fullname, String email, String role, String organisation) {
+    public UserDto(Long id, String fullname, String email, String role, Long organisationID) {
         this.id = id;
         this.fullname = fullname;
         this.email = email;
         this.role = role;
-        this.organisation = organisation;
+        this.organisationID = organisationID;
     }
 
     public UserDto() {
@@ -60,12 +60,11 @@ public class UserDto {
         this.role = role;
     }
 
-
-    public String getOrganisation() {
-        return organisation;
+    public Long getOrganisationID() {
+        return organisationID;
     }
 
-    public void setOrganisation(String organisation) {
-        this.organisation = organisation;
+    public void setOrganisationID(Long organisationID) {
+        this.organisationID = organisationID;
     }
 }

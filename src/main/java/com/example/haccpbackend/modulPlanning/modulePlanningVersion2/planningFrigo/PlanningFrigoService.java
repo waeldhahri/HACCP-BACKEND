@@ -56,14 +56,14 @@ public class PlanningFrigoService {
 
     public List<PlanningFrigo> getPlanningsForToday() {
 
-        return planningFrigoRepository.findByDateCreation(LocalDateTime.now());
+        return planningFrigoRepository.findByDateCreationDay(LocalDate.now());
     }
 
     public List<PlanningFrigo> getPlanningsBetweenDates(LocalDate start, LocalDate end) {
         return planningFrigoRepository.findByDateCreationDayBetween(start, end);
     }
 
-    public List<PlanningFrigo> getPlanningHuileForAday(LocalDate date) {
+    public List<PlanningFrigo> getPlanningFrigoForAday(LocalDate date) {
 
         return planningFrigoRepository.findByDateCreationDay(date);
     }

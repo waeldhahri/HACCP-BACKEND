@@ -45,7 +45,7 @@ public class AuthenticationController {
 
     @PostMapping(value = "/register" , consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.ACCEPTED)
-   // @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<?> register(//@RequestBody @Valid RegistrationRequest request
 
                                       @RequestParam("fullname") String fullname,

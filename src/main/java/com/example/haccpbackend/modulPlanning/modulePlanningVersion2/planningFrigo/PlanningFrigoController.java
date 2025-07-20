@@ -73,6 +73,6 @@ public class PlanningFrigoController {
     public ResponseEntity<List<PlanningFrigo>> getPlanningsByDay(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
-        return ResponseEntity.ok(planningFrigoService.getPlanningHuileForAday(date));
+        return ResponseEntity.ok(planningFrigoService.getPlanningFrigoForAday(date));
     }
 }

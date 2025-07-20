@@ -119,9 +119,9 @@ public class AuthenticationService {
 
         Organisation org = user.getOrganisation();
 
-        String organisationName = (org != null) ? org.getName() : null;
+        Long organisationId = (org != null) ? org.getId() : null;
 
-        UserDto userDTO = new UserDto(user.getId(), user.getFullName(), user.getEmail(), user.getRole().name() , organisationName);
+        UserDto userDTO = new UserDto(user.getId(), user.getFullName(), user.getEmail(), user.getRole().name() , organisationId);
 
         return AuthenticationResponse.builder()
                 .token(jwtToken)

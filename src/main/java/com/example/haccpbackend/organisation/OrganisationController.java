@@ -22,6 +22,7 @@ import java.util.Optional;
 @RestController
 @CrossOrigin
 @RequestMapping("/api/organisation")
+@Transactional
 public class OrganisationController {
 
 
@@ -167,14 +168,31 @@ public class OrganisationController {
 
 
 
-
+/*
 
     @GetMapping("/findAllOrganisations")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
-    @Transactional
+    @Transactional()
     public ResponseEntity<?> findAllOrganisations(){
 
         List<Organisation> organisations=organisationRepository.findAll();
+
+        if (organisations.isEmpty()){
+
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        return ResponseEntity.ok(organisations);
+
+    }
+*/
+
+    @GetMapping("/findAllOrganisations2")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    @Transactional()
+    public ResponseEntity<?> findAllOrganisations2(){
+
+        List<Organisation> organisations=organisationService.getAllorganisations();
 
         if (organisations.isEmpty()){
 
@@ -188,6 +206,32 @@ public class OrganisationController {
 
 
 
+    @GetMapping("/findAllOrganisations")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    @Transactional()
+    public ResponseEntity<?> findAllOrganisations3() {
+
+        List<Organisation> organisations = organisationRepository.findAll();
+
+        if (organisations.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        List<OrganisationDto> dtoList = organisations.stream()
+                .map(this::toDto)
+                .toList();
+
+        return ResponseEntity.ok(dtoList);
+    }
+
+
+    public OrganisationDto toDto(Organisation org) {
+        OrganisationDto dto = new OrganisationDto();
+        dto.setId(org.getId());
+        dto.setName(org.getName());
+        dto.setImageUrl(org.getImageUrl());
+        return dto;
+    }
 
 
 
