@@ -1,8 +1,11 @@
 package com.example.haccpbackend.nettoyagesPostes;
 
 
-import com.itextpdf.text.Image;
-import com.lowagie.text.pdf.PdfPTable;
+
+
+import com.example.haccpbackend.others.mail.PageBorderEvent;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
@@ -22,12 +25,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfWriter;
+
 
 import java.io.ByteArrayOutputStream;
+
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+
 
 
 
@@ -235,7 +239,7 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
         }
     }
 
-
+/*
 
 
     @Transactional
@@ -275,7 +279,7 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
         return out.toByteArray();
     }
 
-
+*/
 
 
 
@@ -287,28 +291,140 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
         Document document = new Document();
 
         try {
-            PdfWriter.getInstance(document, out);
+            PdfWriter writer = PdfWriter.getInstance(document, out);
+            writer.setPageEvent(new PageBorderEvent());
             document.open();
+/*
+            // Définir une police en gras pour le titre et le résumé
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16 ,  BaseColor.RED);
+            Font summaryFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
 
-            // Titre et résumé
-            document.add(new Paragraph("Rapport de Nettoyage poste " + categorieName));
-            document.add(new Paragraph("Nombre total : " + nettoyages.size()));
+// Créer et ajouter le titre
+            Paragraph title = new Paragraph("Rapport de Nettoyage poste " + categorieName, titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+   */
+
+
+
+
+
+
+            // Charger l'image (logo.png dans le dossier resources/static ou src/main/resources)
+            Image logo = Image.getInstance("src/main/resources/static/haccp.png"); // adapte le chemin selon ton projet
+            logo.scaleToFit(80, 80); // redimensionner si nécessaire
+            logo.setAlignment(Image.ALIGN_RIGHT);
+
+// Créer une table pour logo + titre
+            PdfPTable headerTable = new PdfPTable(2);
+            headerTable.setWidthPercentage(100);
+            headerTable.setWidths(new float[]{70f, 30f}); // 80% pour le titre, 20% pour le logo
+
+// Titre en rouge centré
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 17 , BaseColor.RED);
+           /* Paragraph title = new Paragraph("   Rapport de Nettoyage des poste    " +
+                    "                                                                 " + categorieName , titleFont);*/
+
+            Paragraph title = new Paragraph("   Rapport de Nettoyage des poste    "  , titleFont);
+
+
+
+
+            title.setAlignment(Element.ALIGN_CENTER);
+            PdfPCell titleCell = new PdfPCell(title);
+            titleCell.setBorder(Rectangle.NO_BORDER);
+            titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+
+
+
+
+
+// Cellule du logo
+            PdfPCell logoCell = new PdfPCell(logo);
+            logoCell.setBorder(Rectangle.NO_BORDER);
+            logoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            logoCell.setVerticalAlignment(Element.ALIGN_TOP);
+
+// Ajouter les cellules
+            headerTable.addCell(titleCell);
+
+            headerTable.addCell(logoCell);
+
+
+
+// Ajouter le headerTable au document
+            document.add(headerTable);
+
+
+
+
+
+
+
+            Font summaryFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Créer et ajouter le résumé
+            Paragraph summary = new Paragraph("Nombre total du Nettoyage poste : " + nettoyages.size(), summaryFont);
+            summary.setAlignment(Element.ALIGN_CENTER);
+            document.add(summary);
 
 
             document.add(new Paragraph(" ")); // espace
 
-            // Créer un tableau avec 5 colonnes
+            Font dateFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+            Paragraph date = new Paragraph("Date : " + categorieName, dateFont);
+            document.add(date);
+
+            document.add(new Paragraph(" ")); // espace
+
+// Créer un tableau avec 5 colonnes
             PdfPTable table = new PdfPTable(5);
             table.setWidthPercentage(100);
             table.setSpacingBefore(10f);
             table.setSpacingAfter(10f);
 
-            // En-têtes de colonnes
-            table.addCell("Poste");
-            table.addCell("Date");
-            table.addCell("Note");
-            table.addCell("Valide");
-            table.addCell("Validé à");
+// Définir une police en gras
+            Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+
+// Créer les cellules d'en-tête avec texte en gras et centrage
+            PdfPCell cell1 = new PdfPCell(new Phrase("Poste", boldFont));
+            cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            PdfPCell cell2 = new PdfPCell(new Phrase("Date", boldFont));
+            cell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            PdfPCell cell3 = new PdfPCell(new Phrase("Note", boldFont));
+            cell3.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            PdfPCell cell4 = new PdfPCell(new Phrase("Valide", boldFont));
+            cell4.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            PdfPCell cell5 = new PdfPCell(new Phrase("Validé à", boldFont));
+            cell5.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+// Ajouter les cellules au tableau
+            table.addCell(cell1);
+            table.addCell(cell2);
+            table.addCell(cell3);
+            table.addCell(cell4);
+            table.addCell(cell5);
+
 
             // Contenu du tableau
             for (NettoyagesPoste n : nettoyages) {

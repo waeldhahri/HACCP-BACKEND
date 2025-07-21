@@ -90,7 +90,7 @@ public class NettoyagePosteController {
 
     }
 
-
+/*
     @GetMapping("/categorie/{categorieName}/rapport")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<?> findNettoyagesPosteByCategorieAndGetRapportpdf(@PathVariable String categorieName) throws IOException {
@@ -137,7 +137,7 @@ public class NettoyagePosteController {
             serviceNettoyagePoste.sendEmailWithPdf(
                     email,                       // <-- à adapter
                     "Rapport - " + categorieName,
-                    "Veuillez trouver ci-joint le rapport de nettoyage pour la catégorie : " + categorieName,
+                    "Bonjour , Veuillez trouver ci-joint le rapport de nettoyage pour la catégorie : " + categorieName,
                     baos
             );
         } catch (Exception e) {
@@ -158,7 +158,7 @@ public class NettoyagePosteController {
 
 
 
-
+*/
 
     @GetMapping("/categorie/{categorieName}/{email}/rapportTable")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
@@ -186,7 +186,7 @@ public class NettoyagePosteController {
             serviceNettoyagePoste.sendEmailWithPdf(
                     email,
                     "Rapport - " + categorieName,
-                    "Veuillez trouver ci-joint le rapport de nettoyage pour la catégorie : " + categorieName,
+                    " Bonjour , Veuillez trouver ci-joint le rapport de nettoyage pour la catégorie : " + categorieName,
                     baos
             );
         } catch (Exception e) {
@@ -241,7 +241,7 @@ public class NettoyagePosteController {
             serviceNettoyagePoste.sendEmailWithPdf(
                     email,
                     "Rapport Nettoyage Poste - " + date,
-                    "Veuillez trouver ci-joint le rapport de nettoyage poste à la date : " + date,
+                    "Bonjour , Veuillez trouver ci-joint le rapport de nettoyage poste à la date : " + date,
                     baos
             );
         } catch (Exception e) {
@@ -303,7 +303,7 @@ public class NettoyagePosteController {
             serviceNettoyagePoste.sendEmailWithPdf(
                     email,
                     "Rapport Nettoyage Poste du " + startDate + " au " + endDate,
-                    "Veuillez trouver ci-joint le rapport de nettoyage poste entre " + startDate + " et " + endDate,
+                    "Bonjour , Veuillez trouver ci-joint le rapport de nettoyage poste entre " + startDate + " et " + endDate,
                     baos
             );
         } catch (Exception e) {

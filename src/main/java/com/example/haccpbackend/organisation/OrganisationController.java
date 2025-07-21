@@ -148,21 +148,20 @@ public class OrganisationController {
 
     @GetMapping("/findOrganisationByName/{nameOrganisation}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
-    @Transactional
-    public ResponseEntity<?> findOrganisationByName(@PathVariable String nameOrganisation){
 
+    public ResponseEntity<?> findOrganisationByName(@PathVariable String nameOrganisation) {
 
-        Optional<List<Organisation>> organisations=organisationRepository.findByNameIgnoreCase(nameOrganisation);
+        List<Organisation> organisations = organisationRepository.findByNameIgnoreCase(nameOrganisation);
 
-
-
-        if (organisations.isEmpty()){
-
+        if (organisations.isEmpty()) {
             return ResponseEntity.ok(Collections.emptyList());
-
         }
 
-        return ResponseEntity.ok(organisations);
+        List<OrganisationDto> dtoList = organisations.stream()
+                .map(this::toDto)
+                .toList();
+
+        return ResponseEntity.ok(dtoList);
     }
 
 

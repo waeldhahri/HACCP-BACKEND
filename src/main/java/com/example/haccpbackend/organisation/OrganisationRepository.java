@@ -9,7 +9,7 @@ public interface OrganisationRepository extends JpaRepository<Organisation, Long
 
 
 
-    Optional<List<Organisation>> findByNameIgnoreCase(String name);
+    List<Organisation> findByNameIgnoreCase(String name);
 
 
 
