@@ -33,7 +33,7 @@ public class CategorieNettoyageController {
 
 
     @PostMapping("")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<CategorieNettoyage> createCategorieNettoyage(@Valid @RequestBody CategorieNettoyage categorieNettoyage){
 
 
@@ -46,7 +46,7 @@ public class CategorieNettoyageController {
 
 
     @GetMapping("/findAllCategories")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<?> findAllCategorieNettoyage(){
 
         List<CategorieNettoyage> categorieNettoyages=iServiceCategorieNettoyage.findAllCategoriesNettoyage();
@@ -64,7 +64,7 @@ public class CategorieNettoyageController {
 
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
     public ResponseEntity<Void> deleteCategorieNettoyage(@PathVariable Long id){
 

@@ -388,7 +388,7 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
             document.add(new Paragraph(" ")); // espace
 
             Font dateFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
-            Paragraph date = new Paragraph("Date : " + categorieName, dateFont);
+            Paragraph date = new Paragraph("Categorie : " + categorieName, dateFont);
             document.add(date);
 
             document.add(new Paragraph(" ")); // espace
@@ -430,7 +430,15 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
             for (NettoyagesPoste n : nettoyages) {
                 table.addCell(n.getNameOfPoste());
                 table.addCell(n.getCreatedDay().toString());
-                table.addCell(n.getNote());
+                if (n.getNote()==null){
+
+                    table.addCell("-");
+
+                } else {
+
+                    table.addCell(n.getNote());
+
+                }
 
                 if (n.isValide()) {
 

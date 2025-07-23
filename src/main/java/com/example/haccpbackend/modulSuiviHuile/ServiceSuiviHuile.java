@@ -1,9 +1,6 @@
 package com.example.haccpbackend.modulSuiviHuile;
 
 
-import com.example.haccpbackend.nettoyagesPostes.CategorieNettoyage;
-import com.example.haccpbackend.nettoyagesPostes.NettoyagePosteRequest;
-import com.example.haccpbackend.nettoyagesPostes.NettoyagesPoste;
 
 import com.example.haccpbackend.others.mail.PageBorderEvent;
 import com.itextpdf.text.*;
@@ -215,11 +212,11 @@ public class ServiceSuiviHuile implements IServiceSuiviHuile{
 // Créer une table pour logo + titre
             PdfPTable headerTable = new PdfPTable(2);
             headerTable.setWidthPercentage(100);
-            headerTable.setWidths(new float[]{80f, 20f}); // 80% pour le titre, 20% pour le logo
+            headerTable.setWidths(new float[]{70f, 30f}); // 80% pour le titre, 20% pour le logo
 
 // Titre en rouge centré
             Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16 , BaseColor.RED);
-            Paragraph title = new Paragraph("Rapport de Suivi Huile " + date, titleFont);
+            Paragraph title = new Paragraph("Rapport de Suivi Huile des Friteuse " , titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
             PdfPCell titleCell = new PdfPCell(title);
             titleCell.setBorder(Rectangle.NO_BORDER);
@@ -255,12 +252,24 @@ public class ServiceSuiviHuile implements IServiceSuiviHuile{
             Font summaryFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
 
             // Créer et ajouter le résumé
-            Paragraph summary = new Paragraph(" Nombre total du Suivi Huile : " + suiviHuiles.size(),summaryFont);
+            Paragraph summary = new Paragraph(" Nombre total de friteuses suivies : " + suiviHuiles.size(),summaryFont);
             summary.setAlignment(Element.ALIGN_CENTER);
             document.add(summary);
 
 
             document.add(new Paragraph(" ")); // espace
+
+
+            Font dateFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+            Paragraph date2 = new Paragraph("Date : " + date, dateFont);
+            document.add(date2);
+
+            document.add(new Paragraph(" ")); // espace
+
+
+
+
+
             // Créer un tableau avec 5 colonnes
             PdfPTable table = new PdfPTable(5);
             table.setWidthPercentage(100);
@@ -305,7 +314,16 @@ public class ServiceSuiviHuile implements IServiceSuiviHuile{
 
                 table.addCell(n.getCreatedDay().toString());
 
-                table.addCell(n.getNote());
+                if (n.getNote()==null){
+
+                    table.addCell("-");
+
+                } else {
+
+                    table.addCell(n.getNote());
+
+                }
+
 
 
                 if (n.isValide()) {

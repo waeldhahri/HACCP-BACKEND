@@ -32,7 +32,7 @@ public class CategorieProduitContoller {
 
 
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<CategorieProduit> createCategorieProduit(@Valid @RequestBody CategorieProduit categorieProduit){
 
 
@@ -45,7 +45,7 @@ public class CategorieProduitContoller {
 
 
     @GetMapping("/findAllCategories")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<?> findAllCategorieProduit(){
 
         List<CategorieProduit> categorieProduits=categorieProduitRepository.findAll();
@@ -68,7 +68,7 @@ public class CategorieProduitContoller {
 
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
     public ResponseEntity<Void> deleteCategorieProduit(@PathVariable Long id){
 

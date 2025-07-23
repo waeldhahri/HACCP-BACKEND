@@ -32,7 +32,7 @@ public class FournisseurControlleur {
 
 
     @GetMapping("")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public List<Fournisseur> getAllFournisseur(){
 
         return fournisseurService.getAllFourniseurs();
@@ -40,7 +40,7 @@ public class FournisseurControlleur {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<Fournisseur> createFournisseur(@Valid @RequestBody Fournisseur fournisseur){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(fournisseurService.addFournisseur(fournisseur));
@@ -48,7 +48,7 @@ public class FournisseurControlleur {
 
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<Fournisseur> findFournisseurById(@PathVariable Long id){
 
 
@@ -68,7 +68,7 @@ public class FournisseurControlleur {
 
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
     //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteFournisseur(@PathVariable Long id){
@@ -88,7 +88,7 @@ public class FournisseurControlleur {
 
     // Modifier un fournisseur
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<Fournisseur> updateFournisseur(@PathVariable Long id, @RequestBody Fournisseur fournisseur) {
 
         return ResponseEntity.ok(fournisseurService.updateFournisseur(id , fournisseur));

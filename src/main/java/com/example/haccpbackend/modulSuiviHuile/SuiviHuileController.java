@@ -1,8 +1,6 @@
 package com.example.haccpbackend.modulSuiviHuile;
 
 
-import com.example.haccpbackend.nettoyagesPostes.NettoyagePosteRequest;
-import com.example.haccpbackend.nettoyagesPostes.NettoyagesPoste;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -49,7 +47,7 @@ public class SuiviHuileController {
 
 
     @GetMapping("/page")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
     public Page<SuiviHuiles> findAllFriteuses(Pageable pageable) {
 
@@ -60,7 +58,7 @@ public class SuiviHuileController {
 
 
     @GetMapping("/huileDejour")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
     public ResponseEntity<?> findFriteuseDeJour() {
 
@@ -78,7 +76,7 @@ public class SuiviHuileController {
 
 
     @GetMapping("/findByDate/{date}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
     public ResponseEntity<?> findFristeuseByDate(@PathVariable LocalDate date) {
 
@@ -101,7 +99,7 @@ public class SuiviHuileController {
 
     // Modifier un friteuse
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<SuiviHuiles> updateFriteuse(@PathVariable Long id, @RequestBody SuiviHuiles newFriteuse) {
 
         return ResponseEntity.ok(iServiceSuiviHuile.updateFriteuse(id, newFriteuse));
@@ -111,7 +109,7 @@ public class SuiviHuileController {
 
 
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<SuiviHuiles> createFriteuse(@Valid @RequestBody SuiviHuiles friteuse) {
 
         SuiviHuiles friteuse1 = iServiceSuiviHuile.createFruiteuse(friteuse);
@@ -131,7 +129,7 @@ public class SuiviHuileController {
 
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
     // @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteFriteuse(@PathVariable Long id) {
@@ -154,7 +152,7 @@ public class SuiviHuileController {
 
 
     @PutMapping(value = "/validateHuile/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<SuiviHuiles> validateHuile(@PathVariable Long id
             , @RequestPart("huile") String suiviHuileJson , @RequestPart(value = "file", required = false) MultipartFile file) {
 
@@ -198,7 +196,7 @@ public class SuiviHuileController {
 
 
     @GetMapping("/imageAfter/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<byte[]> getFriteuseImage(@PathVariable Long id) {
 
         SuiviHuiles suiviHuiles= suiviHuileRepository.findById(id)
@@ -226,7 +224,7 @@ public class SuiviHuileController {
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date)
             throws IOException {
 
-        // 1. Récupérer tous les nettoyages
+        // 1. Récupérer tous les Friteuse
         List<SuiviHuiles>   suiviHuiles = suiviHuileRepository.findAll();
 
         // 2. Filtrer par date exacte
@@ -242,7 +240,7 @@ public class SuiviHuileController {
         // 4. Générer le PDF
         byte[] pdfBytes = serviceSuiviHuile.generatePdfReportTable(
                 suiviHuilesFiltre,
-                "pour la date :  " + date.toString()
+                  date.toString()
         );
 
         // 5. Envoyer Email
@@ -252,8 +250,8 @@ public class SuiviHuileController {
 
             serviceSuiviHuile.sendEmailWithPdf(
                     email,
-                    "Rapport Nettoyage Poste - " + date,
-                    "Veuillez trouver ci-joint le rapport de nettoyage poste à la date : " + date,
+                    "Rapport Suivi Huile Friteuse - " + date,
+                    "Bonjour , Veuillez trouver ci-joint le rapport de suivi d'huile des Friteuse à la date : " + date,
                     baos
             );
         } catch (Exception e) {
@@ -265,7 +263,7 @@ public class SuiviHuileController {
         // 6. Retourner le PDF
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "rapport_nettoyage_poste_" + date + ".pdf");
+        headers.setContentDispositionFormData("attachment", "rapport_Suivi_Huile_" + date + ".pdf");
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -277,13 +275,13 @@ public class SuiviHuileController {
 
     @GetMapping("/AllSuiviHuile/{email}/rapportTableBetweenDates")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
-    public ResponseEntity<?> findAllNettoyagesPosteGetRapportPdfTableBetweenDates(
+    public ResponseEntity<?> findAllSuiviHuileGetRapportPdfTableBetweenDates(
             @PathVariable String email,
             @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) throws IOException {
 
-        // 1. Récupérer tous les nettoyages
+        // 1. Récupérer tous les Friteuse
         List<SuiviHuiles>   suiviHuiles = suiviHuileRepository.findAll();
 
         // 2. Filtrer ceux entre startDate et endDate inclus
@@ -314,8 +312,8 @@ public class SuiviHuileController {
 
             serviceSuiviHuile.sendEmailWithPdf(
                     email,
-                    "Rapport Nettoyage Poste du " + startDate + " au " + endDate,
-                    "Veuillez trouver ci-joint le rapport de nettoyage poste entre " + startDate + " et " + endDate,
+                    "Rapport Suivi Huile Friteuse - du " + startDate + " au " + endDate,
+                    " Bonjour , Veuillez trouver ci-joint le rapport de Suivi D'huile entre " + startDate + " et " + endDate,
                     baos
             );
         } catch (Exception e) {
@@ -329,7 +327,7 @@ public class SuiviHuileController {
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData(
                 "attachment",
-                "rapport_nettoyage_poste_" + startDate + "_to_" + endDate + ".pdf"
+                "rapport_Suivi_Huile_" + startDate + "_to_" + endDate + ".pdf"
         );
 
         return ResponseEntity.ok()
