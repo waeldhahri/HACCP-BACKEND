@@ -1,6 +1,7 @@
 package com.example.haccpbackend.s3;
 
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -8,10 +9,12 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 public class S3Service {
@@ -80,6 +83,34 @@ public class S3Service {
 
 
 
+    // Exécuté toutes les semaines le lundi a 10 du matin
+    @Scheduled(cron = "0 0 10 * * MON") // lundi à 10h00
+    public void supprimerImagesAnciennes() {
+        Instant ilYAAUnAn = Instant.now().minus(365, ChronoUnit.DAYS);
+
+        ListObjectsV2Request listRequest = ListObjectsV2Request.builder()
+                .bucket(bucketName)
+                .prefix("produits/") // modifie selon ton répertoire S3
+                .build();
+
+        ListObjectsV2Response listResponse = s3Client.listObjectsV2(listRequest);
+
+        List<S3Object> objets = listResponse.contents();
+
+        for (S3Object objet : objets) {
+            if (objet.lastModified().isBefore(ilYAAUnAn)) {
+                String key = objet.key();
+                System.out.println("Suppression automatique de : " + key);
+
+                DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .build();
+
+                s3Client.deleteObject(deleteRequest);
+            }
+        }
+    }
 
 
 

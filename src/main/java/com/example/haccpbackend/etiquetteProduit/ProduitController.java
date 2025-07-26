@@ -44,7 +44,7 @@ public class ProduitController {
 
 
     @PostMapping(value = "/add" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<Produit> ajouterProduit(
             @RequestParam("photo") MultipartFile photo,
             @RequestParam("produitname") String nomProduit,
@@ -61,7 +61,7 @@ public class ProduitController {
 
 
         Produit produit = new Produit();
-        produit.setProduitName(nomProduit);
+        produit.setProduitname(nomProduit);
         produit.setQuantite(quantite);
         produit.setDlc(dlc);
         produit.setCategorieProduit(categorie);
@@ -78,7 +78,7 @@ public class ProduitController {
 
 
     @GetMapping("/photo-by-date")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<?> getPhotoUrl(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
         List<Produit> produits = produitRepository.findAllByDateDeStockage(date);
@@ -101,7 +101,7 @@ public class ProduitController {
 
 
     @GetMapping("/categorie/{categorieName}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<?> findProduitByCategorie(@PathVariable String categorieName){
 
 
@@ -122,6 +122,31 @@ public class ProduitController {
         return ResponseEntity.ok(produits);
 
 
+    }
+
+
+
+    @PutMapping(value = "/{id}/ouverture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<Produit> ajouterDateEtPhotoOuverture(
+            @PathVariable Long id,
+            @RequestParam("photoOuverture") MultipartFile photoOuverture
+    ) {
+        // 1. Trouver le produit
+        Produit produit = produitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produit non trouvé  "));
+
+        // 2. Uploader la photo sur S3
+        String urlS3 = s3Service.uploadFile(photoOuverture, "produits/" + photoOuverture.getOriginalFilename());
+
+        // 3. Mettre à jour les champs
+        produit.setDateDeOuverture(LocalDate.now());
+        produit.setPhotoDeOuvertureUrl(urlS3);
+
+        // 4. Sauvegarder
+        Produit updatedProduit = produitRepository.save(produit);
+
+        return ResponseEntity.ok(updatedProduit);
     }
 
 }

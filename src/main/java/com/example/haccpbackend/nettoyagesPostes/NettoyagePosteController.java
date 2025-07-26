@@ -185,8 +185,8 @@ public class NettoyagePosteController {
 
             serviceNettoyagePoste.sendEmailWithPdf(
                     email,
-                    "Rapport - " + categorieName,
-                    " Bonjour , Veuillez trouver ci-joint le rapport de nettoyage pour la catégorie : " + categorieName,
+                    "Rapport - Nettoyage Poste pour la catégorie : " + categorieName,
+                    "Bonjour,\n \n Veuillez trouver ci-joint le rapport de nettoyage pour la catégorie : " + categorieName + ".\n\n Cordialement,",
                     baos
             );
         } catch (Exception e) {
@@ -241,7 +241,7 @@ public class NettoyagePosteController {
             serviceNettoyagePoste.sendEmailWithPdf(
                     email,
                     "Rapport Nettoyage Poste - " + date,
-                    "Bonjour , Veuillez trouver ci-joint le rapport de nettoyage poste à la date : " + date,
+                    "Bonjour , \n\n Veuillez trouver ci-joint le rapport de nettoyage poste à la date : " + date +" \n\n Cordialement ,",
                     baos
             );
         } catch (Exception e) {
@@ -303,7 +303,7 @@ public class NettoyagePosteController {
             serviceNettoyagePoste.sendEmailWithPdf(
                     email,
                     "Rapport Nettoyage Poste du " + startDate + " au " + endDate,
-                    "Bonjour , Veuillez trouver ci-joint le rapport de nettoyage poste entre " + startDate + " et " + endDate,
+                    "Bonjour ,\n\n Veuillez trouver ci-joint le rapport de nettoyage poste entre " + startDate + " et " + endDate +" \n\n Cordialement ,",
                     baos
             );
         } catch (Exception e) {

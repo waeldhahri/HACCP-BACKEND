@@ -13,5 +13,8 @@ RUN mvn clean package -DskipTests
 FROM openjdk:17-jdk-slim
 VOLUME /tmp
 COPY --from=builder /app/target/*.jar app.jar
+
+# ✅ Copier l'image dans le conteneur
+COPY src/main/resources/static/haccp.png /app/images/haccp.png
 ENTRYPOINT ["java", "-jar", "/app.jar"]
 

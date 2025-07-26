@@ -311,8 +311,17 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
 
 
             // Charger l'image (logo.png dans le dossier resources/static ou src/main/resources)
-            Image logo = Image.getInstance("src/main/resources/static/haccp.png"); // adapte le chemin selon ton projet
-            logo.scaleToFit(80, 80); // redimensionner si nécessaire
+
+            //Image logo = Image.getInstance("src/main/resources/static/haccp.png");
+
+            Image logo = Image.getInstance("/app/images/haccp.png");
+            // adapte le chemin selon ton projet
+
+
+
+
+
+            logo.scaleToFit(90, 90); // redimensionner si nécessaire
             logo.setAlignment(Image.ALIGN_RIGHT);
 
 // Créer une table pour logo + titre
@@ -321,7 +330,7 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
             headerTable.setWidths(new float[]{70f, 30f}); // 80% pour le titre, 20% pour le logo
 
 // Titre en rouge centré
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 17 , BaseColor.RED);
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18 , BaseColor.BLUE);
            /* Paragraph title = new Paragraph("   Rapport de Nettoyage des poste    " +
                     "                                                                 " + categorieName , titleFont);*/
 
@@ -388,7 +397,7 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
             document.add(new Paragraph(" ")); // espace
 
             Font dateFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
-            Paragraph date = new Paragraph("Categorie : " + categorieName, dateFont);
+            Paragraph date = new Paragraph("Date : " + categorieName, dateFont);
             document.add(date);
 
             document.add(new Paragraph(" ")); // espace

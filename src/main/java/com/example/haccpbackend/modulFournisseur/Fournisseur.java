@@ -2,6 +2,7 @@ package com.example.haccpbackend.modulFournisseur;
 
 
 import com.example.haccpbackend.controleReception.Product;
+import com.example.haccpbackend.controleReception.controleReceptionVersion2.ReceptionProduit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -38,20 +39,24 @@ public class Fournisseur {
 
 
 
+    @OneToMany(mappedBy = "fournisseurs" )
+    @JsonIgnoreProperties("fournisseurs")
+    @JsonIgnore
+    private List<ReceptionProduit> receptionProduits;
 
 
-    public Fournisseur(Long id, String name, String email, String phone, String address, byte[] contractDetails,
-                       List<Product> productsFournisseur) {
+    public Fournisseur(Long id, String name, String email, String phone, String address,
+                       byte[] contractDetails,
+                       List<Product> productsFournisseur, List<ReceptionProduit> receptionProduits) {
         this.id = id;
         this.name = name;
-
         this.email = email;
         this.phone = phone;
         this.address = address;
         this.contractDetails = contractDetails;
         this.productsFournisseur = productsFournisseur;
+        this.receptionProduits = receptionProduits;
     }
-
 
     public Fournisseur() {
     }
@@ -113,5 +118,13 @@ public class Fournisseur {
 
     public void setProductsFournisseur(List<Product> productsFournisseur) {
         this.productsFournisseur = productsFournisseur;
+    }
+
+    public List<ReceptionProduit> getReceptionProduits() {
+        return receptionProduits;
+    }
+
+    public void setReceptionProduits(List<ReceptionProduit> receptionProduits) {
+        this.receptionProduits = receptionProduits;
     }
 }

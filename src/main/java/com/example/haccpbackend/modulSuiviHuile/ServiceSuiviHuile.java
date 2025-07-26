@@ -205,8 +205,8 @@ public class ServiceSuiviHuile implements IServiceSuiviHuile{
 */
 
             // Charger l'image (logo.png dans le dossier resources/static ou src/main/resources)
-            Image logo = Image.getInstance("src/main/resources/static/haccp.png"); // adapte le chemin selon ton projet
-            logo.scaleToFit(80, 80); // redimensionner si nécessaire
+            Image logo = Image.getInstance("/app/images/haccp.png"); // adapte le chemin selon ton projet
+            logo.scaleToFit(90, 90); // redimensionner si nécessaire
             logo.setAlignment(Image.ALIGN_RIGHT);
 
 // Créer une table pour logo + titre
@@ -215,7 +215,7 @@ public class ServiceSuiviHuile implements IServiceSuiviHuile{
             headerTable.setWidths(new float[]{70f, 30f}); // 80% pour le titre, 20% pour le logo
 
 // Titre en rouge centré
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16 , BaseColor.RED);
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18 , BaseColor.BLUE);
             Paragraph title = new Paragraph("Rapport de Suivi Huile des Friteuse " , titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
             PdfPCell titleCell = new PdfPCell(title);

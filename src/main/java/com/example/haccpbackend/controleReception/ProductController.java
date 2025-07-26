@@ -29,6 +29,7 @@ import java.util.Optional;
 @RequestMapping("/products")
 public class ProductController {
 
+/*
 
 
     @Autowired
@@ -92,6 +93,7 @@ public class ProductController {
 
 
 
+*/
 /*
 
     @PostMapping("")
@@ -99,7 +101,8 @@ public class ProductController {
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product){
 
       return ResponseEntity.status(HttpStatus.CREATED).body(iServiceProduct.createproduct(product));
-    }*/
+    }*//*
+
 
 
 
@@ -108,7 +111,9 @@ public class ProductController {
 
     @PostMapping(value = "/add", consumes = {"multipart/form-data"})
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Product> createProduct(/*@Valid @RequestBody Product product*/
+    public ResponseEntity<Product> createProduct(*/
+/*@Valid @RequestBody Product product*//*
+
             @RequestPart("product") String productJson ,
              @RequestPart(value = "file", required = false) MultipartFile file) throws IOException{
 
@@ -275,11 +280,13 @@ public class ProductController {
             return ResponseEntity.ok(products);
             // return products.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(products);
         }
-        /*
+        */
+/*
         } catch (Exception e) {
             //return ResponseEntity.badRequest().body(null); // Erreur si la date est mal formatée
             return ResponseEntity.notFound().build();
-        }*/
+        }*//*
+
 
 
        //return iServiceProduct.getProductByDate(date).map(ResponseEntity::ok)
@@ -395,7 +402,9 @@ public class ProductController {
 
              {
 
-        /* @Valid @RequestBody Product product ){*/
+        */
+/* @Valid @RequestBody Product product ){*//*
+
         //return ResponseEntity.status(HttpStatus.CREATED).body(iServiceProduct.updateproduct(id ,product));
 
 
@@ -460,6 +469,7 @@ public class ProductController {
 
 
 
+*/
 
 
 

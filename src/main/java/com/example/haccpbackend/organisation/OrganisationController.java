@@ -186,6 +186,7 @@ public class OrganisationController {
     }
 */
 
+    /*
     @GetMapping("/findAllOrganisations2")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     @Transactional()
@@ -200,7 +201,7 @@ public class OrganisationController {
 
         return ResponseEntity.ok(organisations);
 
-    }
+    }*/
 
 
 
@@ -253,6 +254,53 @@ public class OrganisationController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+
+
+    @PutMapping(value = "/update/{id}", consumes = {"multipart/form-data"})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    @Transactional
+    public ResponseEntity<?> updateOrganisation(@PathVariable Long id,
+                                                @RequestPart("organisation") @Valid String organisationJson,
+                                                @RequestPart(value = "image", required = false) MultipartFile imageFile) {
+        try {
+            // Rechercher l'organisation existante
+            Organisation existing = organisationRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Organisation non trouvée"));
+
+            // Mapper le JSON en objet Organisation
+            Organisation updatedData = objectMapper.readValue(organisationJson, Organisation.class);
+
+            // Mise à jour du nom
+            existing.setName(updatedData.getName());
+
+            // Si une nouvelle image est fournie, la remplacer
+            if (imageFile != null && !imageFile.isEmpty()) {
+                existing.setImage(imageFile.getBytes());
+
+                String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/api/organisation/image/")
+                        .path(existing.getId().toString())
+                        .toUriString();
+
+                existing.setImageUrl(imageUrl);
+            }
+
+            // Sinon, conserver l’image existante (aucun changement)
+
+            Organisation updated = organisationRepository.save(existing);
+
+            return ResponseEntity.ok(updated);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erreur lors de la lecture de l'image ou du JSON : " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
 
 
 

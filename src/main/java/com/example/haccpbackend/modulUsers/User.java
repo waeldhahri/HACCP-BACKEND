@@ -3,10 +3,12 @@ package com.example.haccpbackend.modulUsers;
 
 import com.example.haccpbackend.controleReception.Product;
 
+import com.example.haccpbackend.controleReception.controleReceptionVersion2.ReceptionProduit;
 import com.example.haccpbackend.organisation.Organisation;
 import com.example.haccpbackend.registerJWT.Token;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -55,6 +57,8 @@ public class User implements UserDetails , Principal {
 
     @OneToMany(mappedBy = "users" )
     private List<Product> products;
+
+
 
 
     @OneToMany(mappedBy = "userToken" , cascade = CascadeType.ALL , orphanRemoval = true)
@@ -107,13 +111,16 @@ public class User implements UserDetails , Principal {
     }
 
 
-    public User(Long id, String fullName, String email, String motdepasse, List<Product> products, List<Token> tokens, byte[] imageOfUser,
-                String imageUrl, boolean enabled, boolean accountLocked, Role role, Organisation organisation, String resetToken) {
+    public User(Long id, String fullName, String email, String motdepasse,
+                List<Product> products,
+                List<Token> tokens, byte[] imageOfUser, String imageUrl, boolean enabled,
+                boolean accountLocked, Role role, Organisation organisation, String resetToken) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.motdepasse = motdepasse;
         this.products = products;
+
         this.tokens = tokens;
         this.imageOfUser = imageOfUser;
         this.imageUrl = imageUrl;
@@ -259,6 +266,8 @@ public class User implements UserDetails , Principal {
     public String getPassword() {
         return motdepasse;
     }
+
+
 
 
 }

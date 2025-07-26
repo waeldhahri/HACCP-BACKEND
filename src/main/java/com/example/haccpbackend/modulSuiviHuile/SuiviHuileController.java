@@ -131,7 +131,6 @@ public class SuiviHuileController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     @Transactional
-    // @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteFriteuse(@PathVariable Long id) {
 
 
@@ -251,7 +250,7 @@ public class SuiviHuileController {
             serviceSuiviHuile.sendEmailWithPdf(
                     email,
                     "Rapport Suivi Huile Friteuse - " + date,
-                    "Bonjour , Veuillez trouver ci-joint le rapport de suivi d'huile des Friteuse à la date : " + date,
+                    "Bonjour , \n\n Veuillez trouver ci-joint le rapport de suivi d'huile des Friteuse à la date : " + date +"\n\n Cordialement ,",
                     baos
             );
         } catch (Exception e) {
@@ -313,7 +312,7 @@ public class SuiviHuileController {
             serviceSuiviHuile.sendEmailWithPdf(
                     email,
                     "Rapport Suivi Huile Friteuse - du " + startDate + " au " + endDate,
-                    " Bonjour , Veuillez trouver ci-joint le rapport de Suivi D'huile entre " + startDate + " et " + endDate,
+                    " Bonjour ,\n\n Veuillez trouver ci-joint le rapport de Suivi D'huile entre " + startDate + " et " + endDate +" \n\n Cordialement ,",
                     baos
             );
         } catch (Exception e) {
