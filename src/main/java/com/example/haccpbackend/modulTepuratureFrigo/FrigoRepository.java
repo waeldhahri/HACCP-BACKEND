@@ -26,6 +26,9 @@ public interface FrigoRepository extends JpaRepository<Frigo,Long> {
    Optional<Frigo> findFirstByNameAndCategorieFrigo(String name, CategorieFrigo categorieFrigo);
 
 
+   Optional<Frigo> findByDeviceId(String deviceId);
+
+
 
 
 }

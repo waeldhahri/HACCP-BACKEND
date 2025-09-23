@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/categorieproduit")
+@RequestMapping("/categorieproduit")
 public class CategorieProduitContoller {
 
 
@@ -88,6 +88,24 @@ public class CategorieProduitContoller {
 
 
     }
+
+
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<CategorieProduit> updateCategorieProduit(
+            @PathVariable Long id,
+            @Valid @RequestBody CategorieProduit updatedCategorieProduit) {
+
+        return categorieProduitRepository.findById(id)
+                .map(existingCategorie -> {
+                    existingCategorie.setName(updatedCategorieProduit.getName());
+                    // ⚠️ On ne met pas à jour la liste des produits ici pour éviter de tout écraser
+                    CategorieProduit saved = categorieProduitRepository.save(existingCategorie);
+                    return ResponseEntity.ok(saved);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
 
 

@@ -26,7 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/frigo")
+@RequestMapping("/frigo")
 public class FrigoController {
 
 
@@ -130,7 +130,7 @@ public class FrigoController {
 
                 // Générer l'URL complète de l'image
                 String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/api/frigo/")
+                        .path("/frigo/")
                         .path("/image/")
                         .path(frigo.getId().toString())
                         .toUriString();

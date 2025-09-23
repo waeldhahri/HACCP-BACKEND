@@ -2,6 +2,7 @@ package com.example.haccpbackend.modulTepuratureFrigo;
 
 
 import com.example.haccpbackend.modulPlanning.modulePlanningVersion2.planningFrigo.PlanningFrigo;
+import com.example.haccpbackend.modulTepuratureFrigo.tempurature.TemperatureFrigoMqTT;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -33,6 +34,12 @@ public class Frigo {
 
     @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<TemperatureFrigo> temperatures;
+
+    @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TemperatureFrigoMqTT> temperatureFrigoMqTTS;
+
+
+    private String deviceId;   // correspond au "device_id" reçu par MQTT
 
     @JsonIgnore
     @Lob
@@ -104,14 +111,34 @@ public class Frigo {
         this.planningFrigos = planningFrigos;
     }
 
+    public List<TemperatureFrigoMqTT> getTemperatureFrigoMqTTS() {
+        return temperatureFrigoMqTTS;
+    }
 
-    public Frigo(Long id, String name, CategorieFrigo categorieFrigo, List<PlanningFrigo> planningFrigos,
-                 List<TemperatureFrigo> temperatures, byte[] imageOfFrigo, String imageUrl) {
+
+
+    public void setTemperatureFrigoMqTTS(List<TemperatureFrigoMqTT> temperatureFrigoMqTTS) {
+        this.temperatureFrigoMqTTS = temperatureFrigoMqTTS;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public Frigo(Long id, String name, CategorieFrigo categorieFrigo, List<PlanningFrigo> planningFrigos
+            , List<TemperatureFrigo> temperatures, List<TemperatureFrigoMqTT> temperatureFrigoMqTTS
+            , String deviceId, byte[] imageOfFrigo, String imageUrl) {
         this.id = id;
         this.name = name;
         this.categorieFrigo = categorieFrigo;
         this.planningFrigos = planningFrigos;
         this.temperatures = temperatures;
+        this.temperatureFrigoMqTTS = temperatureFrigoMqTTS;
+        this.deviceId = deviceId;
         this.imageOfFrigo = imageOfFrigo;
         this.imageUrl = imageUrl;
     }

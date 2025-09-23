@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/organisation")
+@RequestMapping("/organisation")
 @Transactional
 public class OrganisationController {
 
@@ -78,7 +78,7 @@ public class OrganisationController {
 
                 // Générer l'URL complète de l'image
                 String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/api/organisation/")
+                        .path("/organisation/")
                         .path("/image/")
                         .path(organisation1.getId().toString())
                         .toUriString();
@@ -280,7 +280,7 @@ public class OrganisationController {
                 existing.setImage(imageFile.getBytes());
 
                 String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/api/organisation/image/")
+                        .path("/organisation/image/")
                         .path(existing.getId().toString())
                         .toUriString();
 

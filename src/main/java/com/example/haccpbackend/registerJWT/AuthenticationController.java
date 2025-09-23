@@ -85,7 +85,7 @@ public class AuthenticationController {
 
             // Génère l'URL d'accès
             String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/api/user/image/")
+                    .path("/user/image/")
                     .path(imageName)
                     .toUriString();
 

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/planningfrigo")
+@RequestMapping("/planningfrigo")
 @CrossOrigin
 public class PlanningFrigoController {
 

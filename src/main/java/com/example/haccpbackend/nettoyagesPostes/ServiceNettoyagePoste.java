@@ -128,7 +128,7 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
 
                     // Générer l'URL complète de l'image
                     String imageUrl1 = ServletUriComponentsBuilder.fromCurrentContextPath()
-                            .path("/api/nettoyageposte/")
+                            .path("/nettoyageposte/")
                             .path("/imageBefore/")
                             .path(existingPoste.getId().toString())
                             .toUriString();
@@ -152,7 +152,7 @@ public class ServiceNettoyagePoste implements IServiceNettoyagePoste{
 
                     // Générer l'URL complète de l'image
                     String imageUrl2 = ServletUriComponentsBuilder.fromCurrentContextPath()
-                            .path("/api/nettoyageposte/")
+                            .path("/nettoyageposte/")
                             .path("/imageAfter/")
                             .path(existingPoste.getId().toString())
                             .toUriString();

@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/CategorieNettoyage")
+@RequestMapping("/CategorieNettoyage")
 public class CategorieNettoyageController {
 
 
@@ -82,6 +82,24 @@ public class CategorieNettoyageController {
 
 
     }
+
+
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<CategorieNettoyage> updateCategorieNettoyage(
+            @PathVariable Long id,
+            @Valid @RequestBody CategorieNettoyage updatedCategorieNettoyage) {
+
+        return categorieNettoyageRepository.findById(id)
+                .map(existingCategorie -> {
+                    existingCategorie.setName(updatedCategorieNettoyage.getName());
+                    // On ne met pas à jour la liste nettoyagesPostes ici pour éviter d'écraser les données
+                    CategorieNettoyage saved = categorieNettoyageRepository.save(existingCategorie);
+                    return ResponseEntity.ok(saved);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
 
 }

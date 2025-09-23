@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/planning-huiles")
+@RequestMapping("/planning-huiles")
 @CrossOrigin
 public class PlanningSuiviHuileController {
 

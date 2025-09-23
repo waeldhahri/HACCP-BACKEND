@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.File;
 
 @RestController
-@RequestMapping("/api/system")
+@RequestMapping("/system")
 public class SystemPathController {
 
     @GetMapping("/path")

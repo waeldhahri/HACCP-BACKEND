@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/planning")
+@RequestMapping("/planning")
 public class PlanningController2 {
 
 

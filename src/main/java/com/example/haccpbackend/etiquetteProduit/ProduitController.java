@@ -1,8 +1,12 @@
 package com.example.haccpbackend.etiquetteProduit;
 
 
+import com.example.haccpbackend.controleReception.controleReceptionVersion2.ReceptionProduit;
 import com.example.haccpbackend.nettoyagesPostes.NettoyagesPoste;
 import com.example.haccpbackend.s3.S3Service;
+import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -77,9 +81,9 @@ public class ProduitController {
 
 
 
-    @GetMapping("/photo-by-date")
+    @GetMapping("/photoDeStockage-by-date")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
-    public ResponseEntity<?> getPhotoUrl(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    public ResponseEntity<?> getPhotoUrlStockage(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
         List<Produit> produits = produitRepository.findAllByDateDeStockage(date);
 
@@ -94,6 +98,35 @@ public class ProduitController {
 
         return ResponseEntity.ok(photoUrls);
     }
+
+
+
+
+
+
+
+    @GetMapping("/photoOuverture-by-date")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<?> getPhotoUrlOuverture(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+
+        List<Produit> produits = produitRepository.findAllByDateDeOuverture(date);
+
+        if (produits.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        List<String> photoUrls = produits.stream()
+                .map(Produit::getPhotoDeOuvertureUrl)
+                .filter(Objects::nonNull)
+                .toList();
+
+        return ResponseEntity.ok(photoUrls);
+    }
+
+
+
+
+
 
 
 
@@ -126,6 +159,39 @@ public class ProduitController {
 
 
 
+
+    @GetMapping("/produitName/{produitName}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<?> findProduitByproduitName(@PathVariable String produitName){
+
+
+
+
+
+        List<Produit> produits=produitRepository.findByProduitnameIgnoreCase(produitName);
+
+
+        if (produits.isEmpty()) {
+
+            return ResponseEntity.ok(Collections.emptyList());
+
+        }
+
+        return ResponseEntity.ok(produits);
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
     @PutMapping(value = "/{id}/ouverture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<Produit> ajouterDateEtPhotoOuverture(
@@ -148,5 +214,56 @@ public class ProduitController {
 
         return ResponseEntity.ok(updatedProduit);
     }
+
+
+
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<Produit> updateProduit(
+            @PathVariable Long id,
+            @RequestParam("produitname") String nomProduit,
+            @RequestParam("quantite") Double quantite,
+            @RequestParam("dlc") boolean dlc,
+            @RequestParam(value = "photo", required = false) MultipartFile photo // optionnel
+    ) {
+        // 1. Récupérer le produit existant
+        Produit produit = produitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produit introuvable"));
+
+
+        // 3. Si une nouvelle photo est fournie, l’uploader sur S3
+        if (photo != null && !photo.isEmpty()) {
+            String urlS3 = s3Service.uploadFile(photo, "produits/" + photo.getOriginalFilename());
+            produit.setPhotoUrl(urlS3);
+        }
+
+        // 4. Mettre à jour les autres champs
+        produit.setProduitname(nomProduit);
+        produit.setQuantite(quantite);
+        produit.setDlc(dlc);
+
+        // 5. Enregistrer les changements
+        Produit updated = produitRepository.save(produit);
+
+        return ResponseEntity.ok(updated);
+    }
+
+
+
+    @GetMapping("/page")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    @Transactional
+    public Page<Produit> getAllProducts(Pageable pageable){
+
+        return produitRepository.findAllByOrderByIdDesc(pageable);
+
+    }
+
+
+
+
+
+
+
 
 }

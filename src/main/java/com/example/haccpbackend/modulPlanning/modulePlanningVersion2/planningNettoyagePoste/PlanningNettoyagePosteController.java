@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/planningNettoyages")
+@RequestMapping("/planningNettoyages")
 @CrossOrigin
 public class PlanningNettoyagePosteController {
 

@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/categoriesFrigo")
+@RequestMapping("/categoriesFrigo")
 public class CategorieFrigoController {
 
 
@@ -96,6 +96,43 @@ public class CategorieFrigoController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+
+
+
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<CategorieFrigo> updateCategorieFrigo(
+            @PathVariable Long id,
+            @Valid @RequestBody CategorieFrigo updatedCategorieFrigo) {
+
+        Optional<CategorieFrigo> categorieFrigoOptional = categorieFrigoRepository.findById(id);
+
+        if (categorieFrigoOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        CategorieFrigo existingCategorie = categorieFrigoOptional.get();
+
+        // Mettre à jour les champs
+        existingCategorie.setName(updatedCategorieFrigo.getName());
+
+        // Sauvegarder les modifications
+        CategorieFrigo savedCategorie = categorieFrigoRepository.save(existingCategorie);
+
+        return ResponseEntity.ok(savedCategorie);
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
