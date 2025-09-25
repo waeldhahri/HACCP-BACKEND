@@ -1,5 +1,6 @@
 package com.example.haccpbackend.organisation;
 
+import com.example.haccpbackend.modulTepuratureFrigo.tempurature.TemperatureFrigoMqTT;
 import com.example.haccpbackend.modulUsers.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -38,17 +39,26 @@ public class Organisation {
     @JsonManagedReference
     private List<User> users;
 
+    // Relation avec User
+    @OneToMany(mappedBy = "organisation", cascade = CascadeType.ALL , orphanRemoval = true )
+    @JsonManagedReference
+    private List<TemperatureFrigoMqTT> temperatureFrigoMqTTS;
+
+
+
 
     public Organisation() {
     }
 
 
-    public Organisation(Long id, String name, byte[] image, String imageUrl, List<User> users) {
+    public Organisation(Long id, String name, byte[] image, String imageUrl
+              , List<User> users, List<TemperatureFrigoMqTT> temperatureFrigoMqTTS) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.imageUrl = imageUrl;
         this.users = users;
+        this.temperatureFrigoMqTTS = temperatureFrigoMqTTS;
     }
 
     public Long getId() {
@@ -91,5 +101,11 @@ public class Organisation {
         this.users = users;
     }
 
+    public List<TemperatureFrigoMqTT> getTemperatureFrigoMqTTS() {
+        return temperatureFrigoMqTTS;
+    }
 
+    public void setTemperatureFrigoMqTTS(List<TemperatureFrigoMqTT> temperatureFrigoMqTTS) {
+        this.temperatureFrigoMqTTS = temperatureFrigoMqTTS;
+    }
 }

@@ -2,9 +2,13 @@ package com.example.haccpbackend.modulTepuratureFrigo.tempurature;
 
 import com.example.haccpbackend.modulTepuratureFrigo.Frigo;
 import com.example.haccpbackend.modulTepuratureFrigo.FrigoRepository;
+import com.example.haccpbackend.modulTepuratureFrigo.tempurature.device.DeviceRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,19 +18,24 @@ import java.time.format.DateTimeFormatter;
 
 public class MqttDataService {
 
-    private final FrigoRepository frigoRepository;
-    private final TemperatureFrigoRepository temperatureFrigoRepository;
+    @Autowired
+    private JavaMailSender mailSender;
+
+    private final ObjectMapper objectMapper;
+    private final DeviceRepository deviceRepository;
+    private final TemperatureFrigoRepository temperatureFrigoMqTTRepository;
+
+    public MqttDataService(ObjectMapper objectMapper, DeviceRepository deviceRepository
+            , TemperatureFrigoRepository temperatureFrigoMqTTRepository) {
+        this.objectMapper = objectMapper;
+        this.deviceRepository = deviceRepository;
+        this.temperatureFrigoMqTTRepository = temperatureFrigoMqTTRepository;
 
 
-
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-
-    public MqttDataService(FrigoRepository frigoRepository, TemperatureFrigoRepository temperatureFrigoRepository) {
-        this.frigoRepository = frigoRepository;
-        this.temperatureFrigoRepository = temperatureFrigoRepository;
     }
+
+    private static final String ALERT_EMAIL = "waeldhahri3@gmail.com";
+
 
     public void processMqttMessage(String payload) {
         try {
@@ -37,26 +46,61 @@ public class MqttDataService {
             Integer batteryLevel = jsonNode.get("battery_level").asInt();
             String datetimeStr = jsonNode.get("datetime").asText();
 
-            LocalDateTime datetime = LocalDateTime.parse(datetimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            LocalDateTime datetime = LocalDateTime.parse(
+                    datetimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            );
 
-            // 🔎 Récupérer le frigo lié au device_id
-            Frigo frigo = frigoRepository.findByDeviceId(deviceId)
-                    .orElseThrow(() -> new RuntimeException("Frigo non trouvé pour device_id=" + deviceId));
+            deviceRepository.findByDeviceId(deviceId).ifPresentOrElse(device -> {
+                Frigo frigo = device.getFrigo();
 
-            // 💾 Sauvegarder la température
-            TemperatureFrigoMqTT temp = new TemperatureFrigoMqTT();
-            temp.setTemperature(temperature);
-            temp.setBatteryLevel(batteryLevel);
-            temp.setDatetime(datetime);
-            temp.setFrigo(frigo);
+                // 💾 Sauvegarde en base
+                TemperatureFrigoMqTT temp = new TemperatureFrigoMqTT();
+                temp.setTemperature(temperature);
+                temp.setBatteryLevel(batteryLevel);
+                temp.setDatetime(datetime);
+                temp.setFrigo(frigo);
 
+                temperatureFrigoMqTTRepository.save(temp);
 
-            temperatureFrigoRepository.save(temp);
+                System.out.println("✅ Température enregistrée pour frigo: " + frigo.getName()
+                        + " | device: " + deviceId
+                        + " | temp: " + temperature + "°C | battery: " + batteryLevel + "%");
 
-            System.out.println("✅ Température sauvegardée : " + temperature + "°C pour frigo " + frigo.getName());
+                // 🚨 ALERTES EMAIL
+                if (temperature > 10) {
+                    sendEmail(
+                            ALERT_EMAIL,
+                            "⚠️ ALERTE Température",
+                            "Le frigo '" + frigo.getName() + "' (device: " + deviceId + ") "
+                                    + "a atteint une température élevée de " + temperature + "°C à " + datetime + "."
+                    );
+                    System.out.println("📧 Email d'alerte température envoyé !");
+                }
+
+                if (batteryLevel < 30) {
+                    sendEmail(
+                            ALERT_EMAIL,
+                            "⚠️ ALERTE Batterie faible",
+                            "Le device '" + deviceId + "' du frigo '" + frigo.getName() + "' "
+                                    + "a un niveau de batterie faible (" + batteryLevel + "%) à " + datetime + "."
+                    );
+                    System.out.println("📧 Email d'alerte batterie envoyé !");
+                }
+
+            }, () -> System.err.println("❌ Aucun device trouvé pour device_id=" + deviceId));
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+
+    public void sendEmail(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
     }
 }

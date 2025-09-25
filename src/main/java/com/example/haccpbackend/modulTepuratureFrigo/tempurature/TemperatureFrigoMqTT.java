@@ -1,6 +1,8 @@
 package com.example.haccpbackend.modulTepuratureFrigo.tempurature;
 
 import com.example.haccpbackend.modulTepuratureFrigo.Frigo;
+import com.example.haccpbackend.organisation.Organisation;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -25,21 +27,25 @@ public class TemperatureFrigoMqTT {
     private Frigo frigo;
 
 
-
+    @ManyToOne
+    @JoinColumn(name = "organisation_id")
+    @JsonBackReference
+    private Organisation organisation;
 
 
     //constructors
 
 
-    public TemperatureFrigoMqTT(Long id, Double temperature, Integer batteryLevel,
-                                LocalDateTime datetime, Frigo frigo) {
+    public TemperatureFrigoMqTT(Long id, Double temperature,
+                                Integer batteryLevel, LocalDateTime datetime,
+                                            Frigo frigo, Organisation organisation) {
         this.id = id;
         this.temperature = temperature;
         this.batteryLevel = batteryLevel;
         this.datetime = datetime;
         this.frigo = frigo;
+        this.organisation = organisation;
     }
-
 
     public TemperatureFrigoMqTT() {
     }
@@ -85,5 +91,13 @@ public class TemperatureFrigoMqTT {
 
     public void setFrigo(Frigo frigo) {
         this.frigo = frigo;
+    }
+
+    public Organisation getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 }

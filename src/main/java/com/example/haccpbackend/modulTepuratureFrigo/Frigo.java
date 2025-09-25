@@ -2,6 +2,7 @@ package com.example.haccpbackend.modulTepuratureFrigo;
 
 
 import com.example.haccpbackend.modulPlanning.modulePlanningVersion2.planningFrigo.PlanningFrigo;
+import com.example.haccpbackend.modulTepuratureFrigo.tempurature.device.Device;
 import com.example.haccpbackend.modulTepuratureFrigo.tempurature.TemperatureFrigoMqTT;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -33,13 +34,18 @@ public class Frigo {
 
 
     @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL , orphanRemoval = true)
+    @JsonManagedReference
     private List<TemperatureFrigo> temperatures;
 
     @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<TemperatureFrigoMqTT> temperatureFrigoMqTTS;
 
 
-    private String deviceId;   // correspond au "device_id" reçu par MQTT
+    @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Device> devices;
+
 
     @JsonIgnore
     @Lob
@@ -121,24 +127,25 @@ public class Frigo {
         this.temperatureFrigoMqTTS = temperatureFrigoMqTTS;
     }
 
-    public String getDeviceId() {
-        return deviceId;
+    public List<Device> getDevices() {
+        return devices;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setDevices(List<Device> devices) {
+        this.devices = devices;
     }
 
-    public Frigo(Long id, String name, CategorieFrigo categorieFrigo, List<PlanningFrigo> planningFrigos
-            , List<TemperatureFrigo> temperatures, List<TemperatureFrigoMqTT> temperatureFrigoMqTTS
-            , String deviceId, byte[] imageOfFrigo, String imageUrl) {
+    public Frigo(Long id, String name, CategorieFrigo categorieFrigo
+            , List<PlanningFrigo> planningFrigos, List<TemperatureFrigo> temperatures
+            , List<TemperatureFrigoMqTT> temperatureFrigoMqTTS
+            , List<Device> devices, byte[] imageOfFrigo, String imageUrl) {
         this.id = id;
         this.name = name;
         this.categorieFrigo = categorieFrigo;
         this.planningFrigos = planningFrigos;
         this.temperatures = temperatures;
         this.temperatureFrigoMqTTS = temperatureFrigoMqTTS;
-        this.deviceId = deviceId;
+        this.devices = devices;
         this.imageOfFrigo = imageOfFrigo;
         this.imageUrl = imageUrl;
     }
