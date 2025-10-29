@@ -55,6 +55,15 @@
 		</dependency>
 
 
+		<!-- Jsoup pour scrapper HTML -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.17.2</version>
+		</dependency>
+
+
+
 
 		<dependency>
 			<groupId>com.github.librepdf</groupId>

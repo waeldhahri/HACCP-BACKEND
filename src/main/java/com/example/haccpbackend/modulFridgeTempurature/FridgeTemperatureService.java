@@ -36,13 +36,13 @@ public class FridgeTemperatureService {
         return repository.save(temp);
     }
 
-
+/*
     @Scheduled(fixedRate = 60000) // Vérifie toutes les minutes
     public void checkTemperatures() {
         List<FridgeTemperature> highTemps = repository.findByTemperatureGreaterThan(TEMPERATURE_THRESHOLD);
         if (!highTemps.isEmpty()) {
             emailService.sendAlert(ALERT_EMAIL, "Alerte Température Frigo", "Un frigo dépasse le seuil de température !");
         }
-    }
+    }*/
 
 }

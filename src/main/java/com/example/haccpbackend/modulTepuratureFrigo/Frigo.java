@@ -28,22 +28,31 @@ public class Frigo {
     @JoinColumn(nullable = false, name = "categorie_id")
     private CategorieFrigo categorieFrigo;
 
+
+    // ✅ Nouvel attribut : indique si le frigo est actif ou non
+    private boolean active = true; // Par défaut, un frigo est actif
+
+
     @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL , orphanRemoval = true )
     @JsonManagedReference
     private List<PlanningFrigo> planningFrigos;
 
 
-    @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL , orphanRemoval = true)
-    @JsonManagedReference
-    private List<TemperatureFrigo> temperatures;
 
+/*
     @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    private List<TemperatureFrigoMqTT> temperatureFrigoMqTTS;*/
+
+    @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("frigoRef")
     private List<TemperatureFrigoMqTT> temperatureFrigoMqTTS;
 
 
+
+
     @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("frigo-device")
     private List<Device> devices;
 
 
@@ -93,12 +102,12 @@ public class Frigo {
         this.categorieFrigo = categorieFrigo;
     }
 
-    public List<TemperatureFrigo> getTemperatures() {
-        return temperatures;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setTemperatures(List<TemperatureFrigo> temperatures) {
-        this.temperatures = temperatures;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public byte[] getImageOfFrigo() {
@@ -135,15 +144,13 @@ public class Frigo {
         this.devices = devices;
     }
 
-    public Frigo(Long id, String name, CategorieFrigo categorieFrigo
-            , List<PlanningFrigo> planningFrigos, List<TemperatureFrigo> temperatures
-            , List<TemperatureFrigoMqTT> temperatureFrigoMqTTS
-            , List<Device> devices, byte[] imageOfFrigo, String imageUrl) {
+    public Frigo(Long id, String name, CategorieFrigo categorieFrigo, boolean active, List<PlanningFrigo> planningFrigos,
+                 List<TemperatureFrigoMqTT> temperatureFrigoMqTTS, List<Device> devices, byte[] imageOfFrigo, String imageUrl) {
         this.id = id;
         this.name = name;
         this.categorieFrigo = categorieFrigo;
+        this.active = active;
         this.planningFrigos = planningFrigos;
-        this.temperatures = temperatures;
         this.temperatureFrigoMqTTS = temperatureFrigoMqTTS;
         this.devices = devices;
         this.imageOfFrigo = imageOfFrigo;

@@ -55,6 +55,7 @@ public class MqttDataService {
 
                 // 💾 Sauvegarde en base
                 TemperatureFrigoMqTT temp = new TemperatureFrigoMqTT();
+                temp.setDevice(device);
                 temp.setTemperature(temperature);
                 temp.setBatteryLevel(batteryLevel);
                 temp.setDatetime(datetime);
@@ -66,17 +67,30 @@ public class MqttDataService {
                         + " | device: " + deviceId
                         + " | temp: " + temperature + "°C | battery: " + batteryLevel + "%");
 
-                // 🚨 ALERTES EMAIL
-                if (temperature > 10) {
+                // 🚨 GESTION DES ALERTES SELON ÉTAT DU FRIGO
+                boolean isActive = frigo.isActive();
+                boolean tempAlerte = false;
+
+                if (isActive && temperature > 2) {
+                    // Frigo actif : alerte si température > 2°C
+                    tempAlerte = true;
+                } else if (!isActive && temperature > -4) {
+                    // Frigo passif : alerte si température > -4°C
+                    tempAlerte = true;
+                }
+
+                if (tempAlerte) {
                     sendEmail(
                             ALERT_EMAIL,
                             "⚠️ ALERTE Température",
                             "Le frigo '" + frigo.getName() + "' (device: " + deviceId + ") "
-                                    + "a atteint une température élevée de " + temperature + "°C à " + datetime + "."
+                                    + "a atteint une température anormale de " + temperature + "°C à " + datetime + ".\n"
+                                    + "État du frigo : " + (isActive ? "Actif (> 2°C)" : "Passif (> -4°C)")
                     );
                     System.out.println("📧 Email d'alerte température envoyé !");
                 }
 
+                // 🚨 ALERTE BATTERIE
                 if (batteryLevel < 30) {
                     sendEmail(
                             ALERT_EMAIL,

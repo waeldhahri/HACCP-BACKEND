@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -53,7 +54,8 @@ public class ProduitController {
             @RequestParam("photo") MultipartFile photo,
             @RequestParam("produitname") String nomProduit,
             @RequestParam("quantite") Double quantite,
-            @RequestParam("dlc") boolean dlc,
+            @RequestParam("dateDeFabrication") LocalDate dateDeFabrication,
+            @RequestParam("dlc") LocalDate dlc,
             @RequestParam("categorieId") Long categorieId
     ) {
 
@@ -67,10 +69,11 @@ public class ProduitController {
         Produit produit = new Produit();
         produit.setProduitname(nomProduit);
         produit.setQuantite(quantite);
+        produit.setDateDeFabrication(dateDeFabrication);
         produit.setDlc(dlc);
         produit.setCategorieProduit(categorie);
         produit.setPhotoUrl(urlS3);
-        produit.setDateDeStockage(LocalDate.now());
+        produit.setDateDeStockage(LocalDateTime.now());
 
         return ResponseEntity.ok(produitRepository.save(produit));
     }
@@ -122,6 +125,7 @@ public class ProduitController {
 
         return ResponseEntity.ok(photoUrls);
     }
+
 
 
 
@@ -223,7 +227,7 @@ public class ProduitController {
             @PathVariable Long id,
             @RequestParam("produitname") String nomProduit,
             @RequestParam("quantite") Double quantite,
-            @RequestParam("dlc") boolean dlc,
+            @RequestParam("dlc") LocalDate dlc,
             @RequestParam(value = "photo", required = false) MultipartFile photo // optionnel
     ) {
         // 1. Récupérer le produit existant

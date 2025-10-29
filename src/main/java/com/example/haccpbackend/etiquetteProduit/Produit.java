@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -30,15 +31,18 @@ public class Produit {
     private Double quantite;
 
     @Column(nullable = false)
-    private boolean dlc;
+    private LocalDate dlc;
 
 
 
 
 
     @CreatedDate
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm")
+    private LocalDateTime dateDeStockage;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dateDeStockage;
+    private LocalDate dateDeFabrication;
 
 
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -61,7 +65,6 @@ public class Produit {
     private CategorieProduit categorieProduit;
 
 //Getter and Setters
-
 
     public Long getId() {
         return id;
@@ -87,20 +90,28 @@ public class Produit {
         this.quantite = quantite;
     }
 
-    public boolean isDlc() {
+    public LocalDate getDlc() {
         return dlc;
     }
 
-    public void setDlc(boolean dlc) {
+    public void setDlc(LocalDate dlc) {
         this.dlc = dlc;
     }
 
-    public LocalDate getDateDeStockage() {
+    public LocalDateTime getDateDeStockage() {
         return dateDeStockage;
     }
 
-    public void setDateDeStockage(LocalDate dateDeStockage) {
+    public void setDateDeStockage(LocalDateTime dateDeStockage) {
         this.dateDeStockage = dateDeStockage;
+    }
+
+    public LocalDate getDateDeFabrication() {
+        return dateDeFabrication;
+    }
+
+    public void setDateDeFabrication(LocalDate dateDeFabrication) {
+        this.dateDeFabrication = dateDeFabrication;
     }
 
     public LocalDate getDateDeOuverture() {
@@ -135,16 +146,18 @@ public class Produit {
         this.categorieProduit = categorieProduit;
     }
 
+
     //Constructors
 
 
-    public Produit(Long id, String produitname, Double quantite, boolean dlc, LocalDate dateDeStockage, LocalDate dateDeOuverture,
-                   String photoUrl, String photoDeOuvertureUrl, CategorieProduit categorieProduit) {
+    public Produit(Long id, String produitname, Double quantite, LocalDate dlc, LocalDateTime dateDeStockage, LocalDate dateDeFabrication
+            , LocalDate dateDeOuverture, String photoUrl, String photoDeOuvertureUrl, CategorieProduit categorieProduit) {
         this.id = id;
         this.produitname = produitname;
         this.quantite = quantite;
         this.dlc = dlc;
         this.dateDeStockage = dateDeStockage;
+        this.dateDeFabrication = dateDeFabrication;
         this.dateDeOuverture = dateDeOuverture;
         this.photoUrl = photoUrl;
         this.photoDeOuvertureUrl = photoDeOuvertureUrl;

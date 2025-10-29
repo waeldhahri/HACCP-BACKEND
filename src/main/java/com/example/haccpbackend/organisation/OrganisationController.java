@@ -78,9 +78,9 @@ public class OrganisationController {
 
                 // Générer l'URL complète de l'image
                 String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/organisation/")
-                        .path("/image/")
-                        .path(organisation1.getId().toString())
+                        .replacePath("/api/organisation/image/"+organisation1.getId().toString())
+                       // .path("/image/")
+                        //.path(organisation1.getId().toString())
                         .toUriString();
 
 
@@ -280,8 +280,8 @@ public class OrganisationController {
                 existing.setImage(imageFile.getBytes());
 
                 String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/organisation/image/")
-                        .path(existing.getId().toString())
+                        .replacePath("/organisation/image/"+existing.getId().toString())
+                       // .path(existing.getId().toString())
                         .toUriString();
 
                 existing.setImageUrl(imageUrl);

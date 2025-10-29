@@ -80,9 +80,7 @@ public class ReceptionProduitController {
                 reception.setImageOfProduct(file.getBytes());
 
                 String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/receptionProduit/")
-                        .path(reception.getIdProduit().toString())
-                        .path("/image")
+                        .replacePath("/api/receptionProduit/"+reception.getIdProduit().toString()+"/image")
                         //.path(UUID.randomUUID().toString()) // ou id plus tard
                         .toUriString();
 
@@ -141,7 +139,7 @@ public class ReceptionProduitController {
         Optional<ReceptionProduit> optionalProduit = receptionProduitRepository.findById(id);
 
         if (optionalProduit.isEmpty()) {
-            // Retourner une liste vide : []
+            // Retourner une liste vide : []reception.getIdProduit().toString()
             return ResponseEntity.ok(Collections.emptyList());
         }
 
@@ -150,9 +148,9 @@ public class ReceptionProduitController {
 
         // Générer l'URL complète de l'image
         String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/products/")
-                .path(receptionProduit.getIdProduit().toString())
-                .path("/image")
+                .replacePath("api/receptionProduit/"+receptionProduit.getIdProduit().toString()+"/image")
+                //.path(receptionProduit.getIdProduit().toString())
+                //.path("/image")
                 .toUriString();
 
 

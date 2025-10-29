@@ -2,10 +2,13 @@ package com.example.haccpbackend.modulTepuratureFrigo.tempurature.device;
 
 
 import com.example.haccpbackend.modulTepuratureFrigo.Frigo;
+import com.example.haccpbackend.modulTepuratureFrigo.tempurature.TemperatureFrigoMqTT;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-
+import java.util.List;
 
 
 @Entity
@@ -22,10 +25,22 @@ public class Device {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "frigo_id")
-    @JsonBackReference
+    @JsonBackReference("frigo-device")
     private Frigo frigo;
 
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL , orphanRemoval = true )
+    @JsonManagedReference("deviceRef")
+    private List<TemperatureFrigoMqTT> temperatureFrigoMqTTS;
 
+
+/*
+
+    // Relation avec Tempurature
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL , orphanRemoval = true )
+    @JsonManagedReference
+    private List<TemperatureFrigoMqTT> temperatureFrigoMqTTS;
+
+*/
 
     //Getters and Setters
     public Long getId() {
@@ -60,16 +75,30 @@ public class Device {
         this.frigo = frigo;
     }
 
+    public List<TemperatureFrigoMqTT> getTemperatureFrigoMqTTS() {
+        return temperatureFrigoMqTTS;
+    }
+
+    public void setTemperatureFrigoMqTTS(List<TemperatureFrigoMqTT> temperatureFrigoMqTTS) {
+        this.temperatureFrigoMqTTS = temperatureFrigoMqTTS;
+    }
+
 
     //Constructors
 
-    public Device(Long id, String deviceId, String description, Frigo frigo) {
+
+    public Device(Long id, String deviceId, String description
+            , Frigo frigo, List<TemperatureFrigoMqTT> temperatureFrigoMqTTS) {
         this.id = id;
         this.deviceId = deviceId;
         this.description = description;
         this.frigo = frigo;
+        this.temperatureFrigoMqTTS = temperatureFrigoMqTTS;
     }
 
     public Device() {
     }
+
+
+
 }

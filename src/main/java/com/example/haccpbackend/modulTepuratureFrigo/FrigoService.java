@@ -78,9 +78,9 @@ public class FrigoService implements IServiceFrigo {
                 existingFrigo.setImageOfFrigo(imageBytes);
 
                 String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/frigo/")
-                        .path("/image/")
-                        .path(existingFrigo.getId().toString())
+                        .replacePath("/frigo/image/+"+existingFrigo.getId().toString())
+                        //.path("/image/")
+                        //.path(existingFrigo.getId().toString())
                         .toUriString();
 
 

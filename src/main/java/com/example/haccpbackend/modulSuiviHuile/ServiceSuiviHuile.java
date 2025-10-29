@@ -158,9 +158,9 @@ public class ServiceSuiviHuile implements IServiceSuiviHuile{
 
                 // Générer l'URL complète de l'image
                 String imageUrl1 = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/suiviHuile/")
-                        .path("/imageAfter/")
-                        .path(existingFriteuse.getId().toString())
+                        .replacePath("/api/suiviHuile/imageAfter/"+existingFriteuse.getId().toString())
+                        //.path("/imageAfter/")
+                        //.path(existingFriteuse.getId().toString())
                         .toUriString();
 
                 existingFriteuse.setImageFriteuseUrl(imageUrl1);

@@ -21,6 +21,9 @@ public interface ProduitRepository extends JpaRepository<Produit,Long> {
     List<Produit> findAllByDateDeOuverture(LocalDate dateOuverture);
 
 
+    List<Produit> findAllByDateDeFabrication(LocalDate dateDeFabrication);
+
+
     public List<Produit> findByCategorieProduit_NameIgnoreCase(String name);
 
 

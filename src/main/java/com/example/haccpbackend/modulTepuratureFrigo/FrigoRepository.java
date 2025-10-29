@@ -29,6 +29,9 @@ public interface FrigoRepository extends JpaRepository<Frigo,Long> {
    Optional<Frigo> findByDevicesDeviceId(String deviceId);
 
 
+   List<Frigo> findAllByActiveIs(boolean active);
+
+
 
 
 

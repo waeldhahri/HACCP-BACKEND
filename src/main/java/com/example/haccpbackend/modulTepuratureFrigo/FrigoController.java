@@ -85,6 +85,25 @@ public class FrigoController {
     }
 
 
+    @GetMapping("/ActiveFrigo/{activeIs}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    @Transactional
+    public ResponseEntity<?> findFrigoByActive(@PathVariable boolean activeIs){
+
+
+
+
+        List<Frigo> frigos = frigoRepository.findAllByActiveIs(activeIs);
+
+        if (frigos.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        return ResponseEntity.ok(frigos);
+
+    }
+
+
 
     @PostMapping(value = "/add" , /*consumes = MediaType.MULTIPART_FORM_DATA_VALUE*/ consumes = {"multipart/form-data"})
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
@@ -112,6 +131,7 @@ public class FrigoController {
             Frigo frigo = new Frigo();
             frigo.setName(frigoRequest.getName());
             frigo.setCategorie(categorie);
+            frigo.setActive(frigoRequest.isActive());
 
             if (frigoRepository.findFirstByNameAndCategorieFrigo(frigo.getName(), frigo.getCategorieFrigo()).isPresent()) {
                 throw new RuntimeException("Un frigo avec ce nom existe déjà dans cette catégorie.");
@@ -128,13 +148,15 @@ public class FrigoController {
                 frigo.setImageOfFrigo(imageFile.getBytes());
 
 
-                // Générer l'URL complète de l'image
+            /*    // Générer l'URL complète de l'image
                 String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/frigo/")
                         .path("/image/")
                         .path(frigo.getId().toString())
-                        .toUriString();
+                        .toUriString();*/
 
+                String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .replacePath("/api/frigo/image/" + frigo.getId())
+                        .toUriString();
 
                 frigo.setImageUrl(imageUrl);
 

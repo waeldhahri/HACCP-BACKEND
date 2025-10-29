@@ -40,9 +40,10 @@ public class Organisation {
     private List<User> users;
 
     // Relation avec User
-    @OneToMany(mappedBy = "organisation", cascade = CascadeType.ALL , orphanRemoval = true )
-    @JsonManagedReference
+    @OneToMany(mappedBy = "organisation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("organisationRef")
     private List<TemperatureFrigoMqTT> temperatureFrigoMqTTS;
+
 
 
 
