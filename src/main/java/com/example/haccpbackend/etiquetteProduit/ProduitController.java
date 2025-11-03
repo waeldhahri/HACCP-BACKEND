@@ -55,6 +55,7 @@ public class ProduitController {
             @RequestParam("produitname") String nomProduit,
             @RequestParam("quantite") Double quantite,
             @RequestParam("dateDeFabrication") LocalDate dateDeFabrication,
+            @RequestParam("dateDeOuverture") LocalDate dateDeOuverture,
             @RequestParam("dlc") LocalDate dlc,
             @RequestParam("categorieId") Long categorieId
     ) {
@@ -70,6 +71,7 @@ public class ProduitController {
         produit.setProduitname(nomProduit);
         produit.setQuantite(quantite);
         produit.setDateDeFabrication(dateDeFabrication);
+        produit.setDateDeOuverture(dateDeOuverture);
         produit.setDlc(dlc);
         produit.setCategorieProduit(categorie);
         produit.setPhotoUrl(urlS3);
@@ -197,10 +199,13 @@ public class ProduitController {
 
 
     @PutMapping(value = "/{id}/ouverture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Transactional
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<Produit> ajouterDateEtPhotoOuverture(
             @PathVariable Long id,
-            @RequestParam("photoOuverture") MultipartFile photoOuverture
+            @RequestParam("photoOuverture") MultipartFile photoOuverture ,
+            @RequestParam("dateDeOuverture") LocalDate dateDeOuverture
+
     ) {
         // 1. Trouver le produit
         Produit produit = produitRepository.findById(id)
@@ -210,7 +215,8 @@ public class ProduitController {
         String urlS3 = s3Service.uploadFile(photoOuverture, "produits/" + photoOuverture.getOriginalFilename());
 
         // 3. Mettre à jour les champs
-        produit.setDateDeOuverture(LocalDate.now());
+        //produit.setDateDeOuverture(LocalDate.now());
+        produit.setDateDeOuverture(dateDeOuverture);
         produit.setPhotoDeOuvertureUrl(urlS3);
 
         // 4. Sauvegarder
@@ -265,6 +271,25 @@ public class ProduitController {
 
 
 
+    @DeleteMapping("/{id}")
+    @Transactional
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<Void> deleteProduit(@PathVariable Long id){
+
+        try {
+
+
+
+            produitRepository.delete(produitRepository.findById(id).get());
+
+            return ResponseEntity.ok().build();
+
+        }
+        catch (Exception e){
+
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
 
 
