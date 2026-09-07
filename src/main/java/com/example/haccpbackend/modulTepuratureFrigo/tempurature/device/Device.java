@@ -25,11 +25,12 @@ public class Device {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "frigo_id")
-    @JsonBackReference("frigo-device")
+    @JsonManagedReference("frigo-device")
     private Frigo frigo;
 
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL , orphanRemoval = true )
     @JsonManagedReference("deviceRef")
+    @JsonIgnore
     private List<TemperatureFrigoMqTT> temperatureFrigoMqTTS;
 
 

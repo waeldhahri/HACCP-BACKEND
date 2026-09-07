@@ -5,6 +5,7 @@ import com.example.haccpbackend.modulTepuratureFrigo.FrigoRepository;
 import com.example.haccpbackend.modulTepuratureFrigo.tempurature.device.DeviceRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
-
+@Transactional
 public class MqttDataService {
 
     @Autowired

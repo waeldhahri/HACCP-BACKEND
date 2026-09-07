@@ -1,8 +1,12 @@
 package com.example.haccpbackend.modulTepuratureFrigo.tempurature.device;
 
 import com.example.haccpbackend.modulTepuratureFrigo.Frigo;
+import com.example.haccpbackend.modulTepuratureFrigo.FrigoLightDTO;
 import com.example.haccpbackend.modulTepuratureFrigo.FrigoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class DeviceService {
@@ -34,4 +38,33 @@ public class DeviceService {
 
         return deviceRepository.save(device);
     }
+
+
+    @Transactional(readOnly = true)
+    public List<DeviceDTO2> getAllDevices() {
+
+        return deviceRepository.findAllWithFrigo()
+                .stream()
+                .map(d -> {
+                    DeviceDTO2 dto = new DeviceDTO2();
+                    dto.setId(d.getId());
+                    dto.setDeviceId(d.getDeviceId());
+                    dto.setDescription(d.getDescription());
+
+                    Frigo f = d.getFrigo();
+                    if (f != null) {
+                        FrigoLightDTO frigoDTO = new FrigoLightDTO();
+                        frigoDTO.setId(f.getId());
+                        frigoDTO.setName(f.getName());
+                        frigoDTO.setActive(f.isActive());
+                        frigoDTO.setImageUrl(f.getImageUrl());
+
+                        dto.setFrigo(frigoDTO);
+                    }
+
+                    return dto;
+                })
+                .toList();
+    }
+
 }

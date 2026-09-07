@@ -4,6 +4,7 @@ package com.example.haccpbackend.modulTepuratureFrigo;
 import com.example.haccpbackend.modulPlanning.modulePlanningVersion2.planningFrigo.PlanningFrigo;
 import com.example.haccpbackend.modulTepuratureFrigo.tempurature.device.Device;
 import com.example.haccpbackend.modulTepuratureFrigo.tempurature.TemperatureFrigoMqTT;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -50,10 +51,12 @@ public class Frigo {
 
 
 
-
-    @OneToMany(mappedBy = "frigo", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("frigo-device")
+    @OneToMany(mappedBy = "frigo")
+    @JsonBackReference("frigo-device")
     private List<Device> devices;
+
+
+
 
 
     @JsonIgnore

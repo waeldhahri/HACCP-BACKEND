@@ -51,11 +51,11 @@ public class ProduitController {
     @PostMapping(value = "/add" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<Produit> ajouterProduit(
-            @RequestParam("photo") MultipartFile photo,
+            @RequestParam(value = "photo", required = false) MultipartFile photo,
             @RequestParam("produitname") String nomProduit,
             @RequestParam("quantite") Double quantite,
-            @RequestParam("dateDeFabrication") LocalDate dateDeFabrication,
-            @RequestParam("dateDeOuverture") LocalDate dateDeOuverture,
+            @RequestParam(value = "dateDeFabrication", required = false) LocalDate dateDeFabrication,
+            @RequestParam(value = "dateDeOuverture", required = false) LocalDate dateDeOuverture,
             @RequestParam("dlc") LocalDate dlc,
             @RequestParam("categorieId") Long categorieId
     ) {
@@ -231,10 +231,12 @@ public class ProduitController {
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<Produit> updateProduit(
             @PathVariable Long id,
-            @RequestParam("produitname") String nomProduit,
-            @RequestParam("quantite") Double quantite,
-            @RequestParam("dlc") LocalDate dlc,
-            @RequestParam(value = "photo", required = false) MultipartFile photo // optionnel
+            @RequestParam(value = "produitname", required = false) String nomProduit,
+            @RequestParam(value ="quantite", required = false) Double quantite,
+            @RequestParam(value ="dlc", required = false) LocalDate dlc,
+            @RequestParam(value = "photo", required = false) MultipartFile photo, // optionnel,
+             @RequestParam(value = "dateDeFabrication", required = false) LocalDate dateDeFabrication,
+            @RequestParam(value = "dateDeOuverture", required = false) LocalDate dateDeOuverture
     ) {
         // 1. Récupérer le produit existant
         Produit produit = produitRepository.findById(id)
@@ -251,6 +253,8 @@ public class ProduitController {
         produit.setProduitname(nomProduit);
         produit.setQuantite(quantite);
         produit.setDlc(dlc);
+        produit.setDateDeOuverture(dateDeOuverture);
+        produit.setDateDeFabrication(dateDeFabrication);
 
         // 5. Enregistrer les changements
         Produit updated = produitRepository.save(produit);
@@ -274,7 +278,7 @@ public class ProduitController {
     @DeleteMapping("/{id}")
     @Transactional
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteProduit(@PathVariable Long id){
+    public ResponseEntity<?> deleteProduit(@PathVariable Long id){
 
         try {
 
@@ -282,7 +286,7 @@ public class ProduitController {
 
             produitRepository.delete(produitRepository.findById(id).get());
 
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(Collections.emptyList());
 
         }
         catch (Exception e){
